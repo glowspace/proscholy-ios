@@ -83,7 +83,7 @@
 		39F7BA5722E7535200FDFF90 /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 		39F9C2A922F621C2004F0712 /* AllSongLyricsListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AllSongLyricsListVC.swift; sourceTree = "<group>"; };
 		39F9C2AE22F625F7004F0712 /* GradientView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = GradientView.swift; sourceTree = "<group>"; };
-		39F9C2B022F6368D004F0712 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Assets.xcassets; path = ../Assets.xcassets; sourceTree = "<group>"; };
+		39F9C2B022F6368D004F0712 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		39F9C2B322F6EE2C004F0712 /* UILabelExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UILabelExtension.swift; sourceTree = "<group>"; };
 		39F9C2B422F6EE2C004F0712 /* FittableFontLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FittableFontLabel.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -121,8 +121,8 @@
 		3997799122F78B1800CE6FF6 /* Resources */ = {
 			isa = PBXGroup;
 			children = (
-				399205B722F78B8400E392A7 /* data.json */,
 				39F9C2B022F6368D004F0712 /* Assets.xcassets */,
+				399205B722F78B8400E392A7 /* data.json */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
