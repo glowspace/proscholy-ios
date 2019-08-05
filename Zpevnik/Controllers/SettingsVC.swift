@@ -40,14 +40,16 @@ class SettingsVC: UIViewController {
         createCells()
     }
     
+    // MARK: - Cells settings
+    
     private func createCells() {
         cells.append(createSettingCell(title: "Blokovat zhasínání displeje", isOn: UserSettings.blockAutoLock, action: #selector(blockAutoLockToggle)))
-        cells.append(createSettingCell(title: "Patkové písmo", isOn: false, action: #selector(test)))
-        cells.append(createSettingCell(title: "Posuvky", isOn: false, action: #selector(test)))
+        cells.append(createSettingCell(title: "Patkové písmo", isOn: UserSettings.serif, action: #selector(serifToggle)))
+        cells.append(createSettingCell(title: "Posuvky", isOn: UserSettings.showSliders, action: #selector(slidersToggle)))
         cells.append(createSettingCell(title: "Akordy", isOn: UserSettings.showChords, action: #selector(showChordsToggle)))
         cells.append(createFontSizeCell())
         cells.append(createSettingCell(title: "Tmavý mód", isOn: UserSettings.darkMode, action: #selector(darkModeToggle)))
-        cells.append(createSettingCell(title: "Zobrazit spodní nabídku", isOn: false, action: #selector(test)))
+        cells.append(createSettingCell(title: "Zobrazit spodní nabídku", isOn: UserSettings.showBottomOptions, action: #selector(bottomOptionsToggle)))
     }
     
     private func createFontSizeCell() -> UITableViewCell {
@@ -63,12 +65,12 @@ class SettingsVC: UIViewController {
         let minFontLabel = UILabel()
         minFontLabel.translatesAutoresizingMaskIntoConstraints = false
         minFontLabel.text = "A"
-        minFontLabel.font = UIFont.systemFont(ofSize: CGFloat(Constants.minFontSize))
+        minFontLabel.font = UIFont.getFont(ofSize: CGFloat(Constants.minFontSize))
         
         let maxFontLabel = UILabel()
         maxFontLabel.translatesAutoresizingMaskIntoConstraints = false
         maxFontLabel.text = "A"
-        maxFontLabel.font = UIFont.systemFont(ofSize: CGFloat(Constants.maxFontSize))
+        maxFontLabel.font = UIFont.getFont(ofSize: CGFloat(Constants.maxFontSize))
         
         cell.addSubview(label)
         cell.addSubview(slider)
@@ -105,8 +107,12 @@ class SettingsVC: UIViewController {
         UserSettings.blockAutoLock = !UserSettings.blockAutoLock
     }
     
-    @objc func test() {
-        
+    @objc func serifToggle() {
+        UserSettings.serif = !UserSettings.serif
+    }
+    
+    @objc func slidersToggle() {
+        UserSettings.showSliders = !UserSettings.showSliders
     }
     
     @objc func showChordsToggle() {
@@ -119,6 +125,10 @@ class SettingsVC: UIViewController {
     
     @objc func darkModeToggle() {
         UserSettings.darkMode = !UserSettings.darkMode
+    }
+    
+    @objc func bottomOptionsToggle() {
+        UserSettings.showBottomOptions = !UserSettings.showBottomOptions
     }
 }
 

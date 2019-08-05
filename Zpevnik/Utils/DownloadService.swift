@@ -59,8 +59,8 @@ class DownloadService {
     private static func downloadSongData(_ handler: @escaping (Data) throws -> (), _ updater: @escaping (String) -> Void, _ completionHandler: @escaping () -> Void) {
         let defaults = UserDefaults.standard
         var arguments = [String: String]()
-        if let last_update = defaults.string(forKey: "last_update") {
-            arguments["updated_after"] = last_update
+        if let lastUpdate = defaults.string(forKey: "last_update") {
+            arguments["updated_after"] = lastUpdate
         }
         
         let queries = [
@@ -72,8 +72,16 @@ class DownloadService {
         guard let encodedUrl = urlString.addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed), let url = URL(string: encodedUrl) else { return }
         
         updater("Aktualizace databáze písní.")
-        URLSession.shared.dataTask(with: url) { (data, response, error) in
-            guard error == nil else { return }
+        let sessionConfig = URLSessionConfiguration.default
+        sessionConfig.timeoutIntervalForRequest = 5.0
+        sessionConfig.timeoutIntervalForResource = 5.0
+        
+        let task = URLSession(configuration: sessionConfig).dataTask(with: url) { (data, response, error) in
+            guard error == nil else {
+                completionHandler()
+                return
+                
+            }
             guard let data = data else { return }
             
             do {
@@ -84,8 +92,12 @@ class DownloadService {
                 setLastUpdate(defaults)
                 
                 completionHandler()
-            } catch { }
-        }.resume()
+            } catch {
+                completionHandler()
+            }
+        }
+        
+        task.resume()
     }
     
     private static func loadSongDataFromFile(_ handler: @escaping (Data) throws -> (), _ updater: @escaping (String) -> Void, _ completionHandler: @escaping () -> Void) {

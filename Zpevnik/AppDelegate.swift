@@ -23,8 +23,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         UINavigationBar.appearance().isTranslucent = false
         UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
         UINavigationBar.appearance().shadowImage = UIImage()
+        UINavigationBar.appearance().setTitleVerticalPositionAdjustment(-2, for: .default)
         
-        UINavigationBar.appearance()
+        let image = UIImage(named: "backIcon")
+        UINavigationBar.appearance().backIndicatorImage = image
+        UINavigationBar.appearance().backIndicatorTransitionMaskImage = image
         
         UserSettings.load()
         

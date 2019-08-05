@@ -8,6 +8,13 @@
 
 import UIKit
 
+extension SongLyric {
+
+    func isFavorite() -> Bool {
+        return favoriteOrder > -1
+    }
+}
+
 extension SongLyric: SongDataSource {
     
     func setCell(_ cell: UITableViewCell) {

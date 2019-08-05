@@ -23,7 +23,7 @@ class ButtonView: GradientView {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.font = UIFont.boldSystemFont(ofSize: 35)
+        label.font = UIFont(name: "Cocogoose Pro", size: 30)
         label.textColor = .white
         
         return label
@@ -33,7 +33,7 @@ class ButtonView: GradientView {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        label.font = UIFont.systemFont(ofSize: 12)
+        label.font = UIFont.getFont(ofSize: 12)
         label.textColor = .white
         
         label.numberOfLines = 0

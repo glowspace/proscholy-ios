@@ -28,7 +28,7 @@ class SongLyricCell: UITableViewCell {
         label.adjustsFontSizeToFitWidth = true
         label.minimumScaleFactor = 0.75
         
-        label.font = UIFont.systemFont(ofSize: 13)
+        label.font = UIFont.getFont(ofSize: 13)
         label.textColor = .gray
         
         label.baselineAdjustment = .alignCenters

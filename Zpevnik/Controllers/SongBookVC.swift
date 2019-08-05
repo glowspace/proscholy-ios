@@ -11,6 +11,23 @@ import UIKit
 class SongBookVC: SongLyricsListVC {
     
     var songBook: SongBook!
+    
+    lazy var searchBarButton: UIBarButtonItem = {
+        let barButtonItem = UIBarButtonItem(image: UIImage(named: "searchIcon"), style: .plain, target: self, action: #selector(showSearch))
+        
+        return barButtonItem
+    }()
+    
+    lazy var emptyBackButtonView: UIView = {
+        let view = UIView()
+        view.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(backButtonTapped)))
+        
+        view.backgroundColor = .clear
+        
+        return view
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -23,9 +40,24 @@ class SongBookVC: SongLyricsListVC {
         
         navigationItem.title = songBook.name
         navigationController?.navigationBar.barTintColor = .red
-        navigationItem.hidesBackButton = true
-        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "backIcon"), style: .plain, target: self, action: #selector(backButtonTapped))
-        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "searchIcon"), style: .plain, target: self, action: #selector(showSearch))
+        navigationItem.setRightBarButton(searchBarButton, animated: true)
+        
+        navigationController?.navigationBar.addSubview(emptyBackButtonView)
+        
+        navigationController?.navigationBar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[emptyBackButtonView(==44)]", metrics: nil, views: ["emptyBackButtonView": emptyBackButtonView]))
+        navigationController?.navigationBar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[emptyBackButtonView(==44)]", metrics: nil, views: ["emptyBackButtonView": emptyBackButtonView]))
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        searchView.searchField.text = ""
+        updateData(sender: searchView.searchField)
+        searchView.searchField.resignFirstResponder()
+        navigationItem.titleView = nil
+        navigationItem.setRightBarButton(searchBarButton, animated: true)
+        
+        emptyBackButtonView.removeFromSuperview()
     }
     
     override func loadData() {
@@ -78,14 +110,14 @@ class SongBookVC: SongLyricsListVC {
             updateData(sender: searchView.searchField)
             searchView.searchField.resignFirstResponder()
             navigationItem.titleView = nil
-            navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "searchIcon"), style: .plain, target: self, action: #selector(showSearch))
+            navigationItem.setRightBarButton(searchBarButton, animated: true)
         } else {
             navigationController?.popViewController(animated: true)
         }
     }
     
     @objc func showSearch() {
-        navigationItem.rightBarButtonItem = nil
+        navigationItem.setRightBarButton(nil, animated: true)
         showSearchView(placeholder: "Zadejte název či číslo písně")
         searchView.searchField.becomeFirstResponder()
     }

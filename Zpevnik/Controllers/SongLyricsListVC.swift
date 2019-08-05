@@ -11,6 +11,14 @@ import UIKit
 class SongLyricsListVC: ListVC<SongLyric> {
     
     var currentSongLyricIndex: Int?
+    
+    lazy var songLyricVC: SongLyricVC = {
+        let vc = SongLyricVC()
+        
+        vc.delegate = self
+        
+        return vc
+    }()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,8 +37,7 @@ class SongLyricsListVC: ListVC<SongLyric> {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         currentSongLyricIndex = indexPath.row
         
-        let songLyricVC = SongLyricVC()
-        songLyricVC.delegate = self
+        
         songLyricVC.songLyric = showingData[indexPath.row]
         navigationController?.pushViewController(songLyricVC, animated: true)
     }

@@ -16,6 +16,18 @@ class AllSongLyricsListVC: SongLyricsListVC {
         return button
     }()
     
+    lazy var cancelButton: UIBarButtonItem = {
+        let barButtonItem = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(disableSelection))
+        
+        return barButtonItem
+    }()
+    
+    lazy var selectAllButton: UIBarButtonItem = {
+        let barButtonItem = UIBarButtonItem(image: UIImage(named: "selectAllIcon"), style: .plain, target: self, action: #selector(selectAllLyrics))
+        
+        return barButtonItem
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -31,6 +43,8 @@ class AllSongLyricsListVC: SongLyricsListVC {
         showSearchView(placeholder: "Zadejte název či číslo písně")
     }
     
+    // MARK: Private functions
+    
     private func updateSelectionTitle(_ selectedCount: Int) {
         if selectedCount == 1 {
             navigationItem.title = "1 píseň"
@@ -39,6 +53,18 @@ class AllSongLyricsListVC: SongLyricsListVC {
         } else {
             navigationItem.title = String(selectedCount) + " písní"
         }
+    }
+    
+    private func shouldAddToFavorites() -> Bool {
+        guard let indexPaths = tableView.indexPathsForSelectedRows else { return true }
+        
+        for indexPath in indexPaths {
+            if !showingData[indexPath.row].isFavorite() {
+                return true
+            }
+        }
+        
+        return false
     }
     
     // MARK: - Handlers
@@ -50,15 +76,16 @@ class AllSongLyricsListVC: SongLyricsListVC {
                 tableView.setEditing(true, animated: true)
                 tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
                 
-                navigationItem.titleView = nil
-                navigationItem.leftBarButtonItem = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(disableSelection))
-                let selectAllButton = UIBarButtonItem(image: UIImage(named: "selectAllIcon"), style: .plain, target: self, action: #selector(selectAllLyrics))
                 selectAllButton.isEnabled = showingData.count <= 50
-                if showingData[indexPath.row].favoriteOrder > -1 {
+                navigationItem.setLeftBarButton(cancelButton, animated: true)
+                navigationItem.setRightBarButtonItems([selectAllButton, starButton], animated: true)
+                
+                navigationItem.titleView = nil
+                navigationItem.title = "1 píseň"
+                
+                if showingData[indexPath.row].isFavorite() {
                     starButton.image = UIImage(named: "starIconFilled")
                 }
-                navigationItem.setRightBarButtonItems([selectAllButton, starButton], animated: true)
-                navigationItem.title = "1 píseň"
                 
                 self.tabBarController?.tabBar.isHidden = true
             }
@@ -68,7 +95,7 @@ class AllSongLyricsListVC: SongLyricsListVC {
     @objc func disableSelection() {
         tableView.setEditing(false, animated: true)
         
-        navigationItem.leftBarButtonItem = nil
+        navigationItem.setLeftBarButton(nil, animated: true)
         navigationItem.setRightBarButtonItems(nil, animated: true)
         navigationItem.title = nil
         
@@ -91,7 +118,7 @@ class AllSongLyricsListVC: SongLyricsListVC {
             var favoriteOrder = defaults.integer(forKey: "favoriteOrder")
             
             for indexPath in indexPaths {
-                if showingData[indexPath.row].favoriteOrder == -1 {
+                if !showingData[indexPath.row].isFavorite() {
                     showingData[indexPath.row].favoriteOrder = Int16(favoriteOrder)
                     favoriteOrder += 1
                 }
@@ -109,18 +136,6 @@ class AllSongLyricsListVC: SongLyricsListVC {
         }
         
         PersistenceService.saveContext()
-    }
-    
-    private func shouldAddToFavorites() -> Bool {
-        guard let indexPaths = tableView.indexPathsForSelectedRows else { return true }
-        
-        for indexPath in indexPaths {
-            if showingData[indexPath.row].favoriteOrder == -1 {
-                return true
-            }
-        }
-        
-        return false
     }
     
     // MARK: - UITableViewDelegete, UITableViewDataSource

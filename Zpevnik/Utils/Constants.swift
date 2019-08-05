@@ -6,7 +6,7 @@
 //  Copyright © 2019 Patrik Dobiáš. All rights reserved.
 //
 
-import Foundation
+import UIKit
 
 class Constants {
     
@@ -14,4 +14,9 @@ class Constants {
     
     static let minFontSize: Float = 10
     static let maxFontSize: Float = 45
+    
+    static let serifFont = "Times new roman"
+    static let sansSerifFont = "Helvetica"
+    
+    static let darkModeLightColor = UIColor(white: 0.15, alpha: 1)
 }

@@ -15,7 +15,6 @@ class LaunchVC: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         
         label.textAlignment = .center
-        label.text = "Příprava písní"
         
         return label
     }()
@@ -42,7 +41,6 @@ class LaunchVC: UIViewController {
             "progressInfoLabel": progressInfoLabel
         ]
         
-        loadingIndicator.startAnimating()
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[loadingIndicator]-|", metrics: nil, views: views))
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[progressInfoLabel]-|", metrics: nil, views: views))
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[loadingIndicator]-[progressInfoLabel]-|", metrics: nil, views: views))
@@ -50,6 +48,30 @@ class LaunchVC: UIViewController {
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
+        
+        let defaults = UserDefaults.standard
+        
+        if let lastUpdate = defaults.string(forKey: "last_update") {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+            
+            let date = Date()
+            let last = dateFormatter.date(from: lastUpdate)!
+            if date.timeIntervalSince(last) / 3600 > 24 {
+                updateSongLyrics()
+            } else {
+                navigationController?.present(TabBarController(), animated: false)
+            }
+        } else {
+            updateSongLyrics()
+        }
+        
+        
+    }
+    
+    private func updateSongLyrics() {
+        progressInfoLabel.text = "Příprava písní"
+        loadingIndicator.startAnimating()
         
         DownloadService.updateSongs({ progressInfo in
             DispatchQueue.main.async {

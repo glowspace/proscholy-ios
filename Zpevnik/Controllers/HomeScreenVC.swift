@@ -90,6 +90,12 @@ class HomeScreenVC: UIViewController {
         return stackView
     }()
     
+    lazy var allSongsLyricsVC: AllSongLyricsListVC = {
+        let vc = AllSongLyricsListVC()
+        
+        return vc
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -191,11 +197,11 @@ class HomeScreenVC: UIViewController {
     // MARK: - Handlers
     
     @objc func showLyricsList() {
-        navigationController?.pushViewController(AllSongLyricsListVC(), animated: true)
+        navigationController?.pushViewController(allSongsLyricsVC, animated: true)
     }
     
     @objc func search() {
-        let lyricsListVC = AllSongLyricsListVC()
+        let lyricsListVC = allSongsLyricsVC
         lyricsListVC.searchView.searchField.text = searchView.searchField.text
         navigationController?.pushViewController(lyricsListVC, animated: true)
     }
@@ -205,7 +211,14 @@ class HomeScreenVC: UIViewController {
     }
     
     @objc func showSettings() {
-        navigationController?.pushViewController(SettingsVC(), animated: true)
+        tabBarController?.selectedIndex = 3
+        
+        if let viewControllers = tabBarController?.viewControllers, let navigationController = viewControllers[3] as? UINavigationController {
+            if navigationController.viewControllers.count > 1 {
+                navigationController.viewControllers = [navigationController.viewControllers[0]]
+            }
+            navigationController.pushViewController(SettingsVC(), animated: true)
+        }
     }
     
     @objc override func dismissKeyboard() {

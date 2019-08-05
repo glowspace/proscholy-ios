@@ -48,6 +48,12 @@ class SongBookCell: UITableViewCell {
         shortcutLabel.backgroundColor = .red
     }
     
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
+        
+        shortcutLabel.backgroundColor = .red
+    }
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         

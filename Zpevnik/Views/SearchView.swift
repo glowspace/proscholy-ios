@@ -14,9 +14,11 @@ class SearchView: UIView {
         let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
         
+        textField.contentVerticalAlignment = .center
+        
         textField.delegate = self
         
-        textField.font = UIFont.systemFont(ofSize: 17)
+        textField.font = UIFont.getFont(ofSize: 17)
         textField.clearButtonMode = .always
         textField.returnKeyType = .search
         

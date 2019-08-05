@@ -8,6 +8,50 @@
 
 import UIKit
 
+extension UIColor {
+    
+    convenience init(red: Int, green: Int, blue: Int) {
+        self.init(red: CGFloat(red) / 255.0, green: CGFloat(green) / 255.0, blue: CGFloat(blue) / 255.0, alpha: 1.0)
+    }
+}
+
+extension UIFont {
+    
+    static func getFont(ofSize size: CGFloat) -> UIFont {
+//        if UserSettings.serif, let font = UIFont(name: Constants.serifFont, size: size) {
+//            return font
+//        } else if let font = UIFont(name: Constants.sansSerifFont, size: size) {
+//            return font
+//        }
+//        
+        return .systemFont(ofSize: size)
+    }
+}
+
+extension UILabel {
+    
+    @objc var substituteFontName: String {
+        get {
+            return ""
+        }
+        set {
+            font = UIFont.getFont(ofSize: font.pointSize)
+        }
+    }
+}
+
+extension UINavigationBar {
+    
+    @objc var substituteFontName: String {
+        get {
+            return ""
+        }
+        set {
+            titleTextAttributes = [.font: UIFont.getFont(ofSize: 17)]
+        }
+    }
+}
+
 extension UIViewController {
     
     func hideKeyboardWhenTappedAround() {
@@ -19,6 +63,34 @@ extension UIViewController {
     @objc func dismissKeyboard() {
         navigationController?.navigationBar.endEditing(true)
     }
+    
+    func hideBars(_ hidden: Bool, animated: Bool) {
+        guard let tabBarController = tabBarController else { return }
+        guard let navigationController = navigationController else { return }
+        
+        if !hidden {
+            tabBarController.tabBar.isHidden = hidden
+            navigationController.navigationBar.isHidden = hidden
+        }
+        
+        let duration = animated ? 0.3 : 0
+        UIView.animate(withDuration: duration, animations: {
+            tabBarController.tabBar.frame.origin.y += tabBarController.tabBar.frame.height * (hidden ? 1 : -1)
+            navigationController.navigationBar.frame.origin.y -= navigationController.navigationBar.frame.height * (hidden ? 1 : -1)
+            
+            self.view.frame.origin.y -= navigationController.navigationBar.frame.height * (hidden ? 1 : -1)
+            if hidden {
+                self.view.frame.size.height += tabBarController.tabBar.frame.height
+            }
+        }) { _ in
+            if !hidden {
+                self.view.frame.size.height -= tabBarController.tabBar.frame.height
+            }
+            
+            tabBarController.tabBar.isHidden = hidden
+            navigationController.navigationBar.isHidden = hidden
+        }
+    }
 }
 
 extension UITextField {
@@ -29,7 +101,7 @@ extension UITextField {
         if let placeholder = self.placeholder {
             var fontSize: CGFloat = 25
             while true {
-                if (placeholder as NSString).size(withAttributes: [.font: UIFont.systemFont(ofSize: fontSize)]).width < self.frame.size.width - 60 {
+                if (placeholder as NSString).size(withAttributes: [.font: UIFont.getFont(ofSize: fontSize)]).width < self.frame.size.width - 60 {
                     self.adjustsFontSizeToFitWidth = true
                     self.minimumFontSize = fontSize
                     break
@@ -66,43 +138,5 @@ class PaddingLabel: UILabel {
     override var intrinsicContentSize: CGSize {
         let size = super.intrinsicContentSize
         return CGSize(width: size.width + leftInset + rightInset, height: size.height + topInset + bottomInset)
-    }
-}
-
-extension UIColor {
-    
-    convenience init(red: Int, green: Int, blue: Int) {
-        self.init(red: CGFloat(red) / 255.0, green: CGFloat(green) / 255.0, blue: CGFloat(blue) / 255.0, alpha: 1.0)
-    }
-}
-
-extension UIViewController {
-    
-    func hideBars(_ hidden: Bool, animated: Bool) {
-        guard let tabBarController = tabBarController else { return }
-        guard let navigationController = navigationController else { return }
-        
-        if !hidden {
-            tabBarController.tabBar.isHidden = hidden
-            navigationController.navigationBar.isHidden = hidden
-        }
-        
-        let duration = animated ? 0.3 : 0
-        UIView.animate(withDuration: duration, animations: {
-            tabBarController.tabBar.frame.origin.y += tabBarController.tabBar.frame.height * (hidden ? 1 : -1)
-            navigationController.navigationBar.frame.origin.y -= navigationController.navigationBar.frame.height * (hidden ? 1 : -1)
-            
-            self.view.frame.origin.y -= navigationController.navigationBar.frame.height * (hidden ? 1 : -1)
-            if hidden {
-                self.view.frame.size.height += tabBarController.tabBar.frame.height
-            }
-        }) { _ in
-            if !hidden {
-                self.view.frame.size.height -= tabBarController.tabBar.frame.height
-            }
-        
-            tabBarController.tabBar.isHidden = hidden
-            navigationController.navigationBar.isHidden = hidden
-        }
     }
 }

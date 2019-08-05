@@ -39,11 +39,15 @@ class MenuVC: UIViewController {
         super.viewWillAppear(animated)
         
         let view = UIView()
+        
         let logoView = UIImageView(image: UIImage(named: "logo"))
         logoView.translatesAutoresizingMaskIntoConstraints = false
+        
         let titleView = UILabel()
         titleView.translatesAutoresizingMaskIntoConstraints = false
+        
         titleView.text = "Zpěvník pro scholy"
+        titleView.font = UIFont.systemFont(ofSize: 17, weight: UIFont.Weight.semibold)
         
         view.addSubview(logoView)
         view.addSubview(titleView)

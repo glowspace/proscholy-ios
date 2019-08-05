@@ -41,11 +41,15 @@ class ListVC<T: SongDataSource>: UIViewController, UITableViewDelegate, UITableV
         
         setViews()
         
-        loadData()
-        
         T.registerCell(tableView, forCellReuseIdentifier: "cellId")
         
         hideKeyboardWhenTappedAround()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        loadData()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -57,6 +61,8 @@ class ListVC<T: SongDataSource>: UIViewController, UITableViewDelegate, UITableV
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
+        
+        searchView.searchField.text = ""
         
         if let index = tableView.indexPathForSelectedRow {
             tableView.deselectRow(at: index, animated: false)
