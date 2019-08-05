@@ -1,0 +1,112 @@
+//
+//  SongBookVC.swift
+//  Zpevnik
+//
+//  Created by Patrik Dobiáš on 24/07/2019.
+//  Copyright © 2019 Patrik Dobiáš. All rights reserved.
+//
+
+import UIKit
+
+class SongBookVC: SongLyricsListVC {
+    
+    var songBook: SongBook!
+
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        searchView.layer.borderWidth = 0
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        navigationItem.title = songBook.name
+        navigationController?.navigationBar.barTintColor = .red
+        navigationItem.hidesBackButton = true
+        navigationItem.leftBarButtonItem = UIBarButtonItem(image: UIImage(named: "backIcon"), style: .plain, target: self, action: #selector(backButtonTapped))
+        navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "searchIcon"), style: .plain, target: self, action: #selector(showSearch))
+    }
+    
+    override func loadData() {
+        if let records = songBook.records?.allObjects as? [SongBookRecord] {
+            self.data = records.map {
+                $0.songLyric!
+            }
+        }
+        self.data = self.data.filter {
+            $0.lyrics != nil
+        }
+        self.data.sort { (first, second) in
+            var firstNumber = -1
+            var secondNumber = -1
+            var firstMore = ""
+            var secondMore = ""
+            if let songBookRecords = first.songbookRecords?.allObjects as? [SongBookRecord] {
+                for songBookRecord in songBookRecords {
+                    if songBookRecord.songBook == songBook {
+                        firstNumber = Int(songBookRecord.number!.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression))!
+                        firstMore = songBookRecord.number!.replacingOccurrences(of: "[0-9]", with: "", options: .regularExpression)
+                        break
+                    }
+                }
+            }
+            if let songBookRecords = second.songbookRecords?.allObjects as? [SongBookRecord] {
+                for songBookRecord in songBookRecords {
+                    if songBookRecord.songBook == songBook {
+                        secondNumber = Int(songBookRecord.number!.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression))!
+                        secondMore = songBookRecord.number!.replacingOccurrences(of: "[0-9]", with: "", options: .regularExpression)
+                        break
+                    }
+                }
+            }
+            
+            if firstNumber == secondNumber {
+                return firstMore < secondMore
+            }
+            return firstNumber < secondNumber
+        }
+        
+        showData()
+    }
+    
+    // MARK: - Handlers
+    
+    @objc func backButtonTapped() {
+        if searchView.searchField.isEditing {
+            searchView.searchField.text = ""
+            updateData(sender: searchView.searchField)
+            searchView.searchField.resignFirstResponder()
+            navigationItem.titleView = nil
+            navigationItem.rightBarButtonItem = UIBarButtonItem(image: UIImage(named: "searchIcon"), style: .plain, target: self, action: #selector(showSearch))
+        } else {
+            navigationController?.popViewController(animated: true)
+        }
+    }
+    
+    @objc func showSearch() {
+        navigationItem.rightBarButtonItem = nil
+        showSearchView(placeholder: "Zadejte název či číslo písně")
+        searchView.searchField.becomeFirstResponder()
+    }
+    
+    // MARK: - UITableViewDelegate, UITableViewDataSource
+    
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cellId", for: indexPath) as! SongLyricCell
+        
+        let songLyric = showingData[indexPath.row]
+        
+        cell.nameLabel.text = songLyric.name
+        if let songBookRecords = songLyric.songbookRecords?.allObjects as? [SongBookRecord] {
+            for songBookRecord in songBookRecords {
+                if songBookRecord.songBook == songBook {
+                    cell.numberLabel.text = songBook.shortcut! + songBookRecord.number!
+                    break
+                }
+            }
+        }
+        
+        return cell
+    }
+}
