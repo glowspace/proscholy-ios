@@ -7,11 +7,10 @@
 //
 
 import UIKit
+import CoreData
 
-protocol SongDataSource {
+protocol SongDataSource: NSManagedObject {
     func setCell(_ cell: UITableViewCell)
-    
-    static func getEntityName() -> String
     
     static func registerCell(_ tableView: UITableView, forCellReuseIdentifier identifier: String)
     

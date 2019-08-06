@@ -47,11 +47,11 @@ class AllSongLyricsListVC: SongLyricsListVC {
     
     private func updateSelectionTitle(_ selectedCount: Int) {
         if selectedCount == 1 {
-            navigationItem.title = "1 píseň"
+            setTitle("1 píseň")
         } else if selectedCount < 5 {
-            navigationItem.title = String(selectedCount) + " písně"
+            setTitle(String(selectedCount) + " písně")
         } else {
-            navigationItem.title = String(selectedCount) + " písní"
+            setTitle(String(selectedCount) + " písní")
         }
     }
     
@@ -81,7 +81,7 @@ class AllSongLyricsListVC: SongLyricsListVC {
                 navigationItem.setRightBarButtonItems([selectAllButton, starButton], animated: true)
                 
                 navigationItem.titleView = nil
-                navigationItem.title = "1 píseň"
+                setTitle("1 píseň")
                 
                 if showingData[indexPath.row].isFavorite() {
                     starButton.image = UIImage(named: "starIconFilled")
@@ -97,7 +97,7 @@ class AllSongLyricsListVC: SongLyricsListVC {
         
         navigationItem.setLeftBarButton(nil, animated: true)
         navigationItem.setRightBarButtonItems(nil, animated: true)
-        navigationItem.title = nil
+        setTitle(nil)
         
         showSearchView(placeholder: "Zadejte název či číslo písně")
         
@@ -154,7 +154,7 @@ class AllSongLyricsListVC: SongLyricsListVC {
         if tableView.isEditing, let indexPaths = tableView.indexPathsForSelectedRows {
             updateSelectionTitle(indexPaths.count)
         } else {
-            navigationItem.title = "Nic nevybráno"
+            setTitle("Nic nevybráno")
         }
         
         starButton.image = shouldAddToFavorites() ? UIImage(named: "starIcon"): UIImage(named: "starIconFilled")

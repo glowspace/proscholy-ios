@@ -24,12 +24,117 @@ class SongLyricsListVC: ListVC<SongLyric> {
         super.viewDidLoad()
     }
     
+    // MARK: - Data Handlers
+    
     override func loadData() {
-        if let data = CoreDataService.fetchData(entityName: entityName, predicate: NSPredicate(format: "lyrics != nil"), sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], context: PersistenceService.context) as? [SongLyric] {
+        if let data: [SongLyric] = CoreDataService.fetchData(predicate: NSPredicate(format: "lyrics != nil"), sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], context: PersistenceService.context) {
             self.data = data
             
             updateData(sender: searchView.searchField)
         }
+    }
+    
+    lazy var filterVC: FilterVC = {
+        let vc = FilterVC()
+        
+        return vc
+    }()
+    
+    var showingFilter = false
+    
+    var filterShadow: UIView?
+    
+    @objc func showFilters() {
+        searchView.searchField.resignFirstResponder()
+        
+        if !showingFilter {
+            let height = view.frame.height
+            let width  = view.frame.width
+            filterVC.view.frame = CGRect(x: 0, y: view.frame.minY - height, width: width, height: height)
+            
+            addChild(filterVC)
+            filterShadow = UIView(frame: tableView.frame)
+            filterShadow?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showFilters)))
+            view.addSubview(filterShadow!)
+            view.addSubview(filterVC.view)
+            filterVC.view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(didPan(sender:))))
+            
+            tableView.isUserInteractionEnabled = false
+            UIView.animate(withDuration: 0.3) {
+                self.filterVC.view.frame.origin.y = -height * 0.25
+                self.filterShadow?.backgroundColor = UIColor.black.withAlphaComponent(0.3)
+            }
+        } else {
+            filterVC.removeFromParent()
+            UIView.animate(withDuration: 0.3, animations:  {
+                self.filterVC.view.frame.origin.y = -self.view.frame.height
+                self.filterShadow?.backgroundColor = UIColor.black.withAlphaComponent(0)
+            }) { _ in
+                self.filterVC.view.removeFromSuperview()
+                self.filterShadow?.removeFromSuperview()
+                self.tableView.isUserInteractionEnabled = true
+            }
+        }
+        showingFilter = !showingFilter
+    }
+    
+    @objc func didPan(sender: UIPanGestureRecognizer) {
+        let y = sender.location(in: view).y
+        if filterVC.view.frame.origin.y + filterVC.view.frame.height - y > 50 {
+            return
+        }
+        filterVC.view.frame.origin.y = y - filterVC.view.frame.height
+        
+        if filterVC.view.frame.origin.y > -filterVC.view.frame.height * 0.25 {
+            filterVC.tagsViewTopConstraint.constant = -filterVC.view.frame.origin.y
+        }
+        
+        if sender.state == .ended {
+            if abs(filterVC.view.frame.origin.y) > filterVC.view.frame.height * 0.25 {
+                let duration = 0.3 // * Double((filterVC.view.frame.height + filterVC.view.frame.origin.y) / filterVC.view.frame.height)
+                filterVC.removeFromParent()
+                UIView.animate(withDuration: duration, animations:  {
+                    self.filterVC.view.frame.origin.y = -self.view.frame.height
+                    if let filterShadow = self.filterShadow {
+                        filterShadow.backgroundColor = UIColor.black.withAlphaComponent(0)
+                    }
+                }) { _ in
+                    self.filterVC.view.removeFromSuperview()
+                    if let filterShadow = self.filterShadow {
+                        filterShadow.removeFromSuperview()
+                    }
+                    self.tableView.isUserInteractionEnabled = true
+                }
+                showingFilter = false
+            } else {
+                let duration = 0.3 // * Double(abs(filterVC.view.frame.origin.y) / filterVC.view.frame.height)
+                self.filterVC.tagsViewTopConstraint.constant = filterVC.view.frame.height * 0.25
+                UIView.animate(withDuration: duration, animations: {
+                    self.filterVC.view.frame.origin.y = -self.filterVC.view.frame.height * 0.25
+                    self.filterVC.view.layoutIfNeeded()
+                })
+            }
+        }
+    }
+    
+    override internal func setViews() {
+        super.setViews()
+        
+        let filterButton = UIButton()
+        filterButton.translatesAutoresizingMaskIntoConstraints = false
+        filterButton.setImage(UIImage(named: "filterIcon"), for: .normal)
+        filterButton.tintColor = .black
+        filterButton.addTarget(self, action: #selector(showFilters), for: .touchUpInside)
+        
+        let views = [
+            "searchField": searchView.searchField,
+            "filterButton": filterButton
+        ]
+        
+        searchView.addSubview(filterButton)
+        
+        searchView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[searchField]-[filterButton(==30)]-|", metrics: nil, views: views))
+        searchView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[filterButton]-|", metrics: nil, views: views))
     }
     
     // MARK: - UITableViewDelegate, UITableViewDataSource

@@ -51,13 +51,13 @@ class LaunchVC: UIViewController {
         
         let defaults = UserDefaults.standard
         
-        if let lastUpdate = defaults.string(forKey: "last_update") {
+        if let lastUpdate = defaults.string(forKey: "lastUpdate") {
             let dateFormatter = DateFormatter()
             dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
             
             let date = Date()
             let last = dateFormatter.date(from: lastUpdate)!
-            if date.timeIntervalSince(last) / 3600 > 24 {
+            if date.timeIntervalSince(last) > 24 {
                 updateSongLyrics()
             } else {
                 navigationController?.present(TabBarController(), animated: false)

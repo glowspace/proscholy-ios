@@ -23,7 +23,7 @@ class FavoriteListVC: SongLyricsListVC {
     }
     
     override func loadData() {
-        if let data = CoreDataService.fetchData(entityName: entityName, predicate: NSPredicate(format: "favoriteOrder != -1"), sortDescriptors: [NSSortDescriptor(key: "favoriteOrder", ascending: true)], context: PersistenceService.context) as? [SongLyric] {
+        if let data: [SongLyric] = CoreDataService.fetchData(predicate: NSPredicate(format: "favoriteOrder != -1"), sortDescriptors: [NSSortDescriptor(key: "favoriteOrder", ascending: true)], context: PersistenceService.context) {
             self.data = data
             
             showData()

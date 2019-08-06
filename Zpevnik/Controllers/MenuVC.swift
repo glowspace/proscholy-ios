@@ -62,7 +62,7 @@ class MenuVC: UIViewController {
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[titleView]|", options: [.alignAllCenterY], metrics: nil, views: views))
         
         navigationItem.titleView = view
-    }    
+    }
 }
 
 extension MenuVC: UITableViewDelegate, UITableViewDataSource {

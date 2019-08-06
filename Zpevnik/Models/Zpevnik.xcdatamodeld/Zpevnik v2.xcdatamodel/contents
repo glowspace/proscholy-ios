@@ -1,7 +1,14 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
 <model type="com.apple.IDECoreDataModeler.DataModel" documentVersion="1.0" lastSavedToolsVersion="14492.1" systemVersion="18G84" minimumToolsVersion="Automatic" sourceLanguage="Swift" userDefinedModelVersionIdentifier="">
+    <entity name="Author" representedClassName="Author" syncable="YES" codeGenerationType="class">
+        <attribute name="id" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="songLyrics" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SongLyric" inverseName="authors" inverseEntity="SongLyric" syncable="YES"/>
+    </entity>
     <entity name="SongBook" representedClassName="SongBook" syncable="YES" codeGenerationType="class">
+        <attribute name="color" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="id" attributeType="String" syncable="YES"/>
+        <attribute name="isPrivate" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="name" attributeType="String" syncable="YES"/>
         <attribute name="shortcut" attributeType="String" syncable="YES"/>
         <relationship name="records" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SongBookRecord" inverseName="songBook" inverseEntity="SongBookRecord" syncable="YES"/>
@@ -17,9 +24,11 @@
         <attribute name="id" attributeType="String" syncable="YES"/>
         <attribute name="lyrics" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" attributeType="String" syncable="YES"/>
+        <relationship name="authors" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Author" inverseName="songLyrics" inverseEntity="Author" syncable="YES"/>
         <relationship name="songBookRecords" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SongBookRecord" inverseName="songLyric" inverseEntity="SongBookRecord" syncable="YES"/>
     </entity>
     <elements>
+        <element name="Author" positionX="0" positionY="0" width="0" height="0"/>
         <element name="SongBook" positionX="0" positionY="0" width="0" height="0"/>
         <element name="SongBookRecord" positionX="0" positionY="0" width="0" height="0"/>
         <element name="SongLyric" positionX="0" positionY="0" width="0" height="0"/>

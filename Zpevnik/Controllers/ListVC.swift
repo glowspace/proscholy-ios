@@ -30,14 +30,11 @@ class ListVC<T: SongDataSource>: UIViewController, UITableViewDelegate, UITableV
         return tableView
     }()
     
-    var entityName: String!
     var data: [T]!
     var showingData: [T]!
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        entityName = T.getEntityName()
         
         setViews()
         
@@ -55,44 +52,26 @@ class ListVC<T: SongDataSource>: UIViewController, UITableViewDelegate, UITableV
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        navigationItem.title = ""
+        setTitle("")
         searchView.searchField.resignFirstResponder()
     }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
         
-        searchView.searchField.text = ""
-        
         if let index = tableView.indexPathForSelectedRow {
             tableView.deselectRow(at: index, animated: false)
         }
     }
     
-    // MARK: - View settings
+    // MARK: - View Settings
     
-    private func setViews() {
+    internal func setViews() {
         view.backgroundColor = .white
         view.addSubview(tableView)
         
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[tableView]|", metrics: nil, views: ["tableView": tableView]))
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[tableView]|", metrics: nil, views: ["tableView": tableView]))
-        
-        let filterButton = UIButton()
-        filterButton.translatesAutoresizingMaskIntoConstraints = false
-        filterButton.setImage(UIImage(named: "filterIcon"), for: .normal)
-        filterButton.tintColor = .black
-        filterButton.addTarget(self, action: #selector(showFilters), for: .touchUpInside)
-        
-        let views = [
-            "searchField": searchView.searchField,
-            "filterButton": filterButton
-        ]
-        
-        searchView.addSubview(filterButton)
-        
-        searchView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[searchField]-[filterButton(==30)]-|", metrics: nil, views: views))
-        searchView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[filterButton]-|", metrics: nil, views: views))
     }
     
     func showSearchView(placeholder: String) {
@@ -104,7 +83,7 @@ class ListVC<T: SongDataSource>: UIViewController, UITableViewDelegate, UITableV
     // MARK: - Data Handlers
     
     func loadData() {
-        if let data = CoreDataService.fetchData(entityName: entityName, sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], context: PersistenceService.context) as? [T] {
+        if let data: [T] = CoreDataService.fetchData(sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], context: PersistenceService.context) {
             self.data = data
             
             updateData(sender: searchView.searchField)
@@ -124,32 +103,16 @@ class ListVC<T: SongDataSource>: UIViewController, UITableViewDelegate, UITableV
                 return predicate.evaluate(with: $0)
             })
         }
-        
-        tableView.reloadData()
     }
     
     @objc func updateData(sender: UITextField) {
         if let searchText = sender.text, searchText.count > 0 {
             search(predicates: T.getPredicates(forSearchText: searchText))
+            
+            tableView.reloadData()
         } else {
             showData()
         }
-    }
-    
-    // MARK: - Handlers
-    
-    @objc func showFilters() {
-        return
-        
-//        let filterVC = FilterVC()
-//
-//        let height = view.frame.height - 100
-//        let width  = view.frame.width
-//        filterVC.view.frame = CGRect(x: 0, y: view.frame.maxY, width: width, height: height)
-//
-//        addChild(filterVC)
-//        view.addSubview(filterVC.view)
-//        filterVC.didMove(toParent: self)
     }
     
     // MARK: - UITableViewDelegate, UITableViewDataSource

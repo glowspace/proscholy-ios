@@ -12,21 +12,28 @@ class CoreDataService {
     
     private init() { }
     
-    static func fetchData(entityName: String, predicate: NSPredicate? = nil, sortDescriptors: [NSSortDescriptor]? = nil, context: NSManagedObjectContext) -> [Any]? {
-        let request = NSFetchRequest<NSFetchRequestResult>(entityName: entityName)
+    static func createOrGetObject<T: NSManagedObject>(id: String, context: NSManagedObjectContext) -> T? {
+        if let objects: [T] = CoreDataService.fetchData(predicate: NSPredicate(format: "id = %@", id), context: context), objects.count == 1 {
+            return objects[0]
+        } else if let entityName = T.entity().name {
+            return NSEntityDescription.insertNewObject(forEntityName: entityName, into: context) as? T
+        }
+        
+        return nil
+    }
+    
+    static func fetchData<T: NSManagedObject>(predicate: NSPredicate? = nil, sortDescriptors: [NSSortDescriptor]? = nil, context: NSManagedObjectContext) -> [T]? {
+        let request = T.fetchRequest()
+        
         request.predicate = predicate
         request.sortDescriptors = sortDescriptors
         
         do {
-            return try context.fetch(request)
+            return try context.fetch(request) as? [T]
         } catch {
             return nil
         }
     }
-}
-
-extension CodingUserInfoKey {
-    static let context = CodingUserInfoKey(rawValue: "context")!
 }
 
 class PersistenceService {

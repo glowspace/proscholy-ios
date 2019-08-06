@@ -38,8 +38,8 @@ class SongBookVC: SongLyricsListVC {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        navigationItem.title = songBook.name
-        navigationController?.navigationBar.barTintColor = .red
+        setTitle(songBook.name)
+        navigationController?.navigationBar.barTintColor = .from(hex: songBook.color)
         navigationItem.setRightBarButton(searchBarButton, animated: true)
         
         navigationController?.navigationBar.addSubview(emptyBackButtonView)
@@ -74,7 +74,7 @@ class SongBookVC: SongLyricsListVC {
             var secondNumber = -1
             var firstMore = ""
             var secondMore = ""
-            if let songBookRecords = first.songbookRecords?.allObjects as? [SongBookRecord] {
+            if let songBookRecords = first.songBookRecords?.allObjects as? [SongBookRecord] {
                 for songBookRecord in songBookRecords {
                     if songBookRecord.songBook == songBook {
                         firstNumber = Int(songBookRecord.number!.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression))!
@@ -83,7 +83,7 @@ class SongBookVC: SongLyricsListVC {
                     }
                 }
             }
-            if let songBookRecords = second.songbookRecords?.allObjects as? [SongBookRecord] {
+            if let songBookRecords = second.songBookRecords?.allObjects as? [SongBookRecord] {
                 for songBookRecord in songBookRecords {
                     if songBookRecord.songBook == songBook {
                         secondNumber = Int(songBookRecord.number!.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression))!
@@ -109,7 +109,7 @@ class SongBookVC: SongLyricsListVC {
             searchView.searchField.text = ""
             updateData(sender: searchView.searchField)
             searchView.searchField.resignFirstResponder()
-            navigationItem.titleView = nil
+            setTitle(songBook.name)
             navigationItem.setRightBarButton(searchBarButton, animated: true)
         } else {
             navigationController?.popViewController(animated: true)
@@ -130,7 +130,7 @@ class SongBookVC: SongLyricsListVC {
         let songLyric = showingData[indexPath.row]
         
         cell.nameLabel.text = songLyric.name
-        if let songBookRecords = songLyric.songbookRecords?.allObjects as? [SongBookRecord] {
+        if let songBookRecords = songLyric.songBookRecords?.allObjects as? [SongBookRecord] {
             for songBookRecord in songBookRecords {
                 if songBookRecord.songBook == songBook {
                     cell.numberLabel.text = songBook.shortcut! + songBookRecord.number!

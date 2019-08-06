@@ -90,7 +90,7 @@ class HomeScreenVC: UIViewController {
         return stackView
     }()
     
-    lazy var allSongsLyricsVC: AllSongLyricsListVC = {
+    lazy var allSongLyricsVC: AllSongLyricsListVC = {
         let vc = AllSongLyricsListVC()
         
         return vc
@@ -101,7 +101,7 @@ class HomeScreenVC: UIViewController {
         
         setViews()
         
-        navigationItem.title = ""
+        setTitle("")
         
         hideKeyboardWhenTappedAround()
     }
@@ -114,6 +114,8 @@ class HomeScreenVC: UIViewController {
         } else {
             backgroundImageView.image = UIImage(named: "background")
         }
+        
+        allSongLyricsVC.searchView.searchField.text = ""
         
         navigationController?.setNavigationBarHidden(true, animated: animated)
     }
@@ -166,7 +168,7 @@ class HomeScreenVC: UIViewController {
     }
     
     private func createButtons() -> [UIView] {
-        let listButton = createGradientButton(icon: UIImage(named: "listIcon"), title: "Rejstřík", summary: "Vybírejte písně podle příležitosti", startColor: UIColor(red: 0x87, green: 0x5A, blue: 0xA5), endColor: UIColor(red: 0x62, green: 0x70, blue: 0xB5))
+        let listButton = createGradientButton(icon: UIImage(named: "listIcon"), title: "Zpěvníky", summary: "Vybírejte písně podle příležitosti", startColor: UIColor(red: 0x87, green: 0x5A, blue: 0xA5), endColor: UIColor(red: 0x62, green: 0x70, blue: 0xB5))
         let favoriteButton = createGradientButton(icon: UIImage(named: "gradeIcon"), title: "Oblíbené", summary: "Vraťte se ke svým oblíbeným písním", startColor: UIColor(red: 0x58, green: 0xC5, blue: 0xCD), endColor: UIColor(red: 0x5C, green: 0x7F, blue: 0xBF))
         let settingsButton = createGradientButton(icon: UIImage(named: "settingsIcon"), title: "Nastavení", summary: "Přizpůsobte si nastavení aplikace", startColor: UIColor(red: 0xF1, green: 0x67, blue: 0x2C), endColor: UIColor(red: 0xF5, green: 0xBA, blue: 0x63))
         
@@ -197,11 +199,12 @@ class HomeScreenVC: UIViewController {
     // MARK: - Handlers
     
     @objc func showLyricsList() {
-        navigationController?.pushViewController(allSongsLyricsVC, animated: true)
+        tabBarController?.selectedIndex = 1
+//        navigationController?.pushViewController(allSongLyricsVC, animated: true)
     }
     
     @objc func search() {
-        let lyricsListVC = allSongsLyricsVC
+        let lyricsListVC = allSongLyricsVC
         lyricsListVC.searchView.searchField.text = searchView.searchField.text
         navigationController?.pushViewController(lyricsListVC, animated: true)
     }
@@ -217,7 +220,8 @@ class HomeScreenVC: UIViewController {
             if navigationController.viewControllers.count > 1 {
                 navigationController.viewControllers = [navigationController.viewControllers[0]]
             }
-            navigationController.pushViewController(SettingsVC(), animated: true)
+            navigationController.viewControllers[0].navigationItem.title = ""
+            navigationController.pushViewController(SettingsVC(), animated: false)
         }
     }
     

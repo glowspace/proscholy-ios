@@ -50,22 +50,24 @@ class DownloadService {
     
     static func updateSongs(_ updater: @escaping (String) -> Void, _ completionHandler: @escaping () -> Void) {
         if Reachability.networkIsReachableOverWifi() {
-            downloadSongData(prepareData(_:), updater, completionHandler)
+            downloadSongData(updater, completionHandler)
         } else {
-            loadSongDataFromFile(prepareData(_:), updater, completionHandler)
+            loadSongDataFromFile(updater, completionHandler)
         }
     }
     
-    private static func downloadSongData(_ handler: @escaping (Data) throws -> (), _ updater: @escaping (String) -> Void, _ completionHandler: @escaping () -> Void) {
+    // MARK: - Data Loading
+    
+    private static func downloadSongData(_ updater: @escaping (String) -> Void, _ completionHandler: @escaping () -> Void) {
         let defaults = UserDefaults.standard
         var arguments = [String: String]()
-        if let lastUpdate = defaults.string(forKey: "last_update") {
+        if let lastUpdate = defaults.string(forKey: "lastUpdate") {
             arguments["updated_after"] = lastUpdate
         }
         
         let queries = [
             Query(type: "song_lyrics", fields: ["id", "lyrics", "name", Query(type: "songbook_records", fields: ["id", "number", Query(type: "songbook", fields: ["id"])]), Query(type: "authors", fields: ["id", "name"])], arguments: arguments),
-            Query(type: "songbooks", fields: ["id", "name", "shortcut"])
+            Query(type: "songbooks", fields: ["id", "name", "shortcut", "is_private", "color"])
         ]
         let urlString = generateQuery("https://zpevnik.proscholy.cz", queries)
         
@@ -73,21 +75,20 @@ class DownloadService {
         
         updater("Aktualizace databáze písní.")
         let sessionConfig = URLSessionConfiguration.default
-        sessionConfig.timeoutIntervalForRequest = 5.0
-        sessionConfig.timeoutIntervalForResource = 5.0
+        sessionConfig.timeoutIntervalForRequest = 10.0
+        sessionConfig.timeoutIntervalForResource = 10.0
         
         let task = URLSession(configuration: sessionConfig).dataTask(with: url) { (data, response, error) in
             guard error == nil else {
                 completionHandler()
                 return
-                
             }
             guard let data = data else { return }
             
             do {
                 updater("Příprava písní")
                 
-                try handler(data)
+                try prepareData(data)
                 
                 setLastUpdate(defaults)
                 
@@ -100,17 +101,17 @@ class DownloadService {
         task.resume()
     }
     
-    private static func loadSongDataFromFile(_ handler: @escaping (Data) throws -> (), _ updater: @escaping (String) -> Void, _ completionHandler: @escaping () -> Void) {
+    private static func loadSongDataFromFile( _ updater: @escaping (String) -> Void, _ completionHandler: @escaping () -> Void) {
         let defaults = UserDefaults.standard
         
-        if defaults.bool(forKey: "defaultDataLoaded") || defaults.string(forKey: "last_update") != nil {
+        if defaults.bool(forKey: "defaultDataLoaded") || defaults.string(forKey: "lastUpdate") != nil {
             completionHandler()
             return
         }
         
         do {
             guard let path = Bundle.main.path(forResource: "data", ofType: "json") else { return }
-            try handler(try Data(contentsOf: URL(fileURLWithPath: path)))
+            try prepareData(try Data(contentsOf: URL(fileURLWithPath: path)))
             
             defaults.set(true, forKey: "defaultDataLoaded")
             
@@ -131,99 +132,51 @@ class DownloadService {
         try context.save()
     }
     
-    private static func setLastUpdate(_ defaults: UserDefaults) {
-        let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-        
-        defaults.set(formatter.string(from: Date()), forKey: "last_update")
-    }
+    // MARK: - Objects Parsing
     
     private static func createSongBooks(from data: [[String: Any]]?, _ context: NSManagedObjectContext) {
         guard let data = data else { return }
-        
+
         for songBookData in data {
-            guard let id = songBookData["id"] as? String else { return }
-            
-            let songBook: SongBook
-            
-            if let songBooks = CoreDataService.fetchData(entityName: "SongBook", predicate: NSPredicate(format: "id = %@", id), context: context) as? [SongBook], songBooks.count == 1 {
-                songBook = songBooks[0]
-            } else {
-                songBook = NSEntityDescription.insertNewObject(forEntityName: "SongBook", into: context) as! SongBook
-            }
-            
-            songBook.id = id
-            songBook.name = songBookData["name"] as? String
-            songBook.shortcut = songBookData["shortcut"] as? String
+            _ = SongBook.createFromDict(songBookData, context)
         }
     }
     
     private static func createSongLyrics(from data: [[String: Any]]?, _ context: NSManagedObjectContext) {
         guard let data = data else { return }
-        
+
         for songLyricsData in data {
-            guard let id = songLyricsData["id"] as? String else { return }
-            
-            let songLyric: SongLyric
-            
-            if let songs = CoreDataService.fetchData(entityName: "SongLyric", predicate: NSPredicate(format: "id = %@", id), context: context) as? [SongLyric], songs.count == 1 {
-                songLyric = songs[0]
-            } else {
-                songLyric = NSEntityDescription.insertNewObject(forEntityName: "SongLyric", into: context) as! SongLyric
-            }
-            
-            songLyric.id = id
-            songLyric.name = songLyricsData["name"] as? String
-            songLyric.lyrics = songLyricsData["lyrics"] as? String
-            
-            if let songBookRecordsData = songLyricsData["songbook_records"] as? [[String: Any]] {
-                for songBookRecordData in songBookRecordsData {
-                    guard let songBookRecordId = songBookRecordData["id"] as? String else { return }
-                    
-                    let songBookRecord: SongBookRecord
-                    
-                    if let songBookRecords = CoreDataService.fetchData(entityName: "SongBookRecord", predicate: NSPredicate(format: "id = %@", songBookRecordId), context: context) as? [SongBookRecord], songBookRecords.count == 1 {
-                        songBookRecord = songBookRecords[0]
-                    } else {
-                        songBookRecord = NSEntityDescription.insertNewObject(forEntityName: "SongBookRecord", into: context) as! SongBookRecord
-                    }
-                    
-                    songBookRecord.id = songBookRecordId
-                    songBookRecord.number = songBookRecordData["number"] as? String
-                    
-                    let songBookId = (songBookRecordData["songbook"] as! [String: String])["id"]!
-                    
-                    if let songBooks = CoreDataService.fetchData(entityName: "SongBook", predicate: NSPredicate(format: "id == %@", songBookId), context: context) as? [SongBook], songBooks.count == 1 {
-                        songBookRecord.songBook = songBooks[0]
-                        songBooks[0].addToRecords(songBookRecord)
-                    }
-                    
-                    songBookRecord.songLyric = songLyric
-                    songLyric.addToSongbookRecords(songBookRecord)
-                }
-            }
-            
-            if let authorsData = songLyricsData["authors"] as? [[String: Any]] {
-                for authorData in authorsData {
-                    guard let authorId = authorData["id"] as? String else { return }
-                    
-                    let author: Author
-                    
-                    if let authors = CoreDataService.fetchData(entityName: "Author", predicate: NSPredicate(format: "id = %@", authorId), context: context) as? [Author], authors.count == 1 {
-                        author = authors[0]
-                    } else {
-                        author = NSEntityDescription.insertNewObject(forEntityName: "Author", into: context) as! Author
-                    }
-                    
-                    author.id = authorId
-                    author.name = authorData["name"] as? String
-                    
-                    author.addToSongLyrics(songLyric)
-                    songLyric.addToAuthors(author)
-                }
+            if let songLyric = SongLyric.createFromDict(songLyricsData, context) {
+                createSongBookRecords(songLyricsData["songbook_records"], forSongLyric: songLyric, context: context)
+
+                createAuthors(songLyricsData["authors"], forSongLyric: songLyric, context: context)
             }
         }
     }
+
+    private static func createSongBookRecords(_ data: Any?, forSongLyric songLyric: SongLyric, context: NSManagedObjectContext) {
+        guard let data = data as? [[String: Any]] else { return }
+
+        for songBookRecordData in data {
+            if let songBookRecord = SongBookRecord.createFromDict(songBookRecordData, context) {
+                songBookRecord.songLyric = songLyric
+                songLyric.addToSongBookRecords(songBookRecord)
+            }
+        }
+    }
+
+    private static func createAuthors(_ data: Any?, forSongLyric songLyric: SongLyric, context: NSManagedObjectContext) {
+        guard let data = data as? [[String: Any]] else { return }
+
+        for authorData in data {
+            if let author = Author.createFromDict(authorData, context) {
+                author.addToSongLyrics(songLyric)
+                songLyric.addToAuthors(author)
+            }
+        }
+    }
+    
+    // MARK: - Help Functions
     
     private static func generateQuery(_ baseUrl: String, _ queries: [Query]) -> String {
         var url = baseUrl + "/graphql?query={"
@@ -235,5 +188,12 @@ class DownloadService {
         url += "}"
         
         return url
+    }
+    
+    private static func setLastUpdate(_ defaults: UserDefaults) {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+        
+        defaults.set(formatter.string(from: Date()), forKey: "lastUpdate")
     }
 }

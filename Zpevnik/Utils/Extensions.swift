@@ -13,6 +13,24 @@ extension UIColor {
     convenience init(red: Int, green: Int, blue: Int) {
         self.init(red: CGFloat(red) / 255.0, green: CGFloat(green) / 255.0, blue: CGFloat(blue) / 255.0, alpha: 1.0)
     }
+    
+    static func from(hex: String?) -> UIColor {
+        guard let hex = hex else { return .red }
+        var cString: String = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
+        
+        if(cString.hasPrefix("#")) {
+            cString.remove(at: cString.startIndex)
+        }
+        
+        if(cString.count != 6) {
+            return .red
+        }
+        
+        var rgbValue:UInt32 = 0
+        Scanner(string: cString).scanHexInt32(&rgbValue)
+        
+        return UIColor(red: Int((rgbValue & 0xFF0000) >> 16), green: Int((rgbValue & 0x00FF00) >> 8), blue: Int(rgbValue & 0x0000FF))
+    }
 }
 
 extension UIFont {
@@ -64,6 +82,20 @@ extension UIViewController {
         navigationController?.navigationBar.endEditing(true)
     }
     
+    func setTitle(_ title: String?) {
+        let label = UILabel()
+        label.text = title
+        label.textColor = .black
+        label.font = .systemFont(ofSize: 17, weight: .semibold)
+        label.backgroundColor = .clear
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.5
+        label.textAlignment = .center
+        
+        navigationItem.titleView = label
+        navigationItem.title = ""
+    }
+    
     func hideBars(_ hidden: Bool, animated: Bool) {
         guard let tabBarController = tabBarController else { return }
         guard let navigationController = navigationController else { return }
@@ -101,6 +133,7 @@ extension UITextField {
         if let placeholder = self.placeholder {
             var fontSize: CGFloat = 25
             while true {
+                
                 if (placeholder as NSString).size(withAttributes: [.font: UIFont.getFont(ofSize: fontSize)]).width < self.frame.size.width - 60 {
                     self.adjustsFontSizeToFitWidth = true
                     self.minimumFontSize = fontSize
@@ -133,6 +166,11 @@ class PaddingLabel: UILabel {
     override func drawText(in rect: CGRect) {
         let insets = UIEdgeInsets(top: topInset, left: leftInset, bottom: bottomInset, right: rightInset)
         super.drawText(in: rect.inset(by: insets))
+    }
+    
+    override func sizeThatFits(_ size: CGSize) -> CGSize {
+        let size = super.sizeThatFits(size)
+        return CGSize(width: size.width + rightInset + leftInset, height: size.height + topInset + bottomInset)
     }
     
     override var intrinsicContentSize: CGSize {

@@ -42,16 +42,24 @@ class SongBookCell: UITableViewCell {
         return label
     }()
     
+    var shortcutBackgroundColor: UIColor? {
+        didSet {
+            if let color = shortcutBackgroundColor {
+                shortcutLabel.backgroundColor = color
+            }
+        }
+    }
+    
     override func setHighlighted(_ highlighted: Bool, animated: Bool) {
         super.setHighlighted(highlighted, animated: animated)
         
-        shortcutLabel.backgroundColor = .red
+        shortcutLabel.backgroundColor = shortcutBackgroundColor
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         
-        shortcutLabel.backgroundColor = .red
+        shortcutLabel.backgroundColor = shortcutBackgroundColor
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
