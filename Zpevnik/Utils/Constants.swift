@@ -20,5 +20,5 @@ class Constants {
     
     static let darkModeLightColor = UIColor(white: 0.15, alpha: 1)
     
-    static let songsUpdateInterval: Double = 3600 * 24
+    static let songsUpdateInterval: Double = 0 // 3600 * 24
 }

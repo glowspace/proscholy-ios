@@ -10,7 +10,14 @@ import CoreData
 
 extension Tag {
     
-    static func createFromDict(_ data: [String: Any], _ context: NSManagedObjectContext) {
+    static func createFromDict(_ data: [String: Any], _ context: NSManagedObjectContext) -> Tag? {
+        guard let id = data["id"] as? String else { return nil }
         
+        guard let tag: Tag = CoreDataService.createOrGetObject(id: id, context: context) else { return nil }
+        
+        tag.id = id
+        tag.name = data["name"] as? String
+        
+        return tag
     }
 }

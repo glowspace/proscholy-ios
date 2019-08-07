@@ -68,8 +68,11 @@ class DownloadService {
             Query(type: "song_lyrics", fields: ["id", "lyrics", "name",
                                                 Query(type: "songbook_records", fields: ["id", "number",
                                                                                          Query(type: "songbook", fields: ["id"])]),
-                                                Query(type: "authors", fields: ["id", "name"])], arguments: arguments),
-            Query(type: "songbooks", fields: ["id", "name", "shortcut", "is_private", "color"])
+                                                Query(type: "authors", fields: ["id", "name"]),
+                                                Query(type: "tags", fields: ["id"])], arguments: arguments),
+            Query(type: "songbooks", fields: ["id", "name", "shortcut", "is_private", "color"]),
+            Query(type: "tags", fields: ["id", "name",
+                                         Query(type: "parent_tag", fields: ["id"])])
         ]
         
         guard let encodedUrl = generateQuery("https://zpevnik.proscholy.cz", queries).addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed), let url = URL(string: encodedUrl) else { return }
@@ -97,6 +100,7 @@ class DownloadService {
                 
                 completionHandler()
             } catch {
+                print(error)
                 completionHandler()
             }
             }.resume()
@@ -129,6 +133,7 @@ class DownloadService {
         
         createSongBooks(from: data["songbooks"] as? [[String: Any]], context)
         createSongLyrics(from: data["song_lyrics"] as? [[String: Any]], context)
+        createTags(from: data["tags"] as? [[String: Any]], context)
         
         try context.save()
     }
@@ -143,6 +148,23 @@ class DownloadService {
         }
     }
     
+    private static func createTags(from data: [[String: Any]]?, _ context: NSManagedObjectContext) {
+        guard let data = data else { return }
+        
+        for tagsData in data {
+            _ = Tag.createFromDict(tagsData, context)
+        }
+        
+        for tagsData in data {
+            if let id = tagsData["id"] as? String, let parentTag = tagsData["parent_tag"] as? [String: String], let parentId = parentTag["id"] {
+                if let tag: Tag = CoreDataService.getObject(id: id, context: context), let parent: Tag = CoreDataService.getObject(id: parentId, context: context) {
+                    tag.parent = parent
+                    parent.addToChildren(tag)
+                }
+            }
+        }
+    }
+    
     private static func createSongLyrics(from data: [[String: Any]]?, _ context: NSManagedObjectContext) {
         guard let data = data else { return }
         
@@ -151,6 +173,15 @@ class DownloadService {
                 createSongBookRecords(songLyricsData["songbook_records"], forSongLyric: songLyric, context: context)
                 
                 createAuthors(songLyricsData["authors"], forSongLyric: songLyric, context: context)
+                
+                if let tagsData = songLyricsData["tags"] as? [[String: String]] {
+                    for tagData in tagsData {
+                        if let id = tagData["id"], let tag: Tag = CoreDataService.getObject(id: id, context: context) {
+                            tag.addToSongLyrics(songLyric)
+                            songLyric.addToTags(tag)
+                        }
+                    }
+                }
             }
         }
     }

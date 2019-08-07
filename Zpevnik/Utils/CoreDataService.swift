@@ -12,9 +12,17 @@ class CoreDataService {
     
     private init() { }
     
-    static func createOrGetObject<T: NSManagedObject>(id: String, context: NSManagedObjectContext) -> T? {
-        if let objects: [T] = CoreDataService.fetchData(predicate: NSPredicate(format: "id = %@", id), context: context), objects.count == 1 {
+    static func getObject<T: NSManagedObject>(id: String, context: NSManagedObjectContext) -> T? {
+        if let objects: [T] = fetchData(predicate: NSPredicate(format: "id = %@", id), context: context), objects.count == 1 {
             return objects[0]
+        }
+        
+        return nil
+    }
+    
+    static func createOrGetObject<T: NSManagedObject>(id: String, context: NSManagedObjectContext) -> T? {
+        if let object: T = getObject(id: id, context: context) {
+            return object
         } else if let entityName = T.entity().name {
             return NSEntityDescription.insertNewObject(forEntityName: entityName, into: context) as? T
         }

@@ -26,16 +26,20 @@
         <attribute name="name" attributeType="String" syncable="YES"/>
         <relationship name="authors" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Author" inverseName="songLyrics" inverseEntity="Author" syncable="YES"/>
         <relationship name="songBookRecords" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SongBookRecord" inverseName="songLyric" inverseEntity="SongBookRecord" syncable="YES"/>
+        <relationship name="tags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tag" inverseName="songLyrics" inverseEntity="Tag" syncable="YES"/>
     </entity>
     <entity name="Tag" representedClassName="Tag" syncable="YES" codeGenerationType="class">
         <attribute name="id" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="children" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tag" inverseName="parent" inverseEntity="Tag" syncable="YES"/>
+        <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Tag" inverseName="children" inverseEntity="Tag" syncable="YES"/>
+        <relationship name="songLyrics" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SongLyric" inverseName="tags" inverseEntity="SongLyric" syncable="YES"/>
     </entity>
     <elements>
         <element name="Author" positionX="-288" positionY="45" width="128" height="90"/>
         <element name="SongBook" positionX="-505.38671875" positionY="-18.53125" width="128" height="135"/>
         <element name="SongBookRecord" positionX="-297" positionY="18" width="128" height="105"/>
-        <element name="SongLyric" positionX="-63" positionY="-18" width="128" height="135"/>
-        <element name="Tag" positionX="-297" positionY="45" width="128" height="75"/>
+        <element name="SongLyric" positionX="-63" positionY="-18" width="128" height="150"/>
+        <element name="Tag" positionX="-297" positionY="45" width="128" height="120"/>
     </elements>
 </model>
