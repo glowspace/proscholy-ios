@@ -172,7 +172,7 @@ class HomeScreenVC: UIViewController {
         let favoriteButton = createGradientButton(icon: UIImage(named: "gradeIcon"), title: "Oblíbené", summary: "Vraťte se ke svým oblíbeným písním", startColor: UIColor(red: 0x58, green: 0xC5, blue: 0xCD), endColor: UIColor(red: 0x5C, green: 0x7F, blue: 0xBF))
         let settingsButton = createGradientButton(icon: UIImage(named: "settingsIcon"), title: "Nastavení", summary: "Přizpůsobte si nastavení aplikace", startColor: UIColor(red: 0xF1, green: 0x67, blue: 0x2C), endColor: UIColor(red: 0xF5, green: 0xBA, blue: 0x63))
         
-        listButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showLyricsList)))
+        listButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showSongBooks)))
         favoriteButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showFavorites)))
         settingsButton.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showSettings)))
         
@@ -198,9 +198,8 @@ class HomeScreenVC: UIViewController {
     
     // MARK: - Handlers
     
-    @objc func showLyricsList() {
+    @objc func showSongBooks() {
         tabBarController?.selectedIndex = 1
-        //        navigationController?.pushViewController(allSongLyricsVC, animated: true)
     }
     
     @objc func search() {

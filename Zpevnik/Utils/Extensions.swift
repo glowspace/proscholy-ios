@@ -48,6 +48,22 @@ extension UIFont {
 
 extension UILabel {
     
+    @objc var darkMode: Bool {
+        get {
+            return false
+        }
+        set(darkMode) {
+            if let text = text, ["Domů", "Zpěvníky", "Oblíbené", "Ostatní"].contains(text) {
+                return
+            }
+            if darkMode {
+                textColor = .white
+            } else {
+                textColor = .black
+            }
+        }
+    }
+    
     @objc var substituteFontName: String {
         get {
             return ""
@@ -75,6 +91,7 @@ extension UIViewController {
     func hideKeyboardWhenTappedAround() {
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
         tap.cancelsTouchesInView = false
+        
         view.addGestureRecognizer(tap)
     }
     
@@ -88,7 +105,6 @@ extension UIViewController {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = title
-        label.textColor = .black
         label.font = .systemFont(ofSize: 17, weight: .semibold)
         label.backgroundColor = .clear
         label.adjustsFontSizeToFitWidth = true
@@ -164,6 +180,28 @@ extension UITextField {
                 }
             }
         }
+    }
+}
+
+class TextField: UITextField {
+    
+    override func draw(_ rect: CGRect) {
+        super.draw(rect)
+        
+        for view in subviews {
+            if let button = view as? UIButton {
+                button.setImage(button.image(for: .normal)?.withRenderingMode(.alwaysTemplate), for: .normal)
+                button.tintColor = .white
+            } else if let label = view as? UILabel {
+                label.textColor = .lightGray
+            }
+        }
+    }
+    
+    override func layoutSubviews() {
+        super.layoutSubviews()
+        
+        keyboardAppearance = UserSettings.darkMode ? .dark : .default
     }
 }
 

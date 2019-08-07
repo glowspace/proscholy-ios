@@ -62,7 +62,9 @@ class SongLyricVC: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        navigationController?.navigationBar.barTintColor = .white
+        scrollView.backgroundColor = Constants.getDarkColor(UserSettings.darkMode) ?? .white
+        
+//        navigationController?.navigationBar.barTintColor = .white
         
         updateSongLyrics()
     }
@@ -266,12 +268,13 @@ class SongLyricVC: UIViewController {
         guard let lyrics = lyrics, let chords = chords else { return NSAttributedString() }
         let showChords = UserSettings.showChords
         let fontSize = CGFloat(UserSettings.fontSize)
+        let textColor = UserSettings.darkMode ? UIColor.white : UIColor.black
         
         let style = NSMutableParagraphStyle()
         style.lineSpacing = (showChords && chords.count > 0) ? fontSize : 0
         lyricsTextView.textContainerInset = UIEdgeInsets(top: (showChords && chords.count > 0) ? fontSize : 0, left: 0, bottom: 10, right: 0)
         lyricsTextView.layoutIfNeeded()
-        let attributes: [NSAttributedString.Key: Any] = [.paragraphStyle: style, .font : UIFont.getFont(ofSize: fontSize)]
+        let attributes: [NSAttributedString.Key: Any] = [.paragraphStyle: style, .font : UIFont.getFont(ofSize: fontSize), .foregroundColor: textColor]
         var chordAttributes = attributes
         chordAttributes[.foregroundColor] = UIColor(red: 0, green: 122, blue: 255)
         let parsedString = NSMutableAttributedString(string: lyrics, attributes: attributes)

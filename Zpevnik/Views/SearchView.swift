@@ -10,8 +10,8 @@ import UIKit
 
 class SearchView: UIView {
     
-    lazy var searchField: UITextField = {
-        let textField = UITextField()
+    lazy var searchField: TextField = {
+        let textField = TextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
         
         textField.contentVerticalAlignment = .center
@@ -40,8 +40,6 @@ class SearchView: UIView {
         layer.borderColor = UIColor.lightGray.cgColor
         layer.cornerRadius = 8
         clipsToBounds = true
-        
-        backgroundColor = .white
         
         let views = [
             "searchField": searchField

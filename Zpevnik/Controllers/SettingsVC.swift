@@ -128,6 +128,14 @@ class SettingsVC: UIViewController {
     
     @objc func darkModeToggle() {
         UserSettings.darkMode = !UserSettings.darkMode
+        
+        for controller in [navigationController, tabBarController] {
+            if let view = controller?.view {
+                let superview = view.superview
+                view.removeFromSuperview()
+                superview?.addSubview(view)
+            }
+        }
     }
     
     @objc func bottomOptionsToggle() {

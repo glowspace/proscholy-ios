@@ -32,20 +32,10 @@ class UserSettings {
     }
     static var darkMode = false {
         didSet {
-            //            if darkMode {
-            //                UINavigationBar.appearance().barTintColor = Constants.darkModeLightColor
-            //                UITableView.appearance().backgroundColor = .black
-            //                UIScrollView.appearance().backgroundColor = .black
-            //                UITextView.appearance().backgroundColor = .black
-            //                UITextView.appearance().textColor = .white
-            //                UITableViewCell.appearance().backgroundColor = Constants.darkModeLightColor
-            //                UILabel.appearance().textColor = .white
-            //                UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.white]
-            //            }
+            prepareDarkMode(darkMode)
         }
     }
     static var showBottomOptions = false
-    
     
     static func load() {
         let defaults = UserDefaults.standard
@@ -88,6 +78,38 @@ class UserSettings {
         defaults.set(fontSize, forKey: "fontSize")
         defaults.set(darkMode, forKey: "darkMode")
         defaults.set(showBottomOptions, forKey: "showBottomOptions")
-        
+    }
+    
+    private static func prepareDarkMode(_ darkMode: Bool) {
+        UINavigationBar.appearance().barTintColor = Constants.getMiddleColor(darkMode)
+        UITabBar.appearance().barTintColor = Constants.getMiddleColor(darkMode)
+
+        UITableView.appearance().backgroundColor = Constants.getDarkColor(darkMode) ?? .groupTableViewBackground
+        UITableView.appearance().separatorColor = Constants.getLightColor(darkMode)
+        UITableViewCell.appearance().backgroundColor = Constants.getMiddleColor(darkMode) ?? .white
+
+        UICollectionViewCell.appearance().backgroundColor = Constants.getMiddleColor(darkMode) ?? .white
+
+        SongLyricCell.appearance().backgroundColor = Constants.getDarkColor(darkMode) ?? .white
+        SongBookCell.appearance().backgroundColor = Constants.getDarkColor(darkMode) ?? .white
+
+        UITextView.appearance().backgroundColor = Constants.getDarkColor(darkMode)
+        UITextView.appearance().textColor = darkMode ? .white : .black
+
+        UILabel.appearance().darkMode = darkMode
+
+        SearchView.appearance().backgroundColor = Constants.getMiddleColor(darkMode) ?? .white
+
+//        UITextField.appearance().tintColor = darkMode ? .white : UIColor(red: 0, green: 122, blue: 255)
+        UITextField.appearance().textColor = darkMode ? .white : .black
+
+//        for window in UIApplication.shared.windows {
+////            for view in window.subviews {
+////                view.removeFromSuperview()
+////                window.addSubview(view)
+////            }
+////
+//            window.rootViewController?.setNeedsStatusBarAppearanceUpdate()
+//        }
     }
 }

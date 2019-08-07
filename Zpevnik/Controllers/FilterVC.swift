@@ -39,8 +39,6 @@ class FilterVC: UIViewController {
         let collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         
-        collectionView.backgroundColor = .white
-        
         collectionView.delegate = self
         collectionView.dataSource = self
         
@@ -76,8 +74,6 @@ class FilterVC: UIViewController {
         view.layer.backgroundColor = UIColor.green.cgColor
         view.layer.mask = rectShape
         
-        view.backgroundColor = .white
-        
         view.addSubview(tagsView)
         view.addSubview(indicator)
         
@@ -95,6 +91,13 @@ class FilterVC: UIViewController {
                 tagsView.selectItem(at: IndexPath(row: row, section: section), animated: true, scrollPosition: [])
             }
         }
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        view.backgroundColor = Constants.getMiddleColor(UserSettings.darkMode) ?? .white
+        tagsView.backgroundColor = Constants.getMiddleColor(UserSettings.darkMode) ?? .white
     }
     
     override func viewDidAppear(_ animated: Bool) {

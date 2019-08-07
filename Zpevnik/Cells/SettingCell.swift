@@ -21,6 +21,8 @@ class SettingCell: UITableViewCell {
         let switchButton = UISwitch()
         switchButton.translatesAutoresizingMaskIntoConstraints = false
         
+        switchButton.layer.cornerRadius = 16
+        
         return switchButton
     }()
     

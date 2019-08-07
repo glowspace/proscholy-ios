@@ -62,6 +62,12 @@ class SongBookCell: UITableViewCell {
         shortcutLabel.backgroundColor = shortcutBackgroundColor
     }
     
+    override func draw(_ rect: CGRect) {
+        super.draw(rect)
+        
+        shortcutLabel.textColor = .white
+    }
+    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         

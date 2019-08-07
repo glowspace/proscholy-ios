@@ -33,7 +33,7 @@ class SongBookVC: SongLyricsListVC {
         super.viewWillAppear(animated)
         
         setTitle(songBook.name)
-        navigationController?.navigationBar.barTintColor = .from(hex: songBook.color)
+//        navigationController?.navigationBar.barTintColor = .from(hex: songBook.color)
         navigationItem.setRightBarButton(searchBarButton, animated: true)
         
         navigationController?.navigationBar.addSubview(emptyBackButtonView)

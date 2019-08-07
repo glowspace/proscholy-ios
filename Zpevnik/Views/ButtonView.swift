@@ -75,6 +75,9 @@ class ButtonView: GradientView {
         super.draw(rect)
         
         stackViewWidthConstraint?.constant = titleLabel.intrinsicContentSize.width
+        
+        titleLabel.textColor = .white
+        summaryLabel.textColor = .white
     }
     
     override init(frame: CGRect) {

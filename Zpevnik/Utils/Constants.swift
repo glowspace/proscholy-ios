@@ -18,7 +18,9 @@ class Constants {
     static let serifFont = "Times new roman"
     static let sansSerifFont = "Helvetica"
     
-    static let darkModeLightColor = UIColor(white: 0.15, alpha: 1)
+    static func getLightColor(_ darkMode: Bool) -> UIColor? { return darkMode ? .darkGray : nil }
+    static func getMiddleColor(_ darkMode: Bool) -> UIColor? { return darkMode ? UIColor(white: 0.15, alpha: 1) : nil }
+    static func getDarkColor(_ darkMode: Bool) -> UIColor? { return darkMode ? UIColor(white: 0.05, alpha: 1) : nil }
     
-    static let songsUpdateInterval: Double = 0 // 3600 * 24
+    static let songsUpdateInterval: Double = 3600 * 24
 }

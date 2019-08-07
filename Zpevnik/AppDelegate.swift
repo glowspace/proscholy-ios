@@ -21,8 +21,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.rootViewController = UINavigationController(rootViewController: LaunchVC())
         
         UINavigationBar.appearance().isTranslucent = false
-        UINavigationBar.appearance().setBackgroundImage(UIImage(), for: .default)
-        UINavigationBar.appearance().shadowImage = UIImage()
         UINavigationBar.appearance().setTitleVerticalPositionAdjustment(-2, for: .default)
         
         let image = UIImage(named: "backIcon")

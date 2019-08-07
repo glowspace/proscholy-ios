@@ -202,13 +202,13 @@
 		39F7BA4522E70D0200FDFF90 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				39F7BA4122E70B4100FDFF90 /* CoreDataService.swift */,
-				3997798D22F76A4A00CE6FF6 /* UserSettings.swift */,
 				3997798F22F7714A00CE6FF6 /* Constants.swift */,
+				39F7BA4122E70B4100FDFF90 /* CoreDataService.swift */,
 				39F7BA4322E70C0D00FDFF90 /* DownloadService.swift */,
-				399205B922F8122C00E392A7 /* Reachability.swift */,
 				39F7BA5722E7535200FDFF90 /* Extensions.swift */,
 				397B625A22E9BE4300B9CCEC /* Protocols.swift */,
+				399205B922F8122C00E392A7 /* Reachability.swift */,
+				3997798D22F76A4A00CE6FF6 /* UserSettings.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
