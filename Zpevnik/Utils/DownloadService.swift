@@ -97,7 +97,6 @@ class DownloadService {
                 
                 completionHandler()
             } catch {
-                print(error)
                 completionHandler()
             }
             }.resume()
@@ -164,19 +163,16 @@ class DownloadService {
             if let songBookRecord = SongBookRecord.createFromDict(songBookRecordData, context) {
                 records.append(songBookRecord)
                 
-                if songBookRecord.songLyric == nil {
-                    songBookRecord.songLyric = songLyric
-                    songLyric.addToSongBookRecords(songBookRecord)
-                } else {
-                    print("set")
-                }
+                songBookRecord.songLyric = songLyric
+                songLyric.addToSongBookRecords(songBookRecord)
             }
         }
         
         if let songBookRecords = songLyric.songBookRecords?.allObjects as? [SongBookRecord] {
             for songBookRecord in songBookRecords {
                 if !records.contains(songBookRecord) {
-                    
+                    songLyric.removeFromSongBookRecords(songBookRecord)
+                    context.delete(songBookRecord)
                 }
             }
         }
@@ -185,10 +181,22 @@ class DownloadService {
     private static func createAuthors(_ data: Any?, forSongLyric songLyric: SongLyric, context: NSManagedObjectContext) {
         guard let data = data as? [[String: Any]] else { return }
         
+        var authors = [Author]()
         for authorData in data {
             if let author = Author.createFromDict(authorData, context) {
+                authors.append(author)
+                
                 author.addToSongLyrics(songLyric)
                 songLyric.addToAuthors(author)
+            }
+        }
+        
+        if let songLyricAuthor = songLyric.authors?.allObjects as? [Author] {
+            for author in songLyricAuthor {
+                if !authors.contains(author) {
+                    songLyric.removeFromAuthors(author)
+                    context.delete(author)
+                }
             }
         }
     }
