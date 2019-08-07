@@ -62,7 +62,7 @@ class SongLyricVC: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        scrollView.backgroundColor = Constants.getDarkColor(UserSettings.darkMode) ?? .white
+        scrollView.backgroundColor = Constants.getDarkColor() ?? .white
         
 //        navigationController?.navigationBar.barTintColor = .white
         

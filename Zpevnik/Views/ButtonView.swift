@@ -77,6 +77,7 @@ class ButtonView: GradientView {
         stackViewWidthConstraint?.constant = titleLabel.intrinsicContentSize.width
         
         titleLabel.textColor = .white
+        titleLabel.font = UIFont(name: "Cocogoose Pro", size: 30)
         summaryLabel.textColor = .white
     }
     

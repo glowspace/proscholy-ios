@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SongBookCell: UITableViewCell {
+class SongBookCell: TableViewCell {
     
     let nameLabel: UILabel = {
         let label = UILabel()
@@ -54,12 +54,14 @@ class SongBookCell: UITableViewCell {
         super.setHighlighted(highlighted, animated: animated)
         
         shortcutLabel.backgroundColor = shortcutBackgroundColor
+        shortcutLabel.textColor = .white
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         
         shortcutLabel.backgroundColor = shortcutBackgroundColor
+        shortcutLabel.textColor = .white
     }
     
     override func draw(_ rect: CGRect) {

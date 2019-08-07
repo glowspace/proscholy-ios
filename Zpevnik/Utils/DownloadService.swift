@@ -132,8 +132,8 @@ class DownloadService {
         guard let data = jsonData["data"] as? [String: Any] else { return }
         
         createSongBooks(from: data["songbooks"] as? [[String: Any]], context)
-        createSongLyrics(from: data["song_lyrics"] as? [[String: Any]], context)
         createTags(from: data["tags"] as? [[String: Any]], context)
+        createSongLyrics(from: data["song_lyrics"] as? [[String: Any]], context)
         
         try context.save()
     }

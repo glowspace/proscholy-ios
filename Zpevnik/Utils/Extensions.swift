@@ -35,13 +35,13 @@ extension UIColor {
 
 extension UIFont {
     
-    static func getFont(ofSize size: CGFloat) -> UIFont {
-        //        if UserSettings.serif, let font = UIFont(name: Constants.serifFont, size: size) {
-        //            return font
-        //        } else if let font = UIFont(name: Constants.sansSerifFont, size: size) {
-        //            return font
-        //        }
-        //
+    static func getFont(ofSize size: CGFloat, weight: UIFont.Weight? = nil) -> UIFont {
+//        if UserSettings.serif, let font = UIFont(name: Constants.serifFont, size: size) {
+//            return font
+//        } else if let font = UIFont(name: Constants.sansSerifFont, size: size) {
+//            return font
+//        }
+
         return .systemFont(ofSize: size)
     }
 }
@@ -232,5 +232,20 @@ class PaddingLabel: UILabel {
     override var intrinsicContentSize: CGSize {
         let size = super.intrinsicContentSize
         return CGSize(width: size.width + leftInset + rightInset, height: size.height + topInset + bottomInset)
+    }
+}
+
+class TableViewCell: UITableViewCell {
+    
+    override func setHighlighted(_ highlighted: Bool, animated: Bool) {
+        super.setHighlighted(highlighted, animated: animated)
+        
+        backgroundColor = highlighted ? (Constants.getLightColor() ?? UIColor(white: 0.85, alpha: 1)) : (Constants.getMiddleColor() ?? .white)
+    }
+    
+    override func setSelected(_ selected: Bool, animated: Bool) {
+        super.setSelected(selected, animated: animated)
+        
+        backgroundColor = selected ? (Constants.getLightColor() ?? UIColor(white: 0.85, alpha: 1)) : (Constants.getMiddleColor() ?? .white)
     }
 }

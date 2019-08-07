@@ -19,8 +19,8 @@ class UserSettings {
     }
     static var serif = false {
         didSet {
-            //            UILabel.appearance().substituteFontName = ""
-            //            UINavigationBar.appearance().substituteFontName = ""
+//            UILabel.appearance().substituteFontName = ""
+//            UINavigationBar.appearance().substituteFontName = ""
         }
     }
     static var showSliders = false
@@ -81,35 +81,26 @@ class UserSettings {
     }
     
     private static func prepareDarkMode(_ darkMode: Bool) {
-        UINavigationBar.appearance().barTintColor = Constants.getMiddleColor(darkMode)
-        UITabBar.appearance().barTintColor = Constants.getMiddleColor(darkMode)
+        UINavigationBar.appearance().barTintColor = Constants.getMiddleColor()
+        UITabBar.appearance().barTintColor = Constants.getMiddleColor()
 
-        UITableView.appearance().backgroundColor = Constants.getDarkColor(darkMode) ?? .groupTableViewBackground
-        UITableView.appearance().separatorColor = Constants.getLightColor(darkMode)
-        UITableViewCell.appearance().backgroundColor = Constants.getMiddleColor(darkMode) ?? .white
+        UITableView.appearance().backgroundColor = Constants.getDarkColor() ?? .groupTableViewBackground
+        UITableView.appearance().separatorColor = Constants.getLightColor()
+        UITableViewCell.appearance().backgroundColor = Constants.getMiddleColor() ?? .white
+        UITableViewCell.appearance().selectionStyle = .none
 
-        UICollectionViewCell.appearance().backgroundColor = Constants.getMiddleColor(darkMode) ?? .white
+        UICollectionViewCell.appearance().backgroundColor = Constants.getMiddleColor() ?? .white
 
-        SongLyricCell.appearance().backgroundColor = Constants.getDarkColor(darkMode) ?? .white
-        SongBookCell.appearance().backgroundColor = Constants.getDarkColor(darkMode) ?? .white
+        SongLyricCell.appearance().backgroundColor = Constants.getDarkColor() ?? .white
+        SongBookCell.appearance().backgroundColor = Constants.getDarkColor() ?? .white
 
-        UITextView.appearance().backgroundColor = Constants.getDarkColor(darkMode)
+        UITextView.appearance().backgroundColor = Constants.getDarkColor()
         UITextView.appearance().textColor = darkMode ? .white : .black
 
         UILabel.appearance().darkMode = darkMode
 
-        SearchView.appearance().backgroundColor = Constants.getMiddleColor(darkMode) ?? .white
+        SearchView.appearance().backgroundColor = Constants.getMiddleColor() ?? .white
 
-//        UITextField.appearance().tintColor = darkMode ? .white : UIColor(red: 0, green: 122, blue: 255)
         UITextField.appearance().textColor = darkMode ? .white : .black
-
-//        for window in UIApplication.shared.windows {
-////            for view in window.subviews {
-////                view.removeFromSuperview()
-////                window.addSubview(view)
-////            }
-////
-//            window.rootViewController?.setNeedsStatusBarAppearanceUpdate()
-//        }
     }
 }

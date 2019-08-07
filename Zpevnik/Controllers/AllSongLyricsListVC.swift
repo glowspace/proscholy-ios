@@ -146,7 +146,10 @@ class AllSongLyricsListVC: SongLyricsListVC {
         if let searchText = searchView.searchField.text {
             let songLyric = showingData[indexPath.row]
             
-            let numbers = songLyric.numbers.filter { $0.contains(searchText) }
+            let predicate = NSPredicate(format: "self CONTAINS[cd] %@", searchText)
+            let numbers = songLyric.numbers.filter {
+                predicate.evaluate(with: $0)
+            }
             
             if numbers.count > 0 && !songLyric.id!.contains(searchText) {
                 cell.numberLabel.text = numbers[0]

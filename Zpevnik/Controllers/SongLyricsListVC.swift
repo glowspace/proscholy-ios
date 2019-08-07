@@ -34,8 +34,24 @@ class SongLyricsListVC: ListVC<SongLyric> {
         }
     }
     
+    override func showData() {
+        let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: filterVC.selectedTags.enumerated().map {
+            let (i, tags) = $0
+            return NSPredicate(format: "ANY tags.id IN %@ OR %d == 1", tags.map { $0.id }, filterVC.usingFilter[i] ? 0 : 1)
+        })
+        
+        showingData = showingData.filter {
+            return predicate.evaluate(with: $0)
+        }
+        
+        super.showData()
+    }
+    
+    // MARK: - Filter VC
+    
     lazy var filterVC: FilterVC = {
         let vc = FilterVC()
+        vc.delegate = self
         
         return vc
     }()
@@ -123,7 +139,7 @@ class SongLyricsListVC: ListVC<SongLyric> {
         let filterButton = UIButton()
         filterButton.translatesAutoresizingMaskIntoConstraints = false
         filterButton.setImage(UIImage(named: "filterIcon"), for: .normal)
-        filterButton.tintColor = .black
+        filterButton.tintColor = Constants.getLightColor() ?? .black
         filterButton.addTarget(self, action: #selector(showFilters), for: .touchUpInside)
         
         let views = [
@@ -142,9 +158,15 @@ class SongLyricsListVC: ListVC<SongLyric> {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         currentSongLyricIndex = indexPath.row
         
-        
         songLyricVC.songLyric = showingData[indexPath.row]
         navigationController?.pushViewController(songLyricVC, animated: true)
+    }
+}
+
+extension SongLyricsListVC: FilterDelegate {
+    
+    func updateSelected() {
+        updateData(sender: searchView.searchField)
     }
 }
 

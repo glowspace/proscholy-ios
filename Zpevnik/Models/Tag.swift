@@ -21,3 +21,16 @@ extension Tag {
         return tag
     }
 }
+
+extension Tag {
+    
+    var allChildren: [Tag] {
+        get {
+            if let children = children?.allObjects as? [Tag] {
+                return children
+            }
+            
+            return []
+        }
+    }
+}

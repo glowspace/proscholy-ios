@@ -92,6 +92,7 @@ class SongBookVC: SongLyricsListVC {
             return firstNumber < secondNumber
         }
         
+        showingData = data
         showData()
     }
     

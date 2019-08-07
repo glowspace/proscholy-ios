@@ -95,19 +95,21 @@ class ListVC<T: SongDataSource>: UIViewController, UITableViewDelegate, UITableV
             
             updateData(sender: searchView.searchField)
         }
+        
+        showingData = data
+        showData()
     }
     
     func showData() {
-        self.showingData = data
         tableView.reloadData()
     }
     
     func search(predicates: [NSPredicate]) {
-        self.showingData = []
+        showingData = []
         
         for predicate in predicates {
-            self.showingData.append(contentsOf: self.data.filter {
-                return predicate.evaluate(with: $0) && !self.showingData.contains($0)
+            showingData.append(contentsOf: data.filter {
+                return predicate.evaluate(with: $0) && !showingData.contains($0)
             })
         }
     }
@@ -115,11 +117,11 @@ class ListVC<T: SongDataSource>: UIViewController, UITableViewDelegate, UITableV
     @objc func updateData(sender: UITextField) {
         if let searchText = sender.text, searchText.count > 0 {
             search(predicates: T.getPredicates(forSearchText: searchText))
-            
-            tableView.reloadData()
         } else {
-            showData()
+            showingData = data
         }
+        
+        showData()
     }
     
     // MARK: - UITableViewDelegate, UITableViewDataSource

@@ -10,31 +10,54 @@ import UIKit
 
 class FilterVC: UIViewController {
     
-    let tags = [
-        ["vstup", "úkon kajícnosti", "před evangeliem", "přinášení darů", "k přijímání", "po přijímání", "závěr", "ordinarium"],
-        ["dětské", "hymny setkání mládeže", "žalm", "život s Ježíšem"],
-        ["křest", "svatební", "za zemřelé"],
-        ["k Duchu Svatému", "ke svatým", "Panna Maria", "sv. Josef", "sv. Jan Bosco"],
-        ["adorace", "chvály", "díky", "prosby"],
-        ["koleda", "Vánoce", "Velikonoce", "advent", "postní doba", "ke křížové cestě"]
-    ]
+    var delegate: FilterDelegate?
     
     let colors: [UIColor] = [.blue, .red, .green, .magenta, .purple, .cyan]
     
-    lazy var labels: [[UILabel]] = {
-        return tags.enumerated().map { (arg) -> [UILabel] in
-            let (index, tags) = arg
-            return tags.map {
-                createLabel($0, color: colors[index])
-            }
-        }
+    let tags: [Tag] = {
+        return CoreDataService.fetchData(context: PersistenceService.context) ?? []
     }()
+    
+    lazy var mainSections: [Tag] = {
+        let defaultTag = Tag(entity: Tag.entity(), insertInto: nil)
+        defaultTag.name = "Filtry"
+        
+        var sections = [defaultTag]
+        sections.append(contentsOf: tags.filter {
+            if $0.allChildren.count > 0 {
+                return true
+            }
+            
+            if $0.parent == nil {
+                defaultTag.addToChildren($0)
+            }
+            
+            return false
+        })
+        
+        return sections
+    }()
+
+    lazy var usingFilter: [Bool] = {
+        return mainSections.map { _ in return false }
+    }()
+    
+    lazy var selected: [[Bool]] = {
+        return mainSections.map { $0.allChildren.map { _ in return true } }
+    }()
+    
+    lazy var labels: [[UILabel]] = mainSections.enumerated().map {
+        let (i, section) = $0
+
+        return section.allChildren.sorted{ $0.id!.localizedStandardCompare($1.id!) == .orderedAscending }.map { createLabel($0.name, color: colors[i]) }
+    }
     
     lazy var tagsView: UICollectionView = {
         let layout = AlignedCollectionViewFlowLayout(horizontalAlignment: .left)
+        layout.headerReferenceSize = CGSize(width: view.frame.width, height: ("A" as NSString).boundingRect(with: CGSize(width: 0, height: 0), options: .usesLineFragmentOrigin, attributes: [.font: UIFont.getFont(ofSize: 17)], context: nil).height + 16)
         
-        layout.minimumLineSpacing = 3
-        layout.sectionInset = UIEdgeInsets(top: 5, left: 10, bottom: 5, right: 10)
+        layout.minimumLineSpacing = 5
+        layout.sectionInset = UIEdgeInsets(top: 0, left: 8, bottom: 0, right: 8)
         
         let collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: layout)
         collectionView.translatesAutoresizingMaskIntoConstraints = false
@@ -45,6 +68,11 @@ class FilterVC: UIViewController {
         collectionView.allowsMultipleSelection = true
         
         collectionView.register(FilterTagCell.self, forCellWithReuseIdentifier: "cellId")
+        collectionView.register(UICollectionReusableView.self, forSupplementaryViewOfKind: UICollectionView.elementKindSectionHeader, withReuseIdentifier: "headerId")
+        
+        for row in 0..<tags.count {
+            collectionView.selectItem(at: IndexPath(row: row, section: 0), animated: true, scrollPosition: [])
+        }
         
         return collectionView
     }()
@@ -85,19 +113,13 @@ class FilterVC: UIViewController {
         tagsViewTopConstraint = tagsView.topAnchor.constraint(equalTo: view.topAnchor, constant: 0)
         tagsViewTopConstraint.isActive = true
         tagsView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -15).isActive = true
-        
-        for (section, _) in tags.enumerated() {
-            for (row, _) in tags[section].enumerated() {
-                tagsView.selectItem(at: IndexPath(row: row, section: section), animated: true, scrollPosition: [])
-            }
-        }
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        view.backgroundColor = Constants.getMiddleColor(UserSettings.darkMode) ?? .white
-        tagsView.backgroundColor = Constants.getMiddleColor(UserSettings.darkMode) ?? .white
+        view.backgroundColor = Constants.getMiddleColor() ?? .white
+        tagsView.backgroundColor = Constants.getMiddleColor() ?? .white
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -114,7 +136,7 @@ class FilterVC: UIViewController {
         view.layer.mask = rectShape
     }
     
-    private func createLabel(_ title: String, color: UIColor) -> UILabel {
+    private func createLabel(_ title: String?, color: UIColor) -> UILabel {
         let label = PaddingLabel()
         
         label.setInsets(top: 5, right: 5, bottom: 5, left: 5)
@@ -134,18 +156,68 @@ class FilterVC: UIViewController {
     }
 }
 
+extension FilterVC {
+    
+    var selectedTags: [[Tag]] {
+        get {
+            var selectedTags = [[Tag]]()
+            
+            mainSections.enumerated().forEach {
+                let (i, section) = $0
+                selectedTags.append([])
+                section.allChildren.enumerated().forEach {
+                    let (j, tag) = $0
+                    if selected[i][j] {
+                        selectedTags[i].append(tag)
+                    }
+                }
+            }
+            
+            return selectedTags
+        }
+    }
+}
+
 extension FilterVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return tags.count
+        return mainSections.count
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return tags[section].count
+        return mainSections[section].allChildren.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
+        switch kind {
+        case UICollectionView.elementKindSectionHeader:
+            let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "headerId", for: indexPath)
+            
+            for subview in headerView.subviews {
+                if subview is UILabel {
+                    subview.removeFromSuperview()
+                }
+            }
+            
+            let label = UILabel()
+            
+            label.text = mainSections[indexPath.section].name
+            label.sizeToFit()
+            
+            label.translatesAutoresizingMaskIntoConstraints = false
+            
+            headerView.addSubview(label)
+            headerView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[label]", metrics: nil, views: ["label": label]))
+            headerView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[label]-|", metrics: nil, views: ["label": label]))
+            
+            return headerView
+        default:
+            assert(false, "Invalid element type")
+        }
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cellId", for: indexPath)
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cellId", for: indexPath) as! FilterTagCell
         
         cell.addSubview(labels[indexPath.section][indexPath.row])
         
@@ -156,28 +228,48 @@ extension FilterVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
         return labels[indexPath.section][indexPath.row].frame.size
     }
     
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let cell = collectionView.cellForItem(at: indexPath)
-        cell?.alpha = 1
-        
-        if let selected = collectionView.indexPathsForSelectedItems, selected.count == tags.reduce(0) { $0 + $1.count } {
-            for (section, _) in tags.enumerated() {
-                for (row, _) in tags[section].enumerated() {
-                    collectionView.deselectItem(at: IndexPath(row: row, section: section), animated: true)
-                }
-            }
-        }
+    func collectionView(_ collectionView: UICollectionView, willDisplay cell: UICollectionViewCell, forItemAt indexPath: IndexPath) {
+        cell.alpha = selected[indexPath.section][indexPath.row] ? 1 : 0.25
     }
     
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        selectedCell(collectionView, didDeselectItemAt: indexPath)
+    }
+
     func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        collectionView.cellForItem(at: indexPath)?.alpha = 0.25
+        selectedCell(collectionView, didDeselectItemAt: indexPath)
+    }
+    
+    private func selectedCell(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
+        selected[indexPath.section][indexPath.row] = !selected[indexPath.section][indexPath.row]
         
-        if collectionView.indexPathsForSelectedItems == nil {
-            for (section, _) in tags.enumerated() {
-                for (row, _) in tags[section].enumerated() {
-                    collectionView.selectItem(at: IndexPath(row: row, section: section), animated: true, scrollPosition: [])
+        if !usingFilter[indexPath.section] {
+            usingFilter[indexPath.section] = true
+            
+            mainSections[indexPath.section].allChildren.enumerated().forEach {
+                let (i, _) = $0
+                let indexPath = IndexPath(row: i, section: indexPath.section)
+                
+                selected[indexPath.section][indexPath.row] = !selected[indexPath.section][indexPath.row]
+                collectionView.cellForItem(at: indexPath)?.alpha = selected[indexPath.section][indexPath.row] ? 1 : 0.25
+            }
+        } else {
+            collectionView.cellForItem(at: indexPath)?.alpha = selected[indexPath.section][indexPath.row] ? 1 : 0.25
+            
+            if selectedTags[indexPath.section].count == 0 {
+                usingFilter[indexPath.section] = false
+                
+                mainSections[indexPath.section].allChildren.enumerated().forEach {
+                    let (i, _) = $0
+                    
+                    let indexPath = IndexPath(row: i, section: indexPath.section)
+                    
+                    selected[indexPath.section][indexPath.row] = true
+                    collectionView.cellForItem(at: indexPath)?.alpha = selected[indexPath.section][indexPath.row] ? 1 : 0.25
                 }
             }
         }
+        
+        delegate?.updateSelected()
     }
 }

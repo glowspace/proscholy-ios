@@ -19,7 +19,7 @@ class MenuVC: UIViewController {
         tableView.delegate = self
         tableView.dataSource = self
         
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "cellId")
+        tableView.register(TableViewCell.self, forCellReuseIdentifier: "cellId")
         
         return tableView
     }()
@@ -33,6 +33,12 @@ class MenuVC: UIViewController {
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[tableView]|", metrics: nil, views: ["tableView": tableView]))
         
         setTitle("Zpěvník pro scholy", iconImage: UIImage(named: "logo"))
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+        tableView.reloadData()
     }
 }
 

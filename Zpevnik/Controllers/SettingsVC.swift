@@ -112,6 +112,14 @@ class SettingsVC: UIViewController {
     
     @objc func serifToggle() {
         UserSettings.serif = !UserSettings.serif
+        
+        for controller in [navigationController, tabBarController] {
+            if let view = controller?.view {
+                let superview = view.superview
+                view.removeFromSuperview()
+                superview?.addSubview(view)
+            }
+        }
     }
     
     @objc func slidersToggle() {

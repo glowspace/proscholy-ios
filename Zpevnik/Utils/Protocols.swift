@@ -20,3 +20,7 @@ protocol SongDataSource: NSManagedObject {
 protocol SongLyricDelegate {
     func changeSongLyric(_ controller: SongLyricVC, change: Int)
 }
+
+protocol FilterDelegate {
+    func updateSelected() 
+}

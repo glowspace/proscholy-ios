@@ -26,6 +26,7 @@ class FavoriteListVC: SongLyricsListVC {
         if let data: [SongLyric] = CoreDataService.fetchData(predicate: NSPredicate(format: "favoriteOrder != -1"), sortDescriptors: [NSSortDescriptor(key: "favoriteOrder", ascending: true)], context: PersistenceService.context) {
             self.data = data
             
+            showingData = data
             showData()
         }
     }

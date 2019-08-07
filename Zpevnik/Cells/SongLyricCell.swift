@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SongLyricCell: UITableViewCell {
+class SongLyricCell: TableViewCell {
     
     let nameLabel: UILabel = {
         let label = UILabel()

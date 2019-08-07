@@ -31,7 +31,7 @@ class LaunchVC: UIViewController {
         
         navigationController?.isNavigationBarHidden = true
         
-        view.backgroundColor = .white
+        view.backgroundColor = Constants.getMiddleColor() ?? .white
         
         view.addSubview(loadingIndicator)
         view.addSubview(progressInfoLabel)
