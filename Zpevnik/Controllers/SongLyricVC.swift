@@ -262,11 +262,11 @@ class SongLyricVC: UIViewController {
     }
     
     private func prepareLyrics() -> NSAttributedString {
-//        let (lyrics, chords) = try extractChords(lyrics.replacingOccurrences(of: "\r", with: ""))
+        //        let (lyrics, chords) = try extractChords(lyrics.replacingOccurrences(of: "\r", with: ""))
         guard let lyrics = lyrics, let chords = chords else { return NSAttributedString() }
         let showChords = UserSettings.showChords
         let fontSize = CGFloat(UserSettings.fontSize)
-
+        
         let style = NSMutableParagraphStyle()
         style.lineSpacing = (showChords && chords.count > 0) ? fontSize : 0
         lyricsTextView.textContainerInset = UIEdgeInsets(top: (showChords && chords.count > 0) ? fontSize : 0, left: 0, bottom: 10, right: 0)
@@ -275,12 +275,12 @@ class SongLyricVC: UIViewController {
         var chordAttributes = attributes
         chordAttributes[.foregroundColor] = UIColor(red: 0, green: 122, blue: 255)
         let parsedString = NSMutableAttributedString(string: lyrics, attributes: attributes)
-
+        
         lyricsTextView.attributedText = parsedString
         lyricsTextView.layoutManager.ensureLayout(for: lyricsTextView.textContainer)
-
+        
         var previous: CGRect?
-
+        
         if showChords {
             for chord in chords {
                 let chordText = NSMutableAttributedString(string: chord.text, attributes: chordAttributes)
@@ -327,21 +327,21 @@ class SongLyricVC: UIViewController {
             
             for chord in chords {
                 let chordText = NSMutableAttributedString(string: chord.text, attributes: chordAttributes)
-
+                
                 let layer = CATextLayer()
                 layer.string = chordText
-
+                
                 let location = lyrics.distance(from: lyrics.startIndex, to: chord.start)
-
+                
                 let start = lyricsTextView.position(from: lyricsTextView.beginningOfDocument, offset: location)!
                 let end = lyricsTextView.position(from: start, offset: 0)!
-
+                
                 let tRange = lyricsTextView.textRange(from: start, to: end)!
                 let rect = lyricsTextView.firstRect(for: tRange)
-
+                
                 let x = rect.origin.x
                 let y = rect.origin.y - 0.75 * chordText.size().height
-
+                
                 let minSpacing: CGFloat = 8
                 
                 var frame = CGRect(origin: CGPoint(x: x, y: y), size: chordText.size())

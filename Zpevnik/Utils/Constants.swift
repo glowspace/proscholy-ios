@@ -19,4 +19,6 @@ class Constants {
     static let sansSerifFont = "Helvetica"
     
     static let darkModeLightColor = UIColor(white: 0.15, alpha: 1)
+    
+    static let songsUpdateInterval: Double = 3600 * 24
 }

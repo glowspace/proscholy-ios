@@ -19,8 +19,8 @@ class UserSettings {
     }
     static var serif = false {
         didSet {
-//            UILabel.appearance().substituteFontName = ""
-//            UINavigationBar.appearance().substituteFontName = ""
+            //            UILabel.appearance().substituteFontName = ""
+            //            UINavigationBar.appearance().substituteFontName = ""
         }
     }
     static var showSliders = false
@@ -32,16 +32,16 @@ class UserSettings {
     }
     static var darkMode = false {
         didSet {
-//            if darkMode {
-//                UINavigationBar.appearance().barTintColor = Constants.darkModeLightColor
-//                UITableView.appearance().backgroundColor = .black
-//                UIScrollView.appearance().backgroundColor = .black
-//                UITextView.appearance().backgroundColor = .black
-//                UITextView.appearance().textColor = .white
-//                UITableViewCell.appearance().backgroundColor = Constants.darkModeLightColor
-//                UILabel.appearance().textColor = .white
-//                UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.white]
-//            }
+            //            if darkMode {
+            //                UINavigationBar.appearance().barTintColor = Constants.darkModeLightColor
+            //                UITableView.appearance().backgroundColor = .black
+            //                UIScrollView.appearance().backgroundColor = .black
+            //                UITextView.appearance().backgroundColor = .black
+            //                UITextView.appearance().textColor = .white
+            //                UITableViewCell.appearance().backgroundColor = Constants.darkModeLightColor
+            //                UILabel.appearance().textColor = .white
+            //                UINavigationBar.appearance().titleTextAttributes = [.foregroundColor: UIColor.white]
+            //            }
         }
     }
     static var showBottomOptions = false

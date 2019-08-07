@@ -23,7 +23,7 @@ class MenuVC: UIViewController {
         
         return tableView
     }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -32,36 +32,7 @@ class MenuVC: UIViewController {
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[tableView]|", metrics: nil, views: ["tableView": tableView]))
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[tableView]|", metrics: nil, views: ["tableView": tableView]))
         
-        navigationItem.title = ""
-    }
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        let view = UIView()
-        
-        let logoView = UIImageView(image: UIImage(named: "logo"))
-        logoView.translatesAutoresizingMaskIntoConstraints = false
-        
-        let titleView = UILabel()
-        titleView.translatesAutoresizingMaskIntoConstraints = false
-        
-        titleView.text = "Zpěvník pro scholy"
-        titleView.font = UIFont.systemFont(ofSize: 17, weight: UIFont.Weight.semibold)
-        
-        view.addSubview(logoView)
-        view.addSubview(titleView)
-        
-        let views = [
-            "logoView": logoView,
-            "titleView": titleView
-        ]
-        
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[logoView(==40)]-[titleView]-|", metrics: nil, views: views))
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[logoView(==40)]|", options: [.alignAllCenterY], metrics: nil, views: views))
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[titleView]|", options: [.alignAllCenterY], metrics: nil, views: views))
-        
-        navigationItem.titleView = view
+        setTitle("Zpěvník pro scholy", iconImage: UIImage(named: "logo"))
     }
 }
 

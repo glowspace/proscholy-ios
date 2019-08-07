@@ -51,7 +51,7 @@ class SearchView: UIView {
         
         addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-15-[searchField]", metrics: nil, views: views))
         addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[searchField]-|", metrics: nil, views: views))
-//        addConstraint(NSLayoutConstraint(item: searchField, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1, constant: 0))
+        //        addConstraint(NSLayoutConstraint(item: searchField, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1, constant: 0))
     }
     
     required init?(coder aDecoder: NSCoder) {

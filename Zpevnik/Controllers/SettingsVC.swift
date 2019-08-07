@@ -25,7 +25,7 @@ class SettingsVC: UIViewController {
         return tableView
     }()
     
-    var cells = [UITableViewCell]()
+    var cells: [UITableViewCell]!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -40,9 +40,11 @@ class SettingsVC: UIViewController {
         createCells()
     }
     
-    // MARK: - Cells settings
+    // MARK: - Cells Settings
     
     private func createCells() {
+        cells = []
+        
         cells.append(createSettingCell(title: "Blokovat zhasínání displeje", isOn: UserSettings.blockAutoLock, action: #selector(blockAutoLockToggle)))
         cells.append(createSettingCell(title: "Patkové písmo", isOn: UserSettings.serif, action: #selector(serifToggle)))
         cells.append(createSettingCell(title: "Posuvky", isOn: UserSettings.showSliders, action: #selector(slidersToggle)))
@@ -54,6 +56,7 @@ class SettingsVC: UIViewController {
     
     private func createFontSizeCell() -> UITableViewCell {
         let cell = UITableViewCell()
+        
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Velikost písma"
@@ -131,6 +134,8 @@ class SettingsVC: UIViewController {
         UserSettings.showBottomOptions = !UserSettings.showBottomOptions
     }
 }
+
+// MARK: - UITableViewDelegate, UITableViewDataSource
 
 extension SettingsVC: UITableViewDelegate, UITableViewDataSource {
     

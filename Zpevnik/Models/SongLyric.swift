@@ -25,7 +25,7 @@ extension SongLyric {
 }
 
 extension SongLyric {
-
+    
     func isFavorite() -> Bool {
         return favoriteOrder > -1
     }
@@ -33,8 +33,11 @@ extension SongLyric {
     @objc var numbers: [String] {
         get {
             guard let songBookRecords = songBookRecords?.allObjects as? [SongBookRecord] else { return [] }
-
-            return songBookRecords.map {$0.songBook!.shortcut! + $0.number!}
+            
+            var numbers = songBookRecords.map {$0.songBook!.shortcut! + $0.number!}
+            numbers.append(id!)
+            
+            return numbers
         }
     }
 }

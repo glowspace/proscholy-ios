@@ -9,7 +9,7 @@
 import UIKit
 
 class FavoriteListVC: SongLyricsListVC {
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }

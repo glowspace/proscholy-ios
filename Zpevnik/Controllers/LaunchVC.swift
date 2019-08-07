@@ -45,7 +45,7 @@ class LaunchVC: UIViewController {
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[progressInfoLabel]-|", metrics: nil, views: views))
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[loadingIndicator]-[progressInfoLabel]-|", metrics: nil, views: views))
     }
-
+    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
@@ -57,7 +57,7 @@ class LaunchVC: UIViewController {
             
             let date = Date()
             let last = dateFormatter.date(from: lastUpdate)!
-            if date.timeIntervalSince(last) > 24 {
+            if date.timeIntervalSince(last) > Constants.songsUpdateInterval {
                 updateSongLyrics()
             } else {
                 navigationController?.present(TabBarController(), animated: false)
@@ -65,8 +65,6 @@ class LaunchVC: UIViewController {
         } else {
             updateSongLyrics()
         }
-        
-        
     }
     
     private func updateSongLyrics() {

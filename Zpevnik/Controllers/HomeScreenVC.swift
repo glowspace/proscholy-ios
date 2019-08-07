@@ -200,7 +200,7 @@ class HomeScreenVC: UIViewController {
     
     @objc func showLyricsList() {
         tabBarController?.selectedIndex = 1
-//        navigationController?.pushViewController(allSongLyricsVC, animated: true)
+        //        navigationController?.pushViewController(allSongLyricsVC, animated: true)
     }
     
     @objc func search() {

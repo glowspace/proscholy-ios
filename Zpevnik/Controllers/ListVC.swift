@@ -17,7 +17,7 @@ class ListVC<T: SongDataSource>: UIViewController, UITableViewDelegate, UITableV
         
         return searchView
     }()
-        
+    
     lazy var tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
@@ -32,7 +32,7 @@ class ListVC<T: SongDataSource>: UIViewController, UITableViewDelegate, UITableV
     
     var data: [T]!
     var showingData: [T]!
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         

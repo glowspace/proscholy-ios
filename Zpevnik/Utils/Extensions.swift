@@ -36,12 +36,12 @@ extension UIColor {
 extension UIFont {
     
     static func getFont(ofSize size: CGFloat) -> UIFont {
-//        if UserSettings.serif, let font = UIFont(name: Constants.serifFont, size: size) {
-//            return font
-//        } else if let font = UIFont(name: Constants.sansSerifFont, size: size) {
-//            return font
-//        }
-//        
+        //        if UserSettings.serif, let font = UIFont(name: Constants.serifFont, size: size) {
+        //            return font
+        //        } else if let font = UIFont(name: Constants.sansSerifFont, size: size) {
+        //            return font
+        //        }
+        //
         return .systemFont(ofSize: size)
     }
 }
@@ -82,8 +82,11 @@ extension UIViewController {
         navigationController?.navigationBar.endEditing(true)
     }
     
-    func setTitle(_ title: String?) {
+    func setTitle(_ title: String?, iconImage: UIImage? = nil) {
+        let view = UIView()
+        
         let label = UILabel()
+        label.translatesAutoresizingMaskIntoConstraints = false
         label.text = title
         label.textColor = .black
         label.font = .systemFont(ofSize: 17, weight: .semibold)
@@ -92,7 +95,22 @@ extension UIViewController {
         label.minimumScaleFactor = 0.5
         label.textAlignment = .center
         
-        navigationItem.titleView = label
+        view.addSubview(label)
+        if iconImage != nil {
+            let icon = UIImageView(image: iconImage)
+            icon.translatesAutoresizingMaskIntoConstraints = false
+            
+            view.addSubview(icon)
+            
+            view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[icon(==40)]-[label]-|", metrics: nil, views: ["icon": icon, "label": label]))
+            view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[icon(==40)]|", options: [.alignAllCenterY], metrics: nil, views: ["icon": icon, "label": label]))
+            view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[label]|", options: [.alignAllCenterY], metrics: nil, views: ["icon": icon, "label": label]))
+        } else {
+            view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[label]-|", metrics: nil, views: ["label": label]))
+            view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[label]|", options: [.alignAllCenterY], metrics: nil, views: ["label": label]))
+        }
+        
+        navigationItem.titleView = view
         navigationItem.title = ""
     }
     

@@ -28,12 +28,6 @@ class SongBookVC: SongLyricsListVC {
         
         return view
     }()
-
-    override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        searchView.layer.borderWidth = 0
-    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -43,7 +37,6 @@ class SongBookVC: SongLyricsListVC {
         navigationItem.setRightBarButton(searchBarButton, animated: true)
         
         navigationController?.navigationBar.addSubview(emptyBackButtonView)
-        
         navigationController?.navigationBar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[emptyBackButtonView(==44)]", metrics: nil, views: ["emptyBackButtonView": emptyBackButtonView]))
         navigationController?.navigationBar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[emptyBackButtonView(==44)]", metrics: nil, views: ["emptyBackButtonView": emptyBackButtonView]))
     }
@@ -105,10 +98,11 @@ class SongBookVC: SongLyricsListVC {
     // MARK: - Handlers
     
     @objc func backButtonTapped() {
-        if searchView.searchField.isEditing {
+        if navigationItem.rightBarButtonItem == nil {
             searchView.searchField.text = ""
-            updateData(sender: searchView.searchField)
             searchView.searchField.resignFirstResponder()
+            updateData(sender: searchView.searchField)
+            
             setTitle(songBook.name)
             navigationItem.setRightBarButton(searchBarButton, animated: true)
         } else {
@@ -125,18 +119,13 @@ class SongBookVC: SongLyricsListVC {
     // MARK: - UITableViewDelegate, UITableViewDataSource
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cellId", for: indexPath) as! SongLyricCell
+        let cell = super.tableView(tableView, cellForRowAt: indexPath) as! SongLyricCell
         
         let songLyric = showingData[indexPath.row]
         
-        cell.nameLabel.text = songLyric.name
-        if let songBookRecords = songLyric.songBookRecords?.allObjects as? [SongBookRecord] {
-            for songBookRecord in songBookRecords {
-                if songBookRecord.songBook == songBook {
-                    cell.numberLabel.text = songBook.shortcut! + songBookRecord.number!
-                    break
-                }
-            }
+        let numbers = songLyric.numbers.filter { $0.contains(songBook.shortcut!) }
+        if numbers.count == 1 {
+            cell.numberLabel.text = numbers[0]
         }
         
         return cell

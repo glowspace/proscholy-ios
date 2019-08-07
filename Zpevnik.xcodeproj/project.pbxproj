@@ -7,6 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		391AE0D422FAC7EE00E7F5BC /* Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 391AE0D122FAC7EE00E7F5BC /* Tag.swift */; };
+		391AE0D522FAC7EE00E7F5BC /* Author.swift in Sources */ = {isa = PBXBuildFile; fileRef = 391AE0D222FAC7EE00E7F5BC /* Author.swift */; };
+		391AE0D622FAC7EE00E7F5BC /* SongBookRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 391AE0D322FAC7EE00E7F5BC /* SongBookRecord.swift */; };
+		391AE0E022FAC87A00E7F5BC /* Zpevnik.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 391AE0DC22FAC87A00E7F5BC /* Zpevnik.xcdatamodeld */; };
+		391AE0E222FAC9B900E7F5BC /* AlignedCollectionViewFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 391AE0E122FAC9B800E7F5BC /* AlignedCollectionViewFlowLayout.swift */; };
+		391AE0E422FAC9CF00E7F5BC /* FilterTagCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 391AE0E322FAC9CF00E7F5BC /* FilterTagCell.swift */; };
 		397B625922E8B58700B9CCEC /* SongBookVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 397B625822E8B58700B9CCEC /* SongBookVC.swift */; };
 		397B625B22E9BE4300B9CCEC /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 397B625A22E9BE4300B9CCEC /* Protocols.swift */; };
 		397B625D22EA22A800B9CCEC /* SongLyricCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 397B625C22EA22A800B9CCEC /* SongLyricCell.swift */; };
@@ -31,12 +37,6 @@
 		39DFB19222E825DC0013906D /* SongBooksListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39DFB19122E825DC0013906D /* SongBooksListVC.swift */; };
 		39DFB19422E8573D0013906D /* FavoriteListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39DFB19322E8573D0013906D /* FavoriteListVC.swift */; };
 		39DFB19822E86FCF0013906D /* MenuVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39DFB19722E86FCF0013906D /* MenuVC.swift */; };
-		39E80B0A22F9641000C47B0D /* Zpevnik.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 39E80B0822F9641000C47B0D /* Zpevnik.xcdatamodeld */; };
-		39E80B0C22F9767400C47B0D /* AlignedCollectionViewFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E80B0B22F9767400C47B0D /* AlignedCollectionViewFlowLayout.swift */; };
-		39E9858F22F999DE0016031F /* FilterTagCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E9858E22F999DE0016031F /* FilterTagCell.swift */; };
-		39E985BE22FA08900016031F /* Author.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E985BD22FA08900016031F /* Author.swift */; };
-		39E985C022FA089B0016031F /* Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E985BF22FA089B0016031F /* Tag.swift */; };
-		39E985C222FA08A80016031F /* SongBookRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E985C122FA08A80016031F /* SongBookRecord.swift */; };
 		39F7BA2D22E7090F00FDFF90 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39F7BA2C22E7090F00FDFF90 /* AppDelegate.swift */; };
 		39F7BA2F22E7090F00FDFF90 /* ListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39F7BA2E22E7090F00FDFF90 /* ListVC.swift */; };
 		39F7BA4222E70B4100FDFF90 /* CoreDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39F7BA4122E70B4100FDFF90 /* CoreDataService.swift */; };
@@ -53,6 +53,14 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		391AE0D122FAC7EE00E7F5BC /* Tag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Tag.swift; path = "Zpevnik/Models (původní)/Tag.swift"; sourceTree = SOURCE_ROOT; };
+		391AE0D222FAC7EE00E7F5BC /* Author.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = Author.swift; path = "Zpevnik/Models (původní)/Author.swift"; sourceTree = SOURCE_ROOT; };
+		391AE0D322FAC7EE00E7F5BC /* SongBookRecord.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = SongBookRecord.swift; path = "Zpevnik/Models (původní)/SongBookRecord.swift"; sourceTree = SOURCE_ROOT; };
+		391AE0DD22FAC87A00E7F5BC /* Zpevnik v3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Zpevnik v3.xcdatamodel"; sourceTree = "<group>"; };
+		391AE0DE22FAC87A00E7F5BC /* Zpevnik.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Zpevnik.xcdatamodel; sourceTree = "<group>"; };
+		391AE0DF22FAC87A00E7F5BC /* Zpevnik v2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Zpevnik v2.xcdatamodel"; sourceTree = "<group>"; };
+		391AE0E122FAC9B800E7F5BC /* AlignedCollectionViewFlowLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = AlignedCollectionViewFlowLayout.swift; path = "Zpevnik/Third-party (původní)/AlignedCollectionViewFlowLayout.swift"; sourceTree = SOURCE_ROOT; };
+		391AE0E322FAC9CF00E7F5BC /* FilterTagCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterTagCell.swift; sourceTree = "<group>"; };
 		397B625822E8B58700B9CCEC /* SongBookVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongBookVC.swift; sourceTree = "<group>"; };
 		397B625A22E9BE4300B9CCEC /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
 		397B625C22EA22A800B9CCEC /* SongLyricCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongLyricCell.swift; sourceTree = "<group>"; };
@@ -77,14 +85,6 @@
 		39DFB19122E825DC0013906D /* SongBooksListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongBooksListVC.swift; sourceTree = "<group>"; };
 		39DFB19322E8573D0013906D /* FavoriteListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FavoriteListVC.swift; sourceTree = "<group>"; };
 		39DFB19722E86FCF0013906D /* MenuVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuVC.swift; sourceTree = "<group>"; };
-		39E80B0922F9641000C47B0D /* Zpevnik.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Zpevnik.xcdatamodel; sourceTree = "<group>"; };
-		39E80B0B22F9767400C47B0D /* AlignedCollectionViewFlowLayout.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AlignedCollectionViewFlowLayout.swift; sourceTree = "<group>"; };
-		39E80B0D22F9811400C47B0D /* Zpevnik v2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Zpevnik v2.xcdatamodel"; sourceTree = "<group>"; };
-		39E9858D22F994110016031F /* Zpevnik v3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Zpevnik v3.xcdatamodel"; sourceTree = "<group>"; };
-		39E9858E22F999DE0016031F /* FilterTagCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTagCell.swift; sourceTree = "<group>"; };
-		39E985BD22FA08900016031F /* Author.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Author.swift; sourceTree = "<group>"; };
-		39E985BF22FA089B0016031F /* Tag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Tag.swift; sourceTree = "<group>"; };
-		39E985C122FA08A80016031F /* SongBookRecord.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongBookRecord.swift; sourceTree = "<group>"; };
 		39F7BA2922E7090F00FDFF90 /* Zpevnik.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zpevnik.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39F7BA2C22E7090F00FDFF90 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		39F7BA2E22E7090F00FDFF90 /* ListVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListVC.swift; sourceTree = "<group>"; };
@@ -128,7 +128,7 @@
 			children = (
 				39F9C2B422F6EE2C004F0712 /* FittableFontLabel.swift */,
 				39F9C2B322F6EE2C004F0712 /* UILabelExtension.swift */,
-				39E80B0B22F9767400C47B0D /* AlignedCollectionViewFlowLayout.swift */,
+				391AE0E122FAC9B800E7F5BC /* AlignedCollectionViewFlowLayout.swift */,
 			);
 			path = "Third-party";
 			sourceTree = "<group>";
@@ -149,7 +149,7 @@
 				39F7BA5322E74D3C00FDFF90 /* SongBookCell.swift */,
 				397B625C22EA22A800B9CCEC /* SongLyricCell.swift */,
 				39CB0FDE22F75483001342E9 /* SettingCell.swift */,
-				39E9858E22F999DE0016031F /* FilterTagCell.swift */,
+				391AE0E322FAC9CF00E7F5BC /* FilterTagCell.swift */,
 			);
 			path = Cells;
 			sourceTree = "<group>";
@@ -157,12 +157,12 @@
 		399D062D22EC332A003C7D56 /* Models */ = {
 			isa = PBXGroup;
 			children = (
-				39E985BD22FA08900016031F /* Author.swift */,
+				391AE0D222FAC7EE00E7F5BC /* Author.swift */,
+				391AE0D322FAC7EE00E7F5BC /* SongBookRecord.swift */,
+				391AE0D122FAC7EE00E7F5BC /* Tag.swift */,
 				397B626222EC2E2900B9CCEC /* SongBook.swift */,
-				39E985C122FA08A80016031F /* SongBookRecord.swift */,
 				397B626022EC2B6200B9CCEC /* SongLyric.swift */,
-				39E985BF22FA089B0016031F /* Tag.swift */,
-				39E80B0822F9641000C47B0D /* Zpevnik.xcdatamodeld */,
+				391AE0DC22FAC87A00E7F5BC /* Zpevnik.xcdatamodeld */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -315,7 +315,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				39E985BE22FA08900016031F /* Author.swift in Sources */,
 				39F7BA4422E70C0D00FDFF90 /* DownloadService.swift in Sources */,
 				39F9C2AF22F625F7004F0712 /* GradientView.swift in Sources */,
 				39DFB19222E825DC0013906D /* SongBooksListVC.swift in Sources */,
@@ -327,32 +326,33 @@
 				39F7BA4222E70B4100FDFF90 /* CoreDataService.swift in Sources */,
 				39DFB19822E86FCF0013906D /* MenuVC.swift in Sources */,
 				39F9C2B622F6EE2C004F0712 /* FittableFontLabel.swift in Sources */,
-				39E985C022FA089B0016031F /* Tag.swift in Sources */,
+				391AE0D522FAC7EE00E7F5BC /* Author.swift in Sources */,
 				3997798922F7605B00CE6FF6 /* SliderTrackLayer.swift in Sources */,
 				39CB0FDD22F70DA8001342E9 /* SettingsVC.swift in Sources */,
 				39F9C2AA22F621C2004F0712 /* AllSongLyricsListVC.swift in Sources */,
-				39E985C222FA08A80016031F /* SongBookRecord.swift in Sources */,
 				39F7BA2F22E7090F00FDFF90 /* ListVC.swift in Sources */,
-				39E9858F22F999DE0016031F /* FilterTagCell.swift in Sources */,
 				399205BC22F8340200E392A7 /* FilterVC.swift in Sources */,
+				391AE0E022FAC87A00E7F5BC /* Zpevnik.xcdatamodeld in Sources */,
 				397B625922E8B58700B9CCEC /* SongBookVC.swift in Sources */,
 				397B626322EC2E2900B9CCEC /* SongBook.swift in Sources */,
 				39F7BA5422E74D3C00FDFF90 /* SongBookCell.swift in Sources */,
 				39F7BA4722E70E9800FDFF90 /* TabBarController.swift in Sources */,
 				399D062F22EF4FE1003C7D56 /* SearchView.swift in Sources */,
 				397B625F22EA25B400B9CCEC /* SongLyricVC.swift in Sources */,
-				39E80B0A22F9641000C47B0D /* Zpevnik.xcdatamodeld in Sources */,
 				39F7BA5822E7535200FDFF90 /* Extensions.swift in Sources */,
 				3997798E22F76A4A00CE6FF6 /* UserSettings.swift in Sources */,
+				391AE0D422FAC7EE00E7F5BC /* Tag.swift in Sources */,
+				391AE0E222FAC9B900E7F5BC /* AlignedCollectionViewFlowLayout.swift in Sources */,
 				39CB0FDF22F75483001342E9 /* SettingCell.swift in Sources */,
 				3997799022F7714A00CE6FF6 /* Constants.swift in Sources */,
 				39DFB19422E8573D0013906D /* FavoriteListVC.swift in Sources */,
 				39F7BA2D22E7090F00FDFF90 /* AppDelegate.swift in Sources */,
+				391AE0E422FAC9CF00E7F5BC /* FilterTagCell.swift in Sources */,
 				397B626122EC2B6200B9CCEC /* SongLyric.swift in Sources */,
 				39DFB19022E8257A0013906D /* HomeScreenVC.swift in Sources */,
 				399D065822F480E7003C7D56 /* SongLyricsListVC.swift in Sources */,
 				39CB0FDB22F70279001342E9 /* ButtonView.swift in Sources */,
-				39E80B0C22F9767400C47B0D /* AlignedCollectionViewFlowLayout.swift in Sources */,
+				391AE0D622FAC7EE00E7F5BC /* SongBookRecord.swift in Sources */,
 				39F7BA5122E721FB00FDFF90 /* LaunchVC.swift in Sources */,
 				397B625B22E9BE4300B9CCEC /* Protocols.swift in Sources */,
 			);
@@ -537,16 +537,17 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		39E80B0822F9641000C47B0D /* Zpevnik.xcdatamodeld */ = {
+		391AE0DC22FAC87A00E7F5BC /* Zpevnik.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				39E9858D22F994110016031F /* Zpevnik v3.xcdatamodel */,
-				39E80B0D22F9811400C47B0D /* Zpevnik v2.xcdatamodel */,
-				39E80B0922F9641000C47B0D /* Zpevnik.xcdatamodel */,
+				391AE0DD22FAC87A00E7F5BC /* Zpevnik v3.xcdatamodel */,
+				391AE0DE22FAC87A00E7F5BC /* Zpevnik.xcdatamodel */,
+				391AE0DF22FAC87A00E7F5BC /* Zpevnik v2.xcdatamodel */,
 			);
-			currentVersion = 39E9858D22F994110016031F /* Zpevnik v3.xcdatamodel */;
-			path = Zpevnik.xcdatamodeld;
-			sourceTree = "<group>";
+			currentVersion = 391AE0DD22FAC87A00E7F5BC /* Zpevnik v3.xcdatamodel */;
+			name = Zpevnik.xcdatamodeld;
+			path = "Zpevnik/Models (původní)/Zpevnik.xcdatamodeld";
+			sourceTree = SOURCE_ROOT;
 			versionGroupType = wrapper.xcdatamodel;
 		};
 /* End XCVersionGroup section */

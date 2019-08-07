@@ -140,6 +140,24 @@ class AllSongLyricsListVC: SongLyricsListVC {
     
     // MARK: - UITableViewDelegete, UITableViewDataSource
     
+    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = super.tableView(tableView, cellForRowAt: indexPath) as! SongLyricCell
+        
+        if let searchText = searchView.searchField.text {
+            let songLyric = showingData[indexPath.row]
+            
+            let numbers = songLyric.numbers.filter { $0.contains(searchText) }
+            
+            if numbers.count > 0 && !songLyric.id!.contains(searchText) {
+                cell.numberLabel.text = numbers[0]
+            } else {
+                cell.numberLabel.text = songLyric.id
+            }
+        }
+        
+        return cell
+    }
+    
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if !tableView.isEditing {
             super.tableView(tableView, didSelectRowAt: indexPath)

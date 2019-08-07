@@ -19,7 +19,7 @@ class SongLyricsListVC: ListVC<SongLyric> {
         
         return vc
     }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }

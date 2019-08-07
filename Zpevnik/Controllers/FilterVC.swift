@@ -20,7 +20,7 @@ class FilterVC: UIViewController {
     ]
     
     let colors: [UIColor] = [.blue, .red, .green, .magenta, .purple, .cyan]
-
+    
     lazy var labels: [[UILabel]] = {
         return tags.enumerated().map { (arg) -> [UILabel] in
             let (index, tags) = arg
@@ -64,7 +64,7 @@ class FilterVC: UIViewController {
     }()
     
     var tagsViewTopConstraint: NSLayoutConstraint!
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -143,9 +143,9 @@ extension FilterVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
         let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "cellId", for: indexPath)
-    
+        
         cell.addSubview(labels[indexPath.section][indexPath.row])
-    
+        
         return cell
     }
     

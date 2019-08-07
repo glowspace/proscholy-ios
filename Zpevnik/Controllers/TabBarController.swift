@@ -12,11 +12,12 @@ class TabBarController: UITabBarController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-
+        
         let homeListVC = createNavigationController(controller: HomeScreenVC(), title: "Domů", image: UIImage(named: "homeIcon"), selectedImage: UIImage(named: "homeIconFilled"), tag: 0)
         let songBookListVC = createNavigationController(controller: SongBooksListVC(), title: "Zpěvníky", image: UIImage(named: "songBookIcon"), selectedImage: UIImage(named: "songBookIconFilled"), tag: 1)
         let favoriteListVC = createNavigationController(controller: FavoriteListVC(), title: "Oblíbené", image: UIImage(named: "starIcon"), selectedImage: UIImage(named: "starIconFilled"), tag: 2)
-        let menuVC = createNavigationController(controller: MenuVC(), title: "Ostatní", image: UIImage(named: "menuIcon"), selectedImage: UIImage(named: "menuIconFilled"), tag: 3)
+        let menuVC = createNavigationController(controller: MenuVC(), title: "Ostatní", image: UIImage(named: "menuIcon"), selectedImage: nil, tag: 3)
+        
         setViewControllers([homeListVC, songBookListVC, favoriteListVC, menuVC], animated: false)
     }
     

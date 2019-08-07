@@ -9,7 +9,7 @@
 import UIKit
 
 class SongLyricCell: UITableViewCell {
-
+    
     let nameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
