@@ -19,6 +19,7 @@ extension SongLyric {
         songLyric.id = id
         songLyric.name = data["name"] as? String
         songLyric.lyrics = data["lyrics"] as? String
+        songLyric.language = data["lang_string"] as? String
         
         return songLyric
     }

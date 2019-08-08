@@ -18,7 +18,7 @@ class SongBooksListVC: ListVC<SongBook> {
         super.viewWillAppear(animated)
         
         showSearchView(placeholder: "Zadejte název či zkratku zpěvníku")
-//        navigationController?.navigationBar.barTintColor = .white
+        navigationController?.navigationBar.barTintColor = Constants.getMiddleColor()
     }
     
     override func viewWillDisappear(_ animated: Bool) {

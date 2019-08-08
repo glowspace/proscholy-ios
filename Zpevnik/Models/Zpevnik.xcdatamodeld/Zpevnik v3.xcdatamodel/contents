@@ -5,6 +5,10 @@
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
         <relationship name="songLyrics" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SongLyric" inverseName="authors" inverseEntity="SongLyric" syncable="YES"/>
     </entity>
+    <entity name="Language" representedClassName="Language" syncable="YES" codeGenerationType="class">
+        <attribute name="count" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+    </entity>
     <entity name="SongBook" representedClassName="SongBook" syncable="YES" codeGenerationType="class">
         <attribute name="color" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="id" attributeType="String" syncable="YES"/>
@@ -22,6 +26,7 @@
     <entity name="SongLyric" representedClassName="SongLyric" syncable="YES" codeGenerationType="class">
         <attribute name="favoriteOrder" optional="YES" attributeType="Integer 16" defaultValueString="-1" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="id" attributeType="String" syncable="YES"/>
+        <attribute name="language" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="lyrics" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" attributeType="String" syncable="YES"/>
         <relationship name="authors" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Author" inverseName="songLyrics" inverseEntity="Author" syncable="YES"/>
@@ -37,9 +42,10 @@
     </entity>
     <elements>
         <element name="Author" positionX="-288" positionY="45" width="128" height="90"/>
+        <element name="Language" positionX="-288" positionY="72" width="128" height="75"/>
         <element name="SongBook" positionX="-505.38671875" positionY="-18.53125" width="128" height="135"/>
         <element name="SongBookRecord" positionX="-297" positionY="18" width="128" height="105"/>
-        <element name="SongLyric" positionX="-63" positionY="-18" width="128" height="150"/>
+        <element name="SongLyric" positionX="-63" positionY="-18" width="128" height="165"/>
         <element name="Tag" positionX="-297" positionY="45" width="128" height="120"/>
     </elements>
 </model>

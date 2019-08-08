@@ -24,3 +24,15 @@ protocol SongLyricDelegate {
 protocol FilterDelegate {
     func updateSelected() 
 }
+
+protocol FilterTag {
+    var title: String { get }
+    
+    var elements: [FilterAble] { get }
+}
+
+protocol FilterAble {
+    var name: String? { get }
+    
+    static var predicateFormat: String { get }
+}

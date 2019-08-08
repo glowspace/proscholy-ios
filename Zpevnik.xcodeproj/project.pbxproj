@@ -14,6 +14,7 @@
 		391AE0EF22FACD5900E7F5BC /* SongBookRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 391AE0ED22FACD5900E7F5BC /* SongBookRecord.swift */; };
 		391AE0F122FACD7C00E7F5BC /* AlignedCollectionViewFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 391AE0F022FACD7C00E7F5BC /* AlignedCollectionViewFlowLayout.swift */; };
 		3939FA6E22FC129600F9AED1 /* AboutVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3939FA6D22FC129600F9AED1 /* AboutVC.swift */; };
+		3939FA7222FC1F1900F9AED1 /* LanguageTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3939FA7122FC1F1900F9AED1 /* LanguageTag.swift */; };
 		397B625922E8B58700B9CCEC /* SongBookVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 397B625822E8B58700B9CCEC /* SongBookVC.swift */; };
 		397B625B22E9BE4300B9CCEC /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 397B625A22E9BE4300B9CCEC /* Protocols.swift */; };
 		397B625D22EA22A800B9CCEC /* SongLyricCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 397B625C22EA22A800B9CCEC /* SongLyricCell.swift */; };
@@ -63,6 +64,7 @@
 		391AE0ED22FACD5900E7F5BC /* SongBookRecord.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongBookRecord.swift; sourceTree = "<group>"; };
 		391AE0F022FACD7C00E7F5BC /* AlignedCollectionViewFlowLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlignedCollectionViewFlowLayout.swift; sourceTree = "<group>"; };
 		3939FA6D22FC129600F9AED1 /* AboutVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutVC.swift; sourceTree = "<group>"; };
+		3939FA7122FC1F1900F9AED1 /* LanguageTag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageTag.swift; sourceTree = "<group>"; };
 		397B625822E8B58700B9CCEC /* SongBookVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongBookVC.swift; sourceTree = "<group>"; };
 		397B625A22E9BE4300B9CCEC /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
 		397B625C22EA22A800B9CCEC /* SongLyricCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongLyricCell.swift; sourceTree = "<group>"; };
@@ -164,6 +166,7 @@
 				397B626022EC2B6200B9CCEC /* SongLyric.swift */,
 				391AE0ED22FACD5900E7F5BC /* SongBookRecord.swift */,
 				391AE0EC22FACD5900E7F5BC /* Tag.swift */,
+				3939FA7122FC1F1900F9AED1 /* LanguageTag.swift */,
 				391AE0E722FACD4D00E7F5BC /* Zpevnik.xcdatamodeld */,
 			);
 			path = Models;
@@ -358,6 +361,7 @@
 				399D065822F480E7003C7D56 /* SongLyricsListVC.swift in Sources */,
 				39CB0FDB22F70279001342E9 /* ButtonView.swift in Sources */,
 				39F7BA5122E721FB00FDFF90 /* LaunchVC.swift in Sources */,
+				3939FA7222FC1F1900F9AED1 /* LanguageTag.swift in Sources */,
 				397B625B22E9BE4300B9CCEC /* Protocols.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

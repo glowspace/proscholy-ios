@@ -64,7 +64,7 @@ class SongLyricVC: UIViewController {
         
         scrollView.backgroundColor = Constants.getDarkColor() ?? .white
         
-//        navigationController?.navigationBar.barTintColor = .white
+        navigationController?.navigationBar.barTintColor = Constants.getMiddleColor()
         
         updateSongLyrics()
     }

@@ -37,7 +37,17 @@ class SongLyricsListVC: ListVC<SongLyric> {
     override func showData() {
         let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: filterVC.selectedTags.enumerated().map {
             let (i, tags) = $0
-            return NSPredicate(format: "ANY tags.id IN %@ OR %d == 1", tags.map { $0.id }, filterVC.usingFilter[i] ? 0 : 1)
+            let predicateFormat: String
+            
+            if tags is [Tag] {
+                predicateFormat = Tag.predicateFormat
+            } else if tags is [Language] {
+                predicateFormat = Language.predicateFormat
+            } else {
+                predicateFormat = ""
+            }
+            
+            return NSPredicate(format: predicateFormat + " OR %d == 1", tags.map { $0.name }, filterVC.usingFilter[i] ? 0 : 1)
         })
         
         showingData = showingData.filter {
@@ -60,7 +70,7 @@ class SongLyricsListVC: ListVC<SongLyric> {
     
     var filterShadow: UIView?
     
-    @objc func showFilters() {
+    @objc func toggleFilters() {
         searchView.searchField.resignFirstResponder()
         
         if !showingFilter {
@@ -70,7 +80,7 @@ class SongLyricsListVC: ListVC<SongLyric> {
             
             addChild(filterVC)
             filterShadow = UIView(frame: tableView.frame)
-            filterShadow?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(showFilters)))
+            filterShadow?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(toggleFilters)))
             view.addSubview(filterShadow!)
             view.addSubview(filterVC.view)
             filterVC.view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(didPan(sender:))))
@@ -140,7 +150,7 @@ class SongLyricsListVC: ListVC<SongLyric> {
         filterButton.translatesAutoresizingMaskIntoConstraints = false
         filterButton.setImage(UIImage(named: "filterIcon"), for: .normal)
         filterButton.tintColor = Constants.getLightColor() ?? .black
-        filterButton.addTarget(self, action: #selector(showFilters), for: .touchUpInside)
+        filterButton.addTarget(self, action: #selector(toggleFilters), for: .touchUpInside)
         
         let views = [
             "searchField": searchView.searchField,

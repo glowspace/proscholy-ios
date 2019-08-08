@@ -33,7 +33,7 @@ class SongBookVC: SongLyricsListVC {
         super.viewWillAppear(animated)
         
         setTitle(songBook.name)
-//        navigationController?.navigationBar.barTintColor = .from(hex: songBook.color)
+        navigationController?.navigationBar.barTintColor = .from(hex: songBook.color)
         navigationItem.setRightBarButton(searchBarButton, animated: true)
         
         navigationController?.navigationBar.addSubview(emptyBackButtonView)
@@ -106,6 +106,11 @@ class SongBookVC: SongLyricsListVC {
             
             setTitle(songBook.name)
             navigationItem.setRightBarButton(searchBarButton, animated: true)
+            
+            filterVC.clearFilters()
+            if showingFilter {
+                toggleFilters()
+            }
         } else {
             navigationController?.popViewController(animated: true)
         }

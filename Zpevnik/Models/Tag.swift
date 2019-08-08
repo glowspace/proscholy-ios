@@ -22,15 +22,30 @@ extension Tag {
     }
 }
 
-extension Tag {
+extension Tag: FilterTag {
     
-    var allChildren: [Tag] {
+    var title: String {
+        get {
+            return self.name!
+        }
+    }
+    
+    var elements: [FilterAble] {
         get {
             if let children = children?.allObjects as? [Tag] {
-                return children
+                return children.sorted{ $0.id!.localizedStandardCompare($1.id!) == .orderedAscending }
             }
             
             return []
+        }
+    }
+}
+
+extension Tag: FilterAble {
+    
+    static var predicateFormat: String {
+        get {
+            return "ANY tags.name IN %@"
         }
     }
 }

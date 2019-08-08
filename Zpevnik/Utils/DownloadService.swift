@@ -65,7 +65,7 @@ class DownloadService {
         }
         
         let queries = [
-            Query(type: "song_lyrics", fields: ["id", "lyrics", "name",
+            Query(type: "song_lyrics", fields: ["id", "lyrics", "name", "lang_string",
                                                 Query(type: "songbook_records", fields: ["id", "number",
                                                                                          Query(type: "songbook", fields: ["id"])]),
                                                 Query(type: "authors", fields: ["id", "name"]),
@@ -131,6 +131,12 @@ class DownloadService {
         
         guard let data = jsonData["data"] as? [String: Any] else { return }
         
+        if let languages: [Language] = CoreDataService.fetchData(context: context) {
+            for language in languages {
+                language.count = 0
+            }
+        }
+        
         createSongBooks(from: data["songbooks"] as? [[String: Any]], context)
         createTags(from: data["tags"] as? [[String: Any]], context)
         createSongLyrics(from: data["song_lyrics"] as? [[String: Any]], context)
@@ -151,6 +157,8 @@ class DownloadService {
     private static func createTags(from data: [[String: Any]]?, _ context: NSManagedObjectContext) {
         guard let data = data else { return }
         
+        removeOldTags(context)
+        
         for tagsData in data {
             _ = Tag.createFromDict(tagsData, context)
         }
@@ -161,6 +169,14 @@ class DownloadService {
                     tag.parent = parent
                     parent.addToChildren(tag)
                 }
+            }
+        }
+    }
+    
+    private static func removeOldTags(_ context: NSManagedObjectContext) {
+        if let tags: [Tag] = CoreDataService.fetchData(context: context) {
+            for tag in tags {
+                context.delete(tag)
             }
         }
     }
@@ -179,6 +195,16 @@ class DownloadService {
                         if let id = tagData["id"], let tag: Tag = CoreDataService.getObject(id: id, context: context) {
                             tag.addToSongLyrics(songLyric)
                             songLyric.addToTags(tag)
+                        }
+                    }
+                }
+                
+                if let lang = songLyricsData["lang_string"] as? String {
+                    if let languages: [Language] = CoreDataService.fetchData(predicate: NSPredicate(format: "name == %@", lang), context: context), languages.count > 0 {
+                        languages[0].count += 1
+                    } else {
+                        if let language = NSEntityDescription.insertNewObject(forEntityName: "Language", into: context) as? Language {
+                            language.name = lang
                         }
                     }
                 }

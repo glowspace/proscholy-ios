@@ -18,13 +18,13 @@ class FilterVC: UIViewController {
         return CoreDataService.fetchData(context: PersistenceService.context) ?? []
     }()
     
-    lazy var mainSections: [Tag] = {
+    lazy var mainSections: [FilterTag] = {
         let defaultTag = Tag(entity: Tag.entity(), insertInto: nil)
         defaultTag.name = "Filtry"
         
-        var sections = [defaultTag]
+        var sections: [FilterTag] = [defaultTag]
         sections.append(contentsOf: tags.filter {
-            if $0.allChildren.count > 0 {
+            if $0.elements.count > 0 {
                 return true
             }
             
@@ -35,6 +35,9 @@ class FilterVC: UIViewController {
             return false
         })
         
+        let languageTag = LanguageTag()
+        sections.append(languageTag)
+        
         return sections
     }()
 
@@ -43,13 +46,13 @@ class FilterVC: UIViewController {
     }()
     
     lazy var selected: [[Bool]] = {
-        return mainSections.map { $0.allChildren.map { _ in return true } }
+        return mainSections.map { $0.elements.map { _ in return true } }
     }()
     
     lazy var labels: [[UILabel]] = mainSections.enumerated().map {
         let (i, section) = $0
 
-        return section.allChildren.sorted{ $0.id!.localizedStandardCompare($1.id!) == .orderedAscending }.map { createLabel($0.name, color: colors[i]) }
+        return section.elements.map { createLabel($0.name, color: colors[i]) }
     }
     
     lazy var tagsView: UICollectionView = {
@@ -158,14 +161,14 @@ class FilterVC: UIViewController {
 
 extension FilterVC {
     
-    var selectedTags: [[Tag]] {
+    var selectedTags: [[FilterAble]] {
         get {
-            var selectedTags = [[Tag]]()
+            var selectedTags = [[FilterAble]]()
             
             mainSections.enumerated().forEach {
                 let (i, section) = $0
                 selectedTags.append([])
-                section.allChildren.enumerated().forEach {
+                section.elements.enumerated().forEach {
                     let (j, tag) = $0
                     if selected[i][j] {
                         selectedTags[i].append(tag)
@@ -176,6 +179,21 @@ extension FilterVC {
             return selectedTags
         }
     }
+    
+    func clearFilters() {
+        for section in 0..<selected.count {
+            for row in 0..<selected[section].count {
+                selected[section][row] = true
+                tagsView.cellForItem(at: IndexPath(row: row, section: section))?.alpha = 1
+            }
+        }
+        
+        for i in 0..<usingFilter.count {
+            usingFilter[i] = false
+        }
+        
+        delegate?.updateSelected()
+    }
 }
 
 extension FilterVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
@@ -185,7 +203,7 @@ extension FilterVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
     }
     
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return mainSections[section].allChildren.count
+        return mainSections[section].elements.count
     }
     
     func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
@@ -201,7 +219,7 @@ extension FilterVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
             
             let label = UILabel()
             
-            label.text = mainSections[indexPath.section].name
+            label.text = mainSections[indexPath.section].title
             label.sizeToFit()
             
             label.translatesAutoresizingMaskIntoConstraints = false
@@ -246,7 +264,7 @@ extension FilterVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
         if !usingFilter[indexPath.section] {
             usingFilter[indexPath.section] = true
             
-            mainSections[indexPath.section].allChildren.enumerated().forEach {
+            mainSections[indexPath.section].elements.enumerated().forEach {
                 let (i, _) = $0
                 let indexPath = IndexPath(row: i, section: indexPath.section)
                 
@@ -259,7 +277,7 @@ extension FilterVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
             if selectedTags[indexPath.section].count == 0 {
                 usingFilter[indexPath.section] = false
                 
-                mainSections[indexPath.section].allChildren.enumerated().forEach {
+                mainSections[indexPath.section].elements.enumerated().forEach {
                     let (i, _) = $0
                     
                     let indexPath = IndexPath(row: i, section: indexPath.section)
