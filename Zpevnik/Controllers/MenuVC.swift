@@ -61,6 +61,17 @@ extension MenuVC: UITableViewDelegate, UITableViewDataSource {
         case 0:
             navigationController?.pushViewController(SettingsVC(), animated: true)
             break
+        case 1:
+            let aboutVC = AboutVC()
+            aboutVC.setTitle("O Zpěvníku")
+            aboutVC.descriptionLabel.text = "Vítejte v digitálním zpěvníku ProScholy.cz, který přichází na pomoc všem scholám, křesťanským kapelám, společenstvím a všem, kdo se chtějí modlit hudbou!"
+            navigationController?.pushViewController(aboutVC, animated: true)
+            break
+        case 2:
+            let aboutVC = AboutVC()
+            aboutVC.setTitle("O Aplikaci")
+            navigationController?.pushViewController(aboutVC, animated: true)
+            break
         case 3:
             guard let url = URL(string: "https://zpevnik.proscholy.cz") else { return }
             UIApplication.shared.open(url)

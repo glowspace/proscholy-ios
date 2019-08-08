@@ -12,7 +12,6 @@ class HomeScreenVC: UIViewController {
     
     let backgroundImageView: UIImageView = {
         let imageView = UIImageView()
-        
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         imageView.contentMode = .scaleAspectFill
@@ -22,7 +21,7 @@ class HomeScreenVC: UIViewController {
     }()
     
     let titleImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: "homeScreenTitle"))
+        let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         return imageView
@@ -110,9 +109,11 @@ class HomeScreenVC: UIViewController {
         super.viewWillAppear(animated)
         
         if UserSettings.darkMode {
-            backgroundImageView.image = UIImage(named: "darkBackground")
+            backgroundImageView.image = UIImage(named: "backgroundDark")
+            titleImageView.image = UIImage(named: "homeScreenTitleDark")
         } else {
             backgroundImageView.image = UIImage(named: "background")
+            titleImageView.image = UIImage(named: "homeScreenTitle")
         }
         
         allSongLyricsVC.searchView.searchField.text = ""

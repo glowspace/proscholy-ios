@@ -13,6 +13,7 @@
 		391AE0EE22FACD5900E7F5BC /* Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 391AE0EC22FACD5900E7F5BC /* Tag.swift */; };
 		391AE0EF22FACD5900E7F5BC /* SongBookRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 391AE0ED22FACD5900E7F5BC /* SongBookRecord.swift */; };
 		391AE0F122FACD7C00E7F5BC /* AlignedCollectionViewFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 391AE0F022FACD7C00E7F5BC /* AlignedCollectionViewFlowLayout.swift */; };
+		3939FA6E22FC129600F9AED1 /* AboutVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3939FA6D22FC129600F9AED1 /* AboutVC.swift */; };
 		397B625922E8B58700B9CCEC /* SongBookVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 397B625822E8B58700B9CCEC /* SongBookVC.swift */; };
 		397B625B22E9BE4300B9CCEC /* Protocols.swift in Sources */ = {isa = PBXBuildFile; fileRef = 397B625A22E9BE4300B9CCEC /* Protocols.swift */; };
 		397B625D22EA22A800B9CCEC /* SongLyricCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 397B625C22EA22A800B9CCEC /* SongLyricCell.swift */; };
@@ -61,6 +62,7 @@
 		391AE0EC22FACD5900E7F5BC /* Tag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tag.swift; sourceTree = "<group>"; };
 		391AE0ED22FACD5900E7F5BC /* SongBookRecord.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongBookRecord.swift; sourceTree = "<group>"; };
 		391AE0F022FACD7C00E7F5BC /* AlignedCollectionViewFlowLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlignedCollectionViewFlowLayout.swift; sourceTree = "<group>"; };
+		3939FA6D22FC129600F9AED1 /* AboutVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutVC.swift; sourceTree = "<group>"; };
 		397B625822E8B58700B9CCEC /* SongBookVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongBookVC.swift; sourceTree = "<group>"; };
 		397B625A22E9BE4300B9CCEC /* Protocols.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Protocols.swift; sourceTree = "<group>"; };
 		397B625C22EA22A800B9CCEC /* SongLyricCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongLyricCell.swift; sourceTree = "<group>"; };
@@ -224,6 +226,7 @@
 				39F7BA2E22E7090F00FDFF90 /* ListVC.swift */,
 				39DFB19722E86FCF0013906D /* MenuVC.swift */,
 				39CB0FDC22F70DA8001342E9 /* SettingsVC.swift */,
+				3939FA6D22FC129600F9AED1 /* AboutVC.swift */,
 				39DFB19122E825DC0013906D /* SongBooksListVC.swift */,
 				397B625822E8B58700B9CCEC /* SongBookVC.swift */,
 				399D065722F480E6003C7D56 /* SongLyricsListVC.swift */,
@@ -346,6 +349,7 @@
 				39CB0FDF22F75483001342E9 /* SettingCell.swift in Sources */,
 				3997799022F7714A00CE6FF6 /* Constants.swift in Sources */,
 				39DFB19422E8573D0013906D /* FavoriteListVC.swift in Sources */,
+				3939FA6E22FC129600F9AED1 /* AboutVC.swift in Sources */,
 				39F7BA2D22E7090F00FDFF90 /* AppDelegate.swift in Sources */,
 				391AE0E422FAC9CF00E7F5BC /* FilterTagCell.swift in Sources */,
 				391AE0F122FACD7C00E7F5BC /* AlignedCollectionViewFlowLayout.swift in Sources */,

@@ -46,12 +46,12 @@ class SettingsVC: UIViewController {
         cells = []
         
         cells.append(createSettingCell(title: "Blokovat zhasínání displeje", isOn: UserSettings.blockAutoLock, action: #selector(blockAutoLockToggle)))
-        cells.append(createSettingCell(title: "Patkové písmo", isOn: UserSettings.serif, action: #selector(serifToggle)))
-        cells.append(createSettingCell(title: "Posuvky", isOn: UserSettings.showSliders, action: #selector(slidersToggle)))
+//        cells.append(createSettingCell(title: "Patkové písmo", isOn: UserSettings.serif, action: #selector(serifToggle)))
+//        cells.append(createSettingCell(title: "Posuvky", isOn: UserSettings.showSliders, action: #selector(slidersToggle)))
         cells.append(createSettingCell(title: "Akordy", isOn: UserSettings.showChords, action: #selector(showChordsToggle)))
         cells.append(createFontSizeCell())
         cells.append(createSettingCell(title: "Tmavý mód", isOn: UserSettings.darkMode, action: #selector(darkModeToggle)))
-        cells.append(createSettingCell(title: "Zobrazit spodní nabídku", isOn: UserSettings.showBottomOptions, action: #selector(bottomOptionsToggle)))
+//        cells.append(createSettingCell(title: "Zobrazit spodní nabídku", isOn: UserSettings.showBottomOptions, action: #selector(bottomOptionsToggle)))
     }
     
     private func createFontSizeCell() -> UITableViewCell {
@@ -160,7 +160,7 @@ extension SettingsVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section == 0 ? 2 : 5
+        return section == 0 ? 1 : 3
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -172,7 +172,7 @@ extension SettingsVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let index = (indexPath.section == 1 ? 2 : 0) + indexPath.row
+        let index = (indexPath.section == 1 ? 1 : 0) + indexPath.row
         
         return cells[index]
     }

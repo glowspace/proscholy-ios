@@ -20,7 +20,6 @@ class UserSettings {
     static var serif = false {
         didSet {
 //            UILabel.appearance().substituteFontName = ""
-//            UINavigationBar.appearance().substituteFontName = ""
         }
     }
     static var showSliders = false
@@ -86,13 +85,10 @@ class UserSettings {
 
         UITableView.appearance().backgroundColor = Constants.getDarkColor() ?? .groupTableViewBackground
         UITableView.appearance().separatorColor = Constants.getLightColor()
-        UITableViewCell.appearance().backgroundColor = Constants.getMiddleColor() ?? .white
+        UITableViewCell.appearance().backgroundColor = Constants.getTableViewCellColor() ?? .white
         UITableViewCell.appearance().selectionStyle = .none
 
         UICollectionViewCell.appearance().backgroundColor = Constants.getMiddleColor() ?? .white
-
-        SongLyricCell.appearance().backgroundColor = Constants.getDarkColor() ?? .white
-        SongBookCell.appearance().backgroundColor = Constants.getDarkColor() ?? .white
 
         UITextView.appearance().backgroundColor = Constants.getDarkColor()
         UITextView.appearance().textColor = darkMode ? .white : .black

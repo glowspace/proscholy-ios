@@ -74,18 +74,6 @@ extension UILabel {
     }
 }
 
-extension UINavigationBar {
-    
-    @objc var substituteFontName: String {
-        get {
-            return ""
-        }
-        set {
-            titleTextAttributes = [.font: UIFont.getFont(ofSize: 17)]
-        }
-    }
-}
-
 extension UIViewController {
     
     func hideKeyboardWhenTappedAround() {
@@ -240,12 +228,12 @@ class TableViewCell: UITableViewCell {
     override func setHighlighted(_ highlighted: Bool, animated: Bool) {
         super.setHighlighted(highlighted, animated: animated)
         
-        backgroundColor = highlighted ? (Constants.getLightColor() ?? UIColor(white: 0.85, alpha: 1)) : (Constants.getMiddleColor() ?? .white)
+        backgroundColor = highlighted ? (Constants.getMiddleColor() ?? UIColor(white: 0.85, alpha: 1)) : (Constants.getTableViewCellColor() ?? .white)
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
         super.setSelected(selected, animated: animated)
         
-        backgroundColor = selected ? (Constants.getLightColor() ?? UIColor(white: 0.85, alpha: 1)) : (Constants.getMiddleColor() ?? .white)
+        backgroundColor = selected ? (Constants.getMiddleColor() ?? UIColor(white: 0.85, alpha: 1)) : (Constants.getTableViewCellColor() ?? .white)
     }
 }

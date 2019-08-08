@@ -10,6 +10,23 @@ import UIKit
 
 class LaunchVC: UIViewController {
     
+    let backgroundImageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(named: UserSettings.darkMode ? "backgroundDark" : "background"))
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        imageView.contentMode = .scaleAspectFill
+        imageView.clipsToBounds = true
+        
+        return imageView
+    }()
+    
+    let titleImageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(named: UserSettings.darkMode ? "homeScreenTitleDark" : "homeScreenTitle"))
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        return imageView
+    }()
+    
     let progressInfoLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -20,7 +37,7 @@ class LaunchVC: UIViewController {
     }()
     
     let loadingIndicator: UIActivityIndicatorView = {
-        let indicator = UIActivityIndicatorView(style: .gray)
+        let indicator = UIActivityIndicatorView(style: UserSettings.darkMode ? .white : .gray)
         indicator.translatesAutoresizingMaskIntoConstraints = false
         
         return indicator
@@ -31,19 +48,28 @@ class LaunchVC: UIViewController {
         
         navigationController?.isNavigationBarHidden = true
         
-        view.backgroundColor = Constants.getMiddleColor() ?? .white
+        view.addSubview(backgroundImageView)
         
+        view.addSubview(titleImageView)
         view.addSubview(loadingIndicator)
         view.addSubview(progressInfoLabel)
         
         let views = [
+            "titleImageView": titleImageView,
             "loadingIndicator": loadingIndicator,
             "progressInfoLabel": progressInfoLabel
         ]
         
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[loadingIndicator]-|", metrics: nil, views: views))
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[progressInfoLabel]-|", metrics: nil, views: views))
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[loadingIndicator]-[progressInfoLabel]-|", metrics: nil, views: views))
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[backgroundImageView]|", metrics: nil, views: ["backgroundImageView": backgroundImageView]))
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[backgroundImageView]|", metrics: nil, views: ["backgroundImageView": backgroundImageView]))
+        
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[titleImageView]-|", metrics: nil, views: ["titleImageView": titleImageView,]))
+        view.addConstraint(NSLayoutConstraint(item: loadingIndicator, attribute: .centerX, relatedBy: .equal, toItem: view, attribute: .centerX, multiplier: 1, constant: 0))
+        view.addConstraint(NSLayoutConstraint(item: progressInfoLabel, attribute: .centerX, relatedBy: .equal, toItem: view, attribute: .centerX, multiplier: 1, constant: 0))
+        view.addConstraint(NSLayoutConstraint(item: loadingIndicator, attribute: .centerY, relatedBy: .equal, toItem: view, attribute: .centerY, multiplier: 1, constant: 0))
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[titleImageView]", metrics: nil, views: views))
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[loadingIndicator]-[progressInfoLabel]", metrics: nil, views: views))
+        view.addConstraint(NSLayoutConstraint(item: titleImageView, attribute: .width, relatedBy: .equal, toItem: titleImageView, attribute: .height, multiplier: 505.0 / 153.0, constant: 0))
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -77,8 +103,8 @@ class LaunchVC: UIViewController {
             }
         }) {
             DispatchQueue.main.async {
-                self.loadingIndicator.stopAnimating()
                 self.navigationController?.present(TabBarController(), animated: false)
+                self.loadingIndicator.stopAnimating()
             }
         }
     }
