@@ -65,14 +65,15 @@ class DownloadService {
         }
         
         let queries = [
-            Query(type: "song_lyrics", fields: ["id", "lyrics", "name", "lang_string",
-                                                Query(type: "songbook_records", fields: ["id", "number",
-                                                                                         Query(type: "songbook", fields: ["id"])]),
-                                                Query(type: "authors", fields: ["id", "name"]),
-                                                Query(type: "tags", fields: ["id"])], arguments: arguments),
+            Query(type: "song_lyrics", fields: ["id", "lyrics", "name", "lang_string", "type",
+                Query(type: "song", fields: ["id", "name"]),
+                Query(type: "songbook_records", fields: ["id", "number",
+                     Query(type: "songbook", fields: ["id"])]),
+                Query(type: "authors", fields: ["id", "name"]),
+                Query(type: "tags", fields: ["id"])], arguments: arguments),
             Query(type: "songbooks", fields: ["id", "name", "shortcut", "is_private", "color"]),
             Query(type: "tags", fields: ["id", "name",
-                                         Query(type: "parent_tag", fields: ["id"])])
+                 Query(type: "parent_tag", fields: ["id"])])
         ]
         
         guard let encodedUrl = generateQuery("https://zpevnik.proscholy.cz", queries).addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed), let url = URL(string: encodedUrl) else { return }
@@ -116,7 +117,7 @@ class DownloadService {
         
         do {
             guard let path = Bundle.main.path(forResource: "data", ofType: "json") else { return }
-            try prepareData(try Data(contentsOf: URL(fileURLWithPath: path)))
+            try prepareData(Data(contentsOf: URL(fileURLWithPath: path)))
             
             defaults.set(true, forKey: "defaultDataLoaded")
             
@@ -186,6 +187,8 @@ class DownloadService {
         
         for songLyricsData in data {
             if let songLyric = SongLyric.createFromDict(songLyricsData, context) {
+                createSong(songLyricsData["song"], forSongLyric: songLyric, context: context)
+                
                 createSongBookRecords(songLyricsData["songbook_records"], forSongLyric: songLyric, context: context)
                 
                 createAuthors(songLyricsData["authors"], forSongLyric: songLyric, context: context)
@@ -209,6 +212,15 @@ class DownloadService {
                     }
                 }
             }
+        }
+    }
+    
+    private static func createSong(_ data: Any?, forSongLyric songLyric: SongLyric, context: NSManagedObjectContext) {
+        guard let data = data as? [String: Any] else { return }
+        
+        if let song = Song.createFromDict(data, context) {
+            song.addToSongLyrics(songLyric)
+            songLyric.song = song
         }
     }
     

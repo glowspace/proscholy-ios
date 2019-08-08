@@ -8,7 +8,7 @@
 
 import UIKit
 
-class HomeScreenVC: UIViewController {
+class HomeScreenVC: ViewController {
     
     let backgroundImageView: UIImageView = {
         let imageView = UIImageView()
@@ -169,7 +169,7 @@ class HomeScreenVC: UIViewController {
     }
     
     private func createButtons() -> [UIView] {
-        let listButton = createGradientButton(icon: UIImage(named: "listIcon"), title: "Zpěvníky", summary: "Vyberte si píseň ze známých zpěvníků", startColor: UIColor(red: 0x87, green: 0x5A, blue: 0xA5), endColor: UIColor(red: 0x62, green: 0x70, blue: 0xB5))
+        let listButton = createGradientButton(icon: UIImage(named: "songBookIcon"), title: "Zpěvníky", summary: "Vyberte si píseň ze známých zpěvníků", startColor: UIColor(red: 0x87, green: 0x5A, blue: 0xA5), endColor: UIColor(red: 0x62, green: 0x70, blue: 0xB5))
         let favoriteButton = createGradientButton(icon: UIImage(named: "gradeIcon"), title: "Oblíbené", summary: "Vraťte se ke svým oblíbeným písním", startColor: UIColor(red: 0x58, green: 0xC5, blue: 0xCD), endColor: UIColor(red: 0x5C, green: 0x7F, blue: 0xBF))
         let settingsButton = createGradientButton(icon: UIImage(named: "settingsIcon"), title: "Nastavení", summary: "Přizpůsobte si nastavení aplikace", startColor: UIColor(red: 0xF1, green: 0x67, blue: 0x2C), endColor: UIColor(red: 0xF5, green: 0xBA, blue: 0x63))
         

@@ -26,7 +26,7 @@ extension Tag: FilterTag {
     
     var title: String {
         get {
-            return self.name!
+            return self.name!.capitalizingFirstLetter()
         }
     }
     

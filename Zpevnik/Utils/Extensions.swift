@@ -74,6 +74,20 @@ extension UILabel {
     }
 }
 
+class NavigationController : UINavigationController {
+    
+    override var preferredStatusBarStyle : UIStatusBarStyle {
+        return UserSettings.darkMode ? .lightContent : .default
+    }
+}
+
+class ViewController: UIViewController {
+
+    override var preferredStatusBarStyle : UIStatusBarStyle {
+        return UserSettings.darkMode ? .lightContent : .default
+    }
+}
+
 extension UIViewController {
     
     func hideKeyboardWhenTappedAround() {
@@ -96,7 +110,7 @@ extension UIViewController {
         label.font = .systemFont(ofSize: 17, weight: .semibold)
         label.backgroundColor = .clear
         label.adjustsFontSizeToFitWidth = true
-        label.minimumScaleFactor = 0.5
+        label.minimumScaleFactor = 0.75
         label.textAlignment = .center
         
         view.addSubview(label)
@@ -116,34 +130,6 @@ extension UIViewController {
         
         navigationItem.titleView = view
         navigationItem.title = ""
-    }
-    
-    func hideBars(_ hidden: Bool, animated: Bool) {
-        guard let tabBarController = tabBarController else { return }
-        guard let navigationController = navigationController else { return }
-        
-        if !hidden {
-            tabBarController.tabBar.isHidden = hidden
-            navigationController.navigationBar.isHidden = hidden
-        }
-        
-        let duration = animated ? 0.3 : 0
-        UIView.animate(withDuration: duration, animations: {
-            tabBarController.tabBar.frame.origin.y += tabBarController.tabBar.frame.height * (hidden ? 1 : -1)
-            navigationController.navigationBar.frame.origin.y -= navigationController.navigationBar.frame.height * (hidden ? 1 : -1)
-            
-            self.view.frame.origin.y -= navigationController.navigationBar.frame.height * (hidden ? 1 : -1)
-            if hidden {
-                self.view.frame.size.height += tabBarController.tabBar.frame.height
-            }
-        }) { _ in
-            if !hidden {
-                self.view.frame.size.height -= tabBarController.tabBar.frame.height
-            }
-            
-            tabBarController.tabBar.isHidden = hidden
-            navigationController.navigationBar.isHidden = hidden
-        }
     }
 }
 
@@ -173,16 +159,21 @@ extension UITextField {
 
 class TextField: UITextField {
     
+    override func layoutSublayers(of layer: CALayer) {
+        super.layoutSublayers(of: layer)
+        
+        if let clearButton = value(forKey: "_clearButton") as? UIButton {
+            let templateImage = clearButton.imageView?.image?.withRenderingMode(.alwaysTemplate)
+            clearButton.setImage(templateImage, for: .normal)
+            clearButton.tintColor = UserSettings.darkMode ? .white : .black
+        }
+    }
+    
     override func draw(_ rect: CGRect) {
         super.draw(rect)
         
-        for view in subviews {
-            if let button = view as? UIButton {
-                button.setImage(button.image(for: .normal)?.withRenderingMode(.alwaysTemplate), for: .normal)
-                button.tintColor = .white
-            } else if let label = view as? UILabel {
-                label.textColor = .lightGray
-            }
+        if let placeholderLabel = value(forKey: "placeholderLabel") as? UILabel {
+            placeholderLabel.textColor = .lightGray
         }
     }
     
@@ -235,5 +226,15 @@ class TableViewCell: UITableViewCell {
         super.setSelected(selected, animated: animated)
         
         backgroundColor = selected ? (Constants.getMiddleColor() ?? UIColor(white: 0.85, alpha: 1)) : (Constants.getTableViewCellColor() ?? .white)
+    }
+}
+
+extension String {
+    func capitalizingFirstLetter() -> String {
+        return prefix(1).uppercased() + self.lowercased().dropFirst()
+    }
+    
+    mutating func capitalizeFirstLetter() {
+        self = self.capitalizingFirstLetter()
     }
 }

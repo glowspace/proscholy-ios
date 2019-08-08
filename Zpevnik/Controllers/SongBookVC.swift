@@ -29,28 +29,30 @@ class SongBookVC: SongLyricsListVC {
         return view
     }()
     
+    var searching = false
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        setTitle(songBook.name)
-        navigationController?.navigationBar.barTintColor = .from(hex: songBook.color)
-        navigationItem.setRightBarButton(searchBarButton, animated: true)
-        
         navigationController?.navigationBar.addSubview(emptyBackButtonView)
-        navigationController?.navigationBar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[emptyBackButtonView(==44)]", metrics: nil, views: ["emptyBackButtonView": emptyBackButtonView]))
-        navigationController?.navigationBar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[emptyBackButtonView(==44)]", metrics: nil, views: ["emptyBackButtonView": emptyBackButtonView]))
+        
+        if !searching {
+            setTitle(songBook.name)
+            navigationController?.navigationBar.barTintColor = .from(hex: songBook.color)
+            navigationItem.setRightBarButton(searchBarButton, animated: true)
+            
+            navigationController?.navigationBar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[emptyBackButtonView(==44)]", metrics: nil, views: ["emptyBackButtonView": emptyBackButtonView]))
+            navigationController?.navigationBar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[emptyBackButtonView(==44)]", metrics: nil, views: ["emptyBackButtonView": emptyBackButtonView]))
+        } else {
+            showSearchView(placeholder: "Zadejte název či číslo písně")
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        searchView.searchField.text = ""
-        updateData(sender: searchView.searchField)
-        searchView.searchField.resignFirstResponder()
-        navigationItem.titleView = nil
-        navigationItem.setRightBarButton(searchBarButton, animated: true)
-        
         emptyBackButtonView.removeFromSuperview()
+        searchView.searchField.resignFirstResponder()
     }
     
     override func loadData() {
@@ -111,6 +113,8 @@ class SongBookVC: SongLyricsListVC {
             if showingFilter {
                 toggleFilters()
             }
+            
+            searching = false
         } else {
             navigationController?.popViewController(animated: true)
         }
@@ -120,6 +124,7 @@ class SongBookVC: SongLyricsListVC {
         navigationItem.setRightBarButton(nil, animated: true)
         showSearchView(placeholder: "Zadejte název či číslo písně")
         searchView.searchField.becomeFirstResponder()
+        searching = true
     }
     
     // MARK: - UITableViewDelegate, UITableViewDataSource

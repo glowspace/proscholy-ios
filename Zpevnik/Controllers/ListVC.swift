@@ -8,7 +8,7 @@
 
 import UIKit
 
-class ListVC<T: SongDataSource>: UIViewController, UITableViewDelegate, UITableViewDataSource, UIAdaptivePresentationControllerDelegate {
+class ListVC<T: SongDataSource>: ViewController, UITableViewDelegate, UITableViewDataSource, UIAdaptivePresentationControllerDelegate {
     
     lazy var searchView: SearchView = {
         let searchView = SearchView()
@@ -46,17 +46,11 @@ class ListVC<T: SongDataSource>: UIViewController, UITableViewDelegate, UITableV
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-//        navigationController?.navigationBar.setBackgroundImage(UIImage(), for: .default)
-//        navigationController?.navigationBar.shadowImage = UIImage()
-        
         loadData()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
-//        navigationController?.navigationBar.setBackgroundImage(nil, for: .default)
-//        navigationController?.navigationBar.shadowImage = nil
         
         setTitle("")
         searchView.searchField.resignFirstResponder()

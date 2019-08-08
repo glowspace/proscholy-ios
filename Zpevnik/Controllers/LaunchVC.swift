@@ -8,7 +8,7 @@
 
 import UIKit
 
-class LaunchVC: UIViewController {
+class LaunchVC: ViewController {
     
     let backgroundImageView: UIImageView = {
         let imageView = UIImageView(image: UIImage(named: UserSettings.darkMode ? "backgroundDark" : "background"))
@@ -32,6 +32,7 @@ class LaunchVC: UIViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         
         label.textAlignment = .center
+        label.text = "Příprava písní"
         
         return label
     }()
@@ -70,6 +71,8 @@ class LaunchVC: UIViewController {
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[titleImageView]", metrics: nil, views: views))
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[loadingIndicator]-[progressInfoLabel]", metrics: nil, views: views))
         view.addConstraint(NSLayoutConstraint(item: titleImageView, attribute: .width, relatedBy: .equal, toItem: titleImageView, attribute: .height, multiplier: 505.0 / 153.0, constant: 0))
+        
+        loadingIndicator.startAnimating()
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -94,9 +97,6 @@ class LaunchVC: UIViewController {
     }
     
     private func updateSongLyrics() {
-        progressInfoLabel.text = "Příprava písní"
-        loadingIndicator.startAnimating()
-        
         DownloadService.updateSongs({ progressInfo in
             DispatchQueue.main.async {
                 self.progressInfoLabel.text = progressInfo

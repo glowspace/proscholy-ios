@@ -20,8 +20,22 @@ class SongLyricsListVC: ListVC<SongLyric> {
         return vc
     }()
     
+    lazy var filterButton: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
+        button.setImage(UIImage(named: "filterIcon"), for: .normal)
+        button.addTarget(self, action: #selector(toggleFilters), for: .touchUpInside)
+        return button
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+    }
+    
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        filterButton.tintColor = Constants.getLightColor() ?? .black
     }
     
     // MARK: - Data Handlers
@@ -146,12 +160,6 @@ class SongLyricsListVC: ListVC<SongLyric> {
     override internal func setViews() {
         super.setViews()
         
-        let filterButton = UIButton()
-        filterButton.translatesAutoresizingMaskIntoConstraints = false
-        filterButton.setImage(UIImage(named: "filterIcon"), for: .normal)
-        filterButton.tintColor = Constants.getLightColor() ?? .black
-        filterButton.addTarget(self, action: #selector(toggleFilters), for: .touchUpInside)
-        
         let views = [
             "searchField": searchView.searchField,
             "filterButton": filterButton
@@ -190,6 +198,9 @@ extension SongLyricsListVC: SongLyricDelegate {
             }
             controller.songLyric = showingData[currentSongLyricIndex]
             controller.updateSongLyrics()
+            controller.scrollView.showsVerticalScrollIndicator = false
+            controller.scrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
+            controller.scrollView.showsVerticalScrollIndicator = true
             self.currentSongLyricIndex = currentSongLyricIndex
         }
     }

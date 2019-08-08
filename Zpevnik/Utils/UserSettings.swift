@@ -82,7 +82,7 @@ class UserSettings {
     private static func prepareDarkMode(_ darkMode: Bool) {
         UINavigationBar.appearance().barTintColor = Constants.getMiddleColor()
         UITabBar.appearance().barTintColor = Constants.getMiddleColor()
-
+        
         UITableView.appearance().backgroundColor = Constants.getDarkColor() ?? .groupTableViewBackground
         UITableView.appearance().separatorColor = Constants.getLightColor()
         UITableViewCell.appearance().backgroundColor = Constants.getTableViewCellColor() ?? .white
@@ -98,5 +98,7 @@ class UserSettings {
         SearchView.appearance().backgroundColor = Constants.getMiddleColor() ?? .white
 
         UITextField.appearance().textColor = darkMode ? .white : .black
+        
+//        UIView.appearance(whenContainedInInstancesOf: [UINavigationController.self]).backgroundColor = Constants.getMiddleColor() ?? .white
     }
 }

@@ -10,12 +10,20 @@ import UIKit
 
 class SongBooksListVC: ListVC<SongBook> {
     
+    lazy var allSongLyricsVC: AllSongLyricsListVC = {
+        let vc = AllSongLyricsListVC()
+        
+        return vc
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        
+        allSongLyricsVC.searchView.searchField.text = ""
         
         showSearchView(placeholder: "Zadejte název či zkratku zpěvníku")
         navigationController?.navigationBar.barTintColor = Constants.getMiddleColor()
@@ -44,7 +52,7 @@ class SongBooksListVC: ListVC<SongBook> {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
-            navigationController?.pushViewController(AllSongLyricsListVC(), animated: true)
+            navigationController?.pushViewController(allSongLyricsVC, animated: true)
         } else {
             let songBookVC = SongBookVC()
             songBookVC.songBook = showingData[indexPath.row - 1]

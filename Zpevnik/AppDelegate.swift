@@ -20,7 +20,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         UserSettings.load()
         
-        window?.rootViewController = UINavigationController(rootViewController: LaunchVC())
+        window?.rootViewController = NavigationController(rootViewController: LaunchVC())
         
         UINavigationBar.appearance().isTranslucent = false
         UINavigationBar.appearance().setTitleVerticalPositionAdjustment(-2, for: .default)

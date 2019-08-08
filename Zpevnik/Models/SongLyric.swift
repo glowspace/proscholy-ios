@@ -20,6 +20,7 @@ extension SongLyric {
         songLyric.name = data["name"] as? String
         songLyric.lyrics = data["lyrics"] as? String
         songLyric.language = data["lang_string"] as? String
+        songLyric.isOriginal = data["type"] as? Int ?? 1 == 0 
         
         return songLyric
     }

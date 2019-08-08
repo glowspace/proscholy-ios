@@ -8,7 +8,7 @@
 
 import UIKit
 
-class FilterVC: UIViewController {
+class FilterVC: ViewController {
     
     var delegate: FilterDelegate?
     
@@ -230,7 +230,7 @@ extension FilterVC: UICollectionViewDelegate, UICollectionViewDataSource, UIColl
             
             return headerView
         default:
-            assert(false, "Invalid element type")
+            return UICollectionReusableView()
         }
     }
     

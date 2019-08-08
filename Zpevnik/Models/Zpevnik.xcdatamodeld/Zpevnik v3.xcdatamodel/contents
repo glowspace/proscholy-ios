@@ -9,6 +9,11 @@
         <attribute name="count" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
     </entity>
+    <entity name="Song" representedClassName="Song" syncable="YES" codeGenerationType="class">
+        <attribute name="id" optional="YES" attributeType="String" syncable="YES"/>
+        <attribute name="name" optional="YES" attributeType="String" syncable="YES"/>
+        <relationship name="songLyrics" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SongLyric" inverseName="song" inverseEntity="SongLyric" syncable="YES"/>
+    </entity>
     <entity name="SongBook" representedClassName="SongBook" syncable="YES" codeGenerationType="class">
         <attribute name="color" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="id" attributeType="String" syncable="YES"/>
@@ -26,10 +31,12 @@
     <entity name="SongLyric" representedClassName="SongLyric" syncable="YES" codeGenerationType="class">
         <attribute name="favoriteOrder" optional="YES" attributeType="Integer 16" defaultValueString="-1" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="id" attributeType="String" syncable="YES"/>
+        <attribute name="isOriginal" optional="YES" attributeType="Boolean" usesScalarValueType="YES" syncable="YES"/>
         <attribute name="language" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="lyrics" optional="YES" attributeType="String" syncable="YES"/>
         <attribute name="name" attributeType="String" syncable="YES"/>
         <relationship name="authors" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Author" inverseName="songLyrics" inverseEntity="Author" syncable="YES"/>
+        <relationship name="song" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Song" inverseName="songLyrics" inverseEntity="Song" syncable="YES"/>
         <relationship name="songBookRecords" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SongBookRecord" inverseName="songLyric" inverseEntity="SongBookRecord" syncable="YES"/>
         <relationship name="tags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tag" inverseName="songLyrics" inverseEntity="Tag" syncable="YES"/>
     </entity>
@@ -45,7 +52,8 @@
         <element name="Language" positionX="-288" positionY="72" width="128" height="75"/>
         <element name="SongBook" positionX="-505.38671875" positionY="-18.53125" width="128" height="135"/>
         <element name="SongBookRecord" positionX="-297" positionY="18" width="128" height="105"/>
-        <element name="SongLyric" positionX="-63" positionY="-18" width="128" height="165"/>
+        <element name="SongLyric" positionX="-63" positionY="-18" width="128" height="195"/>
         <element name="Tag" positionX="-297" positionY="45" width="128" height="120"/>
+        <element name="Song" positionX="-279" positionY="81" width="128" height="90"/>
     </elements>
 </model>

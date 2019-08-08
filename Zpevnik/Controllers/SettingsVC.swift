@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SettingsVC: UIViewController {
+class SettingsVC: ViewController {
     
     lazy var tableView: UITableView = {
         let tableView = UITableView(frame: view.bounds, style: .grouped)
@@ -137,6 +137,7 @@ class SettingsVC: UIViewController {
     @objc func darkModeToggle() {
         UserSettings.darkMode = !UserSettings.darkMode
         
+        setNeedsStatusBarAppearanceUpdate()
         for controller in [navigationController, tabBarController] {
             if let view = controller?.view {
                 let superview = view.superview

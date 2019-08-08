@@ -8,15 +8,30 @@
 
 import UIKit
 
-class SongLyricVC: UIViewController {
+class SongLyricVC: ViewController {
     
     var songLyric: SongLyric! {
         didSet {
+            middle = nil
             do {
                 (lyrics, chords) = try extractChords(songLyric.lyrics)
             } catch { }
         }
     }
+    
+    var middle: UITextPosition?
+    
+    lazy var starButton: UIBarButtonItem = {
+        let tabBarItem = UIBarButtonItem(image: UIImage(named: "starIcon"), style: .plain, target: self, action: #selector(starSelected))
+        
+        return tabBarItem
+    }()
+    
+    lazy var moreButton: UIBarButtonItem = {
+        let tabBarItem = UIBarButtonItem(image: UIImage(named: "moreIcon"), style: .plain, target: self, action: #selector(toggleMore))
+        
+        return tabBarItem
+    }()
     
     var lyrics: String?
     var chords: [Chord]?
@@ -38,21 +53,37 @@ class SongLyricVC: UIViewController {
         return textView
     }()
     
-    let authorsLabel: UILabel = {
-        let label = UILabel()
+    let authorsLabel: PaddingLabel = {
+        let label = PaddingLabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
         label.numberOfLines = 0
+        label.setInsets()
         
         return label
     }()
     
+    lazy var moreOptionsView: UITableView = {
+        let tableView = TableView(frame: CGRect(x: view.frame.width - 151, y: -131, width: 151, height: 131))
+        tableView.register(TableViewCell.self, forCellReuseIdentifier: "cellId")
+        tableView.delegate = self
+        tableView.dataSource = self
+        
+        tableView.isScrollEnabled = false
+        
+        view.addSubview(tableView)
+        
+        return tableView
+    }()
+    
+    var showingMore = false
+    
     var delegate: SongLyricDelegate?
+    
+    var scrollViewTopConstraint: NSLayoutConstraint!
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        view.backgroundColor = .white
         
         setViews()
         
@@ -62,11 +93,19 @@ class SongLyricVC: UIViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        view.backgroundColor = Constants.getDarkColor() ?? .white
         scrollView.backgroundColor = Constants.getDarkColor() ?? .white
         
         navigationController?.navigationBar.barTintColor = Constants.getMiddleColor()
         
         updateSongLyrics()
+    }
+    
+    override func viewDidDisappear(_ animated: Bool) {
+        if showingMore {
+            moreOptionsView.frame.origin.y -= moreOptionsView.frame.height
+            showingMore = false
+        }
     }
     
     private func setGestureRecognizers() {
@@ -78,6 +117,7 @@ class SongLyricVC: UIViewController {
         view.addGestureRecognizer(swipeRight)
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(toggleFullDisplay))
+        tap.delegate = self
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
         
@@ -90,7 +130,10 @@ class SongLyricVC: UIViewController {
         view.addSubview(scrollView)
         
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[scrollView]|", metrics: nil, views: ["scrollView": scrollView]))
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[scrollView]|", metrics: nil, views: ["scrollView": scrollView]))
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[scrollView]|", metrics: nil, views: ["scrollView": scrollView]))
+        
+        scrollViewTopConstraint = NSLayoutConstraint(item: scrollView, attribute: .top, relatedBy: .equal, toItem: view, attribute: .top, multiplier: 1, constant: 0)
+        view.addConstraint(scrollViewTopConstraint)
         
         setNavigationItem()
         
@@ -101,7 +144,8 @@ class SongLyricVC: UIViewController {
     
     private func setNavigationItem() {
         let starIcon = songLyric.favoriteOrder > -1 ? "starIconFilled": "starIcon"
-        navigationItem.setRightBarButton(UIBarButtonItem(image: UIImage(named: starIcon), style: .plain, target: self, action: #selector(toggleFavorite)), animated: true)
+        starButton.image = UIImage(named: starIcon)
+        navigationItem.setRightBarButtonItems([moreButton, starButton], animated: true)
     }
     
     private func setScrollView() {
@@ -118,7 +162,7 @@ class SongLyricVC: UIViewController {
         ]
         
         scrollView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[lyricsTextView(labelWidth)]", metrics: metrics, views: views))
-        scrollView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[authorsLabel(labelWidth)]", metrics: metrics, views: views))
+        scrollView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-14-[authorsLabel(labelWidth)]", metrics: metrics, views: views))
         scrollView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[lyricsTextView]-10-[authorsLabel]-10-|", metrics: nil, views: views))
     }
     
@@ -135,12 +179,30 @@ class SongLyricVC: UIViewController {
         
         setTitle(songLyric.name)
         
-        authorsLabel.text = ""
+        var text = ""
+        if !songLyric.isOriginal {
+            if let song = songLyric.song, let original = song.original, let authors = original.authors?.allObjects as? [Author] {
+                text += "Originál: " + original.name! + "\n"
+                if authors.count == 1 {
+                    text += "Autor: " + authors[0].name!
+                } else if authors.count > 0 {
+                    text += "Autoři: "
+                    
+                    for (i, author) in authors.enumerated() {
+                        text += author.name!
+                        if i != authors.count - 1 {
+                            text += ", "
+                        }
+                    }
+                }
+                text += "\n"
+            }
+        }
         if let authors = songLyric.authors?.allObjects as? [Author] {
             if authors.count == 1 {
-                authorsLabel.text = "Autor: " + authors[0].name!
+                text += "Autor" + (songLyric.isOriginal ? ": " : " překladu: ") + authors[0].name!
             } else if authors.count > 0 {
-                var text = "Autoři: "
+                text += "Autoři" + (songLyric.isOriginal ? ": " : " překladu: ")
                 
                 for (i, author) in authors.enumerated() {
                     text += author.name!
@@ -148,10 +210,10 @@ class SongLyricVC: UIViewController {
                         text += ", "
                     }
                 }
-                
-                authorsLabel.text = text
             }
         }
+        authorsLabel.font = .getFont(ofSize: CGFloat(UserSettings.fontSize))
+        authorsLabel.text = text
         
         lyricsTextView.attributedText = prepareLyrics()
         
@@ -161,12 +223,8 @@ class SongLyricVC: UIViewController {
         
         lyricsTextView.isScrollEnabled = false
         
-        scrollView.showsVerticalScrollIndicator = false
-        scrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)
-        scrollView.showsVerticalScrollIndicator = true
-        
         let starIcon = songLyric.favoriteOrder > -1 ? "starIconFilled": "starIcon"
-        navigationItem.rightBarButtonItem?.image = UIImage(named: starIcon)
+        starButton.image = UIImage(named: starIcon)
     }
     
     // MARK: - Handlers
@@ -182,6 +240,9 @@ class SongLyricVC: UIViewController {
     @objc func toggleFullDisplay() {
         if let hidden = navigationController?.navigationBar.isHidden {
             hideBars(!hidden, animated: true)
+            if showingMore {
+                toggleMore()
+            }
         }
     }
     
@@ -193,10 +254,10 @@ class SongLyricVC: UIViewController {
         }
     }
     
-    @objc func toggleFavorite() {
+    @objc func starSelected() {
         if songLyric.favoriteOrder > -1 {
             songLyric.favoriteOrder = -1
-            navigationItem.rightBarButtonItem?.image = UIImage(named: "starIcon")
+            starButton.image = UIImage(named: "starIcon")
         } else {
             let defaults = UserDefaults.standard
             let favoriteOrder = defaults.integer(forKey: "favoriteOrder")
@@ -205,11 +266,18 @@ class SongLyricVC: UIViewController {
             
             defaults.set(favoriteOrder + 1, forKey: "favoriteOrder")
             PersistenceService.saveContext()
-            navigationItem.rightBarButtonItem?.image = UIImage(named: "starIconFilled")
+            starButton.image = UIImage(named: "starIconFilled")
         }
     }
     
-    // MARK: - Lyrics preparation
+    @objc func toggleMore() {
+        showingMore = !showingMore
+        UIView.animate(withDuration: 0.3) {
+            self.moreOptionsView.frame.origin.y += self.moreOptionsView.frame.height * (self.showingMore ? 1 : -1)
+        }
+    }
+    
+    // MARK: - Lyrics Preparation
     
     struct Chord {
         var text: String
@@ -360,6 +428,11 @@ class SongLyricVC: UIViewController {
             }
         }
         
+//        let middleY = scrollView.contentOffset.y + scrollView.frame.height / 2
+//        let middleX = scrollView.frame.width / 2
+//        
+//        middle = lyricsTextView.characterRange(at: CGPoint(x: middleX, y: middleY))?.start
+        
         return parsedString
     }
     
@@ -370,5 +443,101 @@ class SongLyricVC: UIViewController {
             self.delegate?.changeSongLyric(self, change: 1)
             self.next()
         })
+    }
+}
+
+extension SongLyricVC {
+    
+    func hideBars(_ hidden: Bool, animated: Bool) {
+        guard let tabBarController = tabBarController else { return }
+        guard let navigationController = navigationController else { return }
+        
+        if !hidden {
+            tabBarController.tabBar.isHidden = hidden
+            navigationController.navigationBar.isHidden = hidden
+        }
+        
+        let duration = animated ? 0.3 : 0
+        let statusBarHeight = UIApplication.shared.statusBarFrame.height
+        
+        scrollViewTopConstraint.constant += statusBarHeight * (hidden ? 1 : -1)
+        
+        UIView.animate(withDuration: duration, animations: {
+            tabBarController.tabBar.frame.origin.y += tabBarController.tabBar.frame.height * (hidden ? 1 : -1)
+            navigationController.navigationBar.frame.origin.y -= (navigationController.navigationBar.frame.height + statusBarHeight) * (hidden ? 1 : -1)
+            
+            self.view.frame.origin.y -= (navigationController.navigationBar.frame.height + statusBarHeight) * (hidden ? 1 : -1)
+            if hidden {
+                self.view.frame.size.height += tabBarController.tabBar.frame.height + statusBarHeight
+            }
+            
+            self.view.layoutIfNeeded()
+        }) { _ in
+            if !hidden {
+                self.view.frame.size.height -= (tabBarController.tabBar.frame.height + statusBarHeight)
+            }
+            
+            tabBarController.tabBar.isHidden = hidden
+            navigationController.navigationBar.isHidden = hidden
+        }
+    }
+}
+
+extension SongLyricVC: UITableViewDelegate, UITableViewDataSource {
+    
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        return 3
+    }
+    
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        let cell = tableView.dequeueReusableCell(withIdentifier: "cellId", for: indexPath)
+        
+        cell.textLabel?.text = ["Sdílet", "Otevřít na webu", "Nahlásit"][indexPath.row]
+        
+        return cell
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        switch indexPath.row {
+        case 0:
+            let textToShare = ["https://zpevnik.proscholy.cz/pisen/" + songLyric.id!]
+            
+            UserSettings.darkMode = !UserSettings.darkMode
+            UICollectionViewCell.appearance().backgroundColor = nil
+            
+            let activityViewController = UIActivityViewController(activityItems: textToShare, applicationActivities: nil)
+            activityViewController.popoverPresentationController?.sourceView = view
+            
+            self.present(activityViewController, animated: true) {
+                UserSettings.darkMode = !UserSettings.darkMode
+                self.toggleMore()
+            }
+            break
+        case 1:
+            guard let url = URL(string: "https://zpevnik.proscholy.cz/pisen/" + songLyric.id!) else { return }
+            UIApplication.shared.open(url)
+            toggleMore()
+            break
+        case 2:
+            guard let encodedUrl = ("https://docs.google.com/forms/d/e/1FAIpQLSdTaOCzzlfZmyoCB0I_S2kSPiSZVGwDhDovyxkWB7w2LfH0IA/viewform?entry.2038741493=" + songLyric.name!).addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed), let url = URL(string: encodedUrl) else { return }
+            UIApplication.shared.open(url)
+            toggleMore()
+            break
+        default:
+            break
+        }
+    }
+}
+
+extension SongLyricVC: UIGestureRecognizerDelegate {
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if let view = touch.view, view.isDescendant(of: moreOptionsView) {
+            return false
+        }
+        
+        return true
     }
 }
