@@ -35,12 +35,12 @@ extension UIColor {
 
 extension UIFont {
     
-    static func getFont(ofSize size: CGFloat, weight: UIFont.Weight? = nil) -> UIFont {
-//        if UserSettings.serif, let font = UIFont(name: Constants.serifFont, size: size) {
-//            return font
-//        } else if let font = UIFont(name: Constants.sansSerifFont, size: size) {
-//            return font
-//        }
+    static func getFont(ofSize size: CGFloat) -> UIFont {
+        if UserSettings.serif, let font = UIFont(name: Constants.serifFont, size: size) {
+            return font
+        } else if let font = UIFont(name: Constants.sansSerifFont, size: size) {
+            return font
+        }
 
         return .systemFont(ofSize: size)
     }
@@ -69,6 +69,9 @@ extension UILabel {
             return ""
         }
         set {
+            if superview is UIStackView {
+                return
+            }
             font = UIFont.getFont(ofSize: font.pointSize)
         }
     }
@@ -141,7 +144,6 @@ extension UITextField {
         if let placeholder = self.placeholder {
             var fontSize: CGFloat = 25
             while true {
-                
                 if (placeholder as NSString).size(withAttributes: [.font: UIFont.getFont(ofSize: fontSize)]).width < self.frame.size.width - 60 {
                     self.adjustsFontSizeToFitWidth = true
                     self.minimumFontSize = fontSize
@@ -200,32 +202,39 @@ class PaddingLabel: UILabel {
     
     override func drawText(in rect: CGRect) {
         let insets = UIEdgeInsets(top: topInset, left: leftInset, bottom: bottomInset, right: rightInset)
+        
         super.drawText(in: rect.inset(by: insets))
     }
     
     override func sizeThatFits(_ size: CGSize) -> CGSize {
         let size = super.sizeThatFits(size)
+        
         return CGSize(width: size.width + rightInset + leftInset, height: size.height + topInset + bottomInset)
     }
     
     override var intrinsicContentSize: CGSize {
         let size = super.intrinsicContentSize
+        
         return CGSize(width: size.width + leftInset + rightInset, height: size.height + topInset + bottomInset)
     }
 }
 
 class TableViewCell: UITableViewCell {
     
-    override func setHighlighted(_ highlighted: Bool, animated: Bool) {
-        super.setHighlighted(highlighted, animated: animated)
+    override func draw(_ rect: CGRect) {
+        super.draw(rect)
         
-        backgroundColor = highlighted ? (Constants.getMiddleColor() ?? UIColor(white: 0.85, alpha: 1)) : (Constants.getTableViewCellColor() ?? .white)
+        selectedBackgroundView?.backgroundColor = Constants.getMiddleColor() ?? UIColor(white: 0.85, alpha: 1)
     }
     
-    override func setSelected(_ selected: Bool, animated: Bool) {
-        super.setSelected(selected, animated: animated)
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        backgroundColor = selected ? (Constants.getMiddleColor() ?? UIColor(white: 0.85, alpha: 1)) : (Constants.getTableViewCellColor() ?? .white)
+        selectedBackgroundView = UIView()
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }
 

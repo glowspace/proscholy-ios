@@ -10,7 +10,7 @@ import UIKit
 
 class FavoriteListVC: SongLyricsListVC {
     
-    let noFavoritesView: UIView = {
+    lazy var noFavoritesView: UIView = {
         let view = UIView()
         
         let label = UILabel()
@@ -23,6 +23,7 @@ class FavoriteListVC: SongLyricsListVC {
         
         view.addSubview(label)
         
+        label.addConstraint(NSLayoutConstraint(item: label, attribute: .width, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: self.view.frame.width))
         view.addConstraint(NSLayoutConstraint(item: label, attribute: .centerX, relatedBy: .equal, toItem: view, attribute: .centerX, multiplier: 1, constant: 0))
         view.addConstraint(NSLayoutConstraint(item: label, attribute: .centerY, relatedBy: .equal, toItem: view, attribute: .centerY, multiplier: 1, constant: 0))
 

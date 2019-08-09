@@ -64,6 +64,7 @@ class SongBookVC: SongLyricsListVC {
         self.data = self.data.filter {
             $0.lyrics != nil
         }
+        
         self.data.sort { (first, second) in
             var firstNumber = -1
             var secondNumber = -1
@@ -96,6 +97,19 @@ class SongBookVC: SongLyricsListVC {
         
         showingData = data
         showData()
+    }
+    
+    override func showData() {
+        if let searchText = searchView.searchField.text, searchText.count > 0 {
+            showingData = showingData.filter {
+                let numbers = $0.numbers.filter {
+                    $0.contains(songBook.shortcut!)
+                }
+                return NSPredicate(format: "ANY %@ CONTAINS[cd] %@", numbers, searchText).evaluate(with: nil)
+            }
+        }
+        
+        super.showData()
     }
     
     // MARK: - Handlers

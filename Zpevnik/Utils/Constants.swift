@@ -15,8 +15,8 @@ class Constants {
     static let minFontSize: Float = 10
     static let maxFontSize: Float = 45
     
-    static let serifFont = "Times new roman"
-    static let sansSerifFont = "Helvetica"
+    static let serifFont = "Courier"
+    static let sansSerifFont = "Chalkduster"
     
     static func getLightColor() -> UIColor? { return UserSettings.darkMode ? .darkGray : nil }
     static func getMiddleColor() -> UIColor? { return UserSettings.darkMode ? UIColor(white: 0.15, alpha: 1) : nil }

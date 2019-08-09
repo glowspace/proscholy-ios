@@ -19,7 +19,7 @@ class UserSettings {
     }
     static var serif = false {
         didSet {
-//            UILabel.appearance().substituteFontName = ""
+            UILabel.appearance().substituteFontName = ""
         }
     }
     static var showSliders = false
@@ -86,7 +86,6 @@ class UserSettings {
         UITableView.appearance().backgroundColor = Constants.getDarkColor() ?? .groupTableViewBackground
         UITableView.appearance().separatorColor = Constants.getLightColor()
         UITableViewCell.appearance().backgroundColor = Constants.getTableViewCellColor() ?? .white
-        UITableViewCell.appearance().selectionStyle = .none
 
         UICollectionViewCell.appearance().backgroundColor = Constants.getMiddleColor() ?? .white
 
@@ -98,7 +97,5 @@ class UserSettings {
         SearchView.appearance().backgroundColor = Constants.getMiddleColor() ?? .white
 
         UITextField.appearance().textColor = darkMode ? .white : .black
-        
-//        UIView.appearance(whenContainedInInstancesOf: [UINavigationController.self]).backgroundColor = Constants.getMiddleColor() ?? .white
     }
 }

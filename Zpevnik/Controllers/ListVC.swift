@@ -46,6 +46,7 @@ class ListVC<T: SongDataSource>: ViewController, UITableViewDelegate, UITableVie
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        searchView.searchField.updateFontSize()
         loadData()
     }
     
@@ -103,7 +104,7 @@ class ListVC<T: SongDataSource>: ViewController, UITableViewDelegate, UITableVie
         
         for predicate in predicates {
             showingData.append(contentsOf: data.filter {
-                return predicate.evaluate(with: $0) && !showingData.contains($0)
+                predicate.evaluate(with: $0) && !showingData.contains($0)
             })
         }
     }

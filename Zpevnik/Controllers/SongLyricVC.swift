@@ -103,7 +103,7 @@ class SongLyricVC: ViewController {
     
     override func viewDidDisappear(_ animated: Bool) {
         if showingMore {
-            moreOptionsView.frame.origin.y -= moreOptionsView.frame.height
+            moreOptionsView.frame.origin.y = -moreOptionsView.frame.height
             showingMore = false
         }
     }
@@ -339,7 +339,8 @@ class SongLyricVC: ViewController {
         let textColor = UserSettings.darkMode ? UIColor.white : UIColor.black
         
         let style = NSMutableParagraphStyle()
-        style.lineSpacing = (showChords && chords.count > 0) ? fontSize : 0
+        let fontHeight = ("Ú" as NSString).size(withAttributes: [.font: UIFont.getFont(ofSize: fontSize)]).height * 1.2
+        style.lineSpacing = (showChords && chords.count > 0) ? fontHeight : 0
         lyricsTextView.textContainerInset = UIEdgeInsets(top: (showChords && chords.count > 0) ? fontSize : 0, left: 0, bottom: 10, right: 0)
         lyricsTextView.layoutIfNeeded()
         let attributes: [NSAttributedString.Key: Any] = [.paragraphStyle: style, .font : UIFont.getFont(ofSize: fontSize), .foregroundColor: textColor]
@@ -365,7 +366,7 @@ class SongLyricVC: ViewController {
                 let rect = lyricsTextView.firstRect(for: tRange)
                 
                 let x = rect.origin.x
-                let y = rect.origin.y - 0.75 * chordText.size().height
+                let y = rect.origin.y - 0.8 * fontHeight
                 
                 let minSpacing: CGFloat = 8
                 
@@ -411,7 +412,7 @@ class SongLyricVC: ViewController {
                 let rect = lyricsTextView.firstRect(for: tRange)
                 
                 let x = rect.origin.x
-                let y = rect.origin.y - 0.75 * chordText.size().height
+                let y = rect.origin.y - 0.8 * fontHeight
                 
                 let minSpacing: CGFloat = 8
                 
@@ -504,26 +505,30 @@ extension SongLyricVC: UITableViewDelegate, UITableViewDataSource {
         case 0:
             let textToShare = ["https://zpevnik.proscholy.cz/pisen/" + songLyric.id!]
             
+            self.toggleMore()
+            
             UserSettings.darkMode = !UserSettings.darkMode
             UICollectionViewCell.appearance().backgroundColor = nil
             
             let activityViewController = UIActivityViewController(activityItems: textToShare, applicationActivities: nil)
             activityViewController.popoverPresentationController?.sourceView = view
-            
-            self.present(activityViewController, animated: true) {
+            activityViewController.completionWithItemsHandler = { activity, completed, items, error in
                 UserSettings.darkMode = !UserSettings.darkMode
-                self.toggleMore()
             }
+            
+            self.present(activityViewController, animated: true)
             break
         case 1:
             guard let url = URL(string: "https://zpevnik.proscholy.cz/pisen/" + songLyric.id!) else { return }
-            UIApplication.shared.open(url)
-            toggleMore()
+            UIApplication.shared.open(url) { _ in
+                self.toggleMore()
+            }
             break
         case 2:
             guard let encodedUrl = ("https://docs.google.com/forms/d/e/1FAIpQLSdTaOCzzlfZmyoCB0I_S2kSPiSZVGwDhDovyxkWB7w2LfH0IA/viewform?entry.2038741493=" + songLyric.name!).addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed), let url = URL(string: encodedUrl) else { return }
-            UIApplication.shared.open(url)
-            toggleMore()
+            UIApplication.shared.open(url) { _ in
+                self.toggleMore()
+            }
             break
         default:
             break

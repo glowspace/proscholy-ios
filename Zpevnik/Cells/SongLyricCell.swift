@@ -68,6 +68,10 @@ class SongLyricCell: TableViewCell {
         addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[containerView]-|", metrics: nil, views: ["containerView": containerView]))
     }
     
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
     override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
         
@@ -77,17 +81,6 @@ class SongLyricCell: TableViewCell {
             nameLabelLeadingConstraint.constant = 8
         }
         
-        if editing {
-            let checkMarkView = subviews[subviews.count - 1]
-            checkMarkView.translatesAutoresizingMaskIntoConstraints = false
-            let views = [
-                "checkMarkView": checkMarkView,
-                "containerView" : containerView
-            ]
-            addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[checkMarkView]-[containerView]", metrics: nil, views: views))
-            addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[checkMarkView]-|", metrics: nil, views: views))
-        }
-        
         if animated {
             UIView.animate(withDuration: 0.3, animations: {
                 self.layoutIfNeeded()
@@ -95,9 +88,5 @@ class SongLyricCell: TableViewCell {
         } else {
             self.layoutIfNeeded()
         }
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
     }
 }

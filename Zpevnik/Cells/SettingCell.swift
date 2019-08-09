@@ -14,6 +14,9 @@ class SettingCell: UITableViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.75
+        
         return label
     }()
     

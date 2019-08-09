@@ -18,6 +18,8 @@ class SongBooksListVC: ListVC<SongBook> {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        searchView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[searchField]-|", metrics: nil, views: ["searchField": searchView.searchField]))
     }
     
     override func viewWillAppear(_ animated: Bool) {

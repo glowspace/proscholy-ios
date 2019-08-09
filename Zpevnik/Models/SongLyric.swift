@@ -61,7 +61,8 @@ extension SongLyric: SongDataSource {
         let predicates = [
             NSPredicate(format: "name BEGINSWITH[cd] %@", searchText),
             NSPredicate(format: "NOT name BEGINSWITH[cd] %@ AND name CONTAINS[cd] %@", searchText, searchText),
-            NSPredicate(format: "ANY numbers CONTAINS[cd] %@", searchText)
+            NSPredicate(format: "ANY numbers CONTAINS[cd] %@", searchText),
+            NSPredicate(format: "lyrics CONTAINS[cd] %@", searchText)
         ]
         
         return predicates

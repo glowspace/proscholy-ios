@@ -38,6 +38,14 @@ class SongLyricsListVC: ListVC<SongLyric> {
         filterButton.tintColor = Constants.getLightColor() ?? .black
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        if isMovingFromParent && showingFilter {
+            toggleFilters()
+        }
+    }
+    
     // MARK: - Data Handlers
     
     override func loadData() {
@@ -65,7 +73,7 @@ class SongLyricsListVC: ListVC<SongLyric> {
         })
         
         showingData = showingData.filter {
-            return predicate.evaluate(with: $0)
+            predicate.evaluate(with: $0)
         }
         
         super.showData()

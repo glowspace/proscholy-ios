@@ -92,17 +92,6 @@ extension MenuVC: UITableViewDelegate, UITableViewDataSource {
             Offline mobilní verze pro iOS.
 
             Autor mobilní aplikace: Patrik Dobiáš
-
-            Verze 1.2
-            - přidána možnost filtrování písní podle tagů či jazyků
-            - přidána sekce "O zpěvníku", "O aplikaci"
-            - grafické úpravy
-
-            Verze 1.1
-            - zvýraznění akordů
-            - grafické úpravy
-
-            Verze 1.0
             
             Na vývoji se stále pracuje.
             

@@ -18,6 +18,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()
         
+        let defaults = UserDefaults.standard
+        let currentVersion = "1.2"
+        if let version = defaults.string(forKey: "version"), version == currentVersion {
+            
+        } else {
+            defaults.removeObject(forKey: "lastUpdate")
+            defaults.removeObject(forKey: "defaultDataLoaded")
+            defaults.set(currentVersion, forKey: "version")
+        }
+        
         UserSettings.load()
         
         window?.rootViewController = NavigationController(rootViewController: LaunchVC())

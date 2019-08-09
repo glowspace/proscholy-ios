@@ -108,6 +108,8 @@ class HomeScreenVC: ViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        searchView.searchField.updateFontSize()
+        
         if UserSettings.darkMode {
             backgroundImageView.image = UIImage(named: "backgroundDark")
             titleImageView.image = UIImage(named: "homeScreenTitleDark")
