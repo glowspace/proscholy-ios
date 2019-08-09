@@ -19,10 +19,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window?.makeKeyAndVisible()
         
         let defaults = UserDefaults.standard
-        let currentVersion = "1.2"
-        if let version = defaults.string(forKey: "version"), version == currentVersion {
-            
-        } else {
+        let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+        if let version = defaults.string(forKey: "version"), version == currentVersion { } else {
             defaults.removeObject(forKey: "lastUpdate")
             defaults.removeObject(forKey: "defaultDataLoaded")
             defaults.set(currentVersion, forKey: "version")

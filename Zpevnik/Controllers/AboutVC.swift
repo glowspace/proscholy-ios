@@ -8,29 +8,43 @@
 
 import UIKit
 
-class AboutVC: UIViewController {
+class AboutVC: ViewController {
     
-    let descriptionLabel: UILabel = {
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
+    lazy var descriptionTextView: UITextView = {
+        let textView = UITextView()
+        textView.translatesAutoresizingMaskIntoConstraints = false
         
-        label.numberOfLines = 0
+        textView.textContainerInset = UIEdgeInsets(top: 10, left: 5, bottom: 5, right: 5)
         
-        return label
+        textView.delegate = self
+        
+        textView.isEditable = false
+        textView.dataDetectorTypes = [.link, .address]
+        
+        textView.textContainer.lineBreakMode = .byWordWrapping
+        
+        return textView
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        view.addSubview(descriptionLabel)
+        view.addSubview(descriptionTextView)
         
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[descriptionLabel]-|", metrics: nil, views: ["descriptionLabel": descriptionLabel]))
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-15-[descriptionLabel]", metrics: nil, views: ["descriptionLabel": descriptionLabel]))
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[descriptionTextView]|", metrics: nil, views: ["descriptionTextView": descriptionTextView]))
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[descriptionTextView]-|", metrics: nil, views: ["descriptionTextView": descriptionTextView]))
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         view.backgroundColor = Constants.getDarkColor() ?? .groupTableViewBackground
+    }
+}
+
+extension AboutVC: UITextViewDelegate {
+    
+    func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+        return true
     }
 }
