@@ -36,11 +36,11 @@ extension UIColor {
 extension UIFont {
     
     static func getFont(ofSize size: CGFloat) -> UIFont {
-        if UserSettings.serif, let font = UIFont(name: Constants.serifFont, size: size) {
-            return font
-        } else if let font = UIFont(name: Constants.sansSerifFont, size: size) {
-            return font
-        }
+//        if UserSettings.serif, let font = UIFont(name: Constants.serifFont, size: size) {
+//            return font
+//        } else if let font = UIFont(name: Constants.sansSerifFont, size: size) {
+//            return font
+//        }
 
         return .systemFont(ofSize: size)
     }

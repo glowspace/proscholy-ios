@@ -19,7 +19,7 @@ class UserSettings {
     }
     static var serif = false {
         didSet {
-            UILabel.appearance().substituteFontName = ""
+//            UILabel.appearance().substituteFontName = ""
         }
     }
     static var showSliders = false
