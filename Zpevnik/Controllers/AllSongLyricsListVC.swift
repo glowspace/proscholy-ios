@@ -10,6 +10,8 @@ import UIKit
 
 class AllSongLyricsListVC: SongLyricsListVC {
     
+    var sectionTitles: [String]?
+    
     lazy var starButton: UIBarButtonItem = {
         let button = UIBarButtonItem(image: UIImage(named: "starIcon"), style: .plain, target: self, action: #selector(starSelected))
         

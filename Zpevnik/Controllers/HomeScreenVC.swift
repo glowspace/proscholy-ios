@@ -157,14 +157,15 @@ class HomeScreenVC: ViewController {
         
         let metrics = [
             "searchViewbottomMargin": 15,
-            "buttonsStackHeight": 310
+            "bottomMargin": (tabBarController?.tabBar.frame.height ?? 0) + 15
         ]
         
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[titleImageView]-|", metrics: nil, views: views))
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[searchView]-|", metrics: nil, views: views))
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[buttonsStackView]-|", metrics: nil, views: views))
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[titleImageView]-[searchView]-(searchViewbottomMargin)-[buttonsStackView(buttonsStackHeight)]", metrics: metrics, views: views))
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[titleImageView]-[searchView]-(searchViewbottomMargin)-[buttonsStackView(>=300,<=400)]-(>=bottomMargin@250)-|", metrics: metrics, views: views))
         view.addConstraint(NSLayoutConstraint(item: titleImageView, attribute: .width, relatedBy: .equal, toItem: titleImageView, attribute: .height, multiplier: 505.0 / 153.0, constant: 0))
+        
         
         searchView.searchField.placeholder = "Zadejte název či číslo písně..."
         searchView.searchField.updateFontSize()
@@ -195,6 +196,8 @@ class HomeScreenVC: ViewController {
         gradientLayer.endPoint = CGPoint(x: 1.0, y: 1.0)
         
         buttonView.gradientLayer = gradientLayer
+        
+//        buttonView.addConstraint(NSLayoutConstraint(item: buttonView, attribute: .width, relatedBy: .equal, toItem: buttonView, attribute: .height, multiplier: 3.0 / 1.0, constant: 0))
         
         return buttonView
     }

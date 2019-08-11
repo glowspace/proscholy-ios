@@ -59,7 +59,7 @@ class SongLyricCell: TableViewCell {
             "numberLabel": numberLabel
         ]
         
-        containerView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[nameLabel]-[numberLabel(==60)]-|", metrics: nil, views: views))
+        containerView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[nameLabel]-[numberLabel(==60)]-15-|", metrics: nil, views: views))
         containerView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[nameLabel]|", metrics: nil, views: views))
         containerView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[numberLabel]|", metrics: nil, views: views))
         nameLabelLeadingConstraint = NSLayoutConstraint(item: containerView, attribute: .leading, relatedBy: .equal, toItem: self, attribute: .leading, multiplier: 1, constant: 8)
