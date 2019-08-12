@@ -45,6 +45,12 @@ class AllSongLyricsListVC: SongLyricsListVC {
         showSearchView(placeholder: "Zadejte název či číslo písně")
     }
     
+    @objc override func updateData(sender: UITextField) {
+        super.updateData(sender: sender)
+        
+        (dataSource as? SongLyricDataSource)?.searchText = sender.text
+    }
+    
     // MARK: Private functions
     
     private func updateSelectionTitle(_ selectedCount: Int) {
@@ -141,27 +147,6 @@ class AllSongLyricsListVC: SongLyricsListVC {
     }
     
     // MARK: - UITableViewDelegete, UITableViewDataSource
-    
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = super.tableView(tableView, cellForRowAt: indexPath) as! SongLyricCell
-        
-        if let searchText = searchView.searchField.text {
-            let songLyric = showingData[indexPath.row]
-            
-            let predicate = NSPredicate(format: "self CONTAINS[cd] %@", searchText)
-            let numbers = songLyric.numbers.filter {
-                predicate.evaluate(with: $0)
-            }
-            
-            if numbers.count > 0 && !songLyric.id!.contains(searchText) {
-                cell.numberLabel.text = numbers[0]
-            } else {
-                cell.numberLabel.text = songLyric.id
-            }
-        }
-        
-        return cell
-    }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if !tableView.isEditing {

@@ -62,6 +62,7 @@ class UserSettings {
         if defaults.object(forKey: "darkMode") != nil {
             darkMode = defaults.bool(forKey: "darkMode")
         }
+        
         if defaults.object(forKey: "showBottomOptions") != nil {
             showBottomOptions = defaults.bool(forKey: "showBottomOptions")
         }

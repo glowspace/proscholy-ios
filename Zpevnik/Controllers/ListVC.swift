@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import CoreData
 
-class ListVC<T: SongDataSource>: ViewController, UITableViewDelegate, UITableViewDataSource, UIAdaptivePresentationControllerDelegate {
+class ListVC<T: NSManagedObject>: ViewController, UITableViewDelegate, UITableViewDataSource, UIAdaptivePresentationControllerDelegate {
     
     lazy var searchView: SearchView = {
         let searchView = SearchView()
@@ -30,6 +31,7 @@ class ListVC<T: SongDataSource>: ViewController, UITableViewDelegate, UITableVie
         return tableView
     }()
     
+    var dataSource: DataSource!
     var data: [T]!
     var showingData: [T]!
     
@@ -38,7 +40,7 @@ class ListVC<T: SongDataSource>: ViewController, UITableViewDelegate, UITableVie
         
         setViews()
         
-        T.registerCell(tableView, forCellReuseIdentifier: "cellId")
+        dataSource.registerCell(tableView, forCellReuseIdentifier: "cellId")
         
         hideKeyboardWhenTappedAround()
     }
@@ -111,7 +113,7 @@ class ListVC<T: SongDataSource>: ViewController, UITableViewDelegate, UITableVie
     
     @objc func updateData(sender: UITextField) {
         if let searchText = sender.text, searchText.count > 0 {
-            search(predicates: T.getPredicates(forSearchText: searchText))
+            search(predicates: dataSource.getPredicates(forSearchText: searchText))
         } else {
             showingData = data
         }
@@ -125,8 +127,6 @@ class ListVC<T: SongDataSource>: ViewController, UITableViewDelegate, UITableVie
         searchView.searchField.resignFirstResponder()
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) { }
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return showingData.count
     }
@@ -134,10 +134,12 @@ class ListVC<T: SongDataSource>: ViewController, UITableViewDelegate, UITableVie
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cellId", for: indexPath)
         
-        showingData[indexPath.row].setCell(cell)
+        dataSource.setCell(cell, showingData[indexPath.row])
         
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) { }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) { }
 }

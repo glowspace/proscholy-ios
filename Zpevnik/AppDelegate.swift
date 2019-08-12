@@ -18,20 +18,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.makeKeyAndVisible()
         
-        let defaults = UserDefaults.standard
-        let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
-        if let version = defaults.string(forKey: "version"), version == currentVersion { } else {
-            defaults.removeObject(forKey: "lastUpdate")
-            defaults.removeObject(forKey: "defaultDataLoaded")
-            defaults.set(currentVersion, forKey: "version")
-        }
-        
         UserSettings.load()
         
         window?.rootViewController = NavigationController(rootViewController: LaunchVC())
         
         UINavigationBar.appearance().isTranslucent = false
-        UINavigationBar.appearance().setTitleVerticalPositionAdjustment(-2, for: .default)
         
         let image = UIImage(named: "backIcon")
         UINavigationBar.appearance().backIndicatorImage = image

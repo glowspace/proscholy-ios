@@ -86,7 +86,7 @@ class DownloadService {
         
         URLSession(configuration: sessionConfig).dataTask(with: url) { (data, response, error) in
             guard error == nil else {
-                completionHandler()
+                loadSongDataFromFile(completionHandler)
                 return
             }
             
@@ -101,10 +101,9 @@ class DownloadService {
                 
                 completionHandler()
             } catch {
-                print(error)
-                completionHandler()
+                loadSongDataFromFile(completionHandler)
             }
-            }.resume()
+        }.resume()
     }
     
     private static func loadSongDataFromFile(_ completionHandler: @escaping () -> Void) {

@@ -17,6 +17,7 @@ class SongBooksListVC: ListVC<SongBook> {
     }()
     
     override func viewDidLoad() {
+        dataSource = SongBookDataSource()
         super.viewDidLoad()
         
         searchView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[searchField]-|", metrics: nil, views: ["searchField": searchView.searchField]))
@@ -28,12 +29,14 @@ class SongBooksListVC: ListVC<SongBook> {
         allSongLyricsVC.searchView.searchField.text = ""
         
         showSearchView(placeholder: "Zadejte název či zkratku zpěvníku")
+        
         navigationController?.navigationBar.barTintColor = Constants.getMiddleColor()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
+        // needed to correctly update placeholder font size in next VC
         navigationController?.setNavigationBarHidden(true, animated: false)
         navigationController?.setNavigationBarHidden(false, animated: false)
     }

@@ -43,28 +43,3 @@ extension SongLyric {
         }
     }
 }
-
-extension SongLyric: SongDataSource {
-    
-    func setCell(_ cell: UITableViewCell) {
-        guard let cell = cell as? SongLyricCell else { return }
-        
-        cell.nameLabel.text = name
-        cell.numberLabel.text = id!
-    }
-    
-    static func registerCell(_ tableView: UITableView, forCellReuseIdentifier identifier: String) {
-        tableView.register(SongLyricCell.self, forCellReuseIdentifier: identifier)
-    }
-    
-    static func getPredicates(forSearchText searchText: String) -> [NSPredicate] {
-        let predicates = [
-            NSPredicate(format: "name BEGINSWITH[cd] %@", searchText),
-            NSPredicate(format: "NOT name BEGINSWITH[cd] %@ AND name CONTAINS[cd] %@", searchText, searchText),
-            NSPredicate(format: "ANY numbers CONTAINS[cd] %@", searchText),
-            NSPredicate(format: "lyrics CONTAINS[cd] %@", searchText)
-        ]
-        
-        return predicates
-    }
-}

@@ -29,6 +29,7 @@ class SongLyricsListVC: ListVC<SongLyric> {
     }()
     
     override func viewDidLoad() {
+        dataSource = SongLyricDataSource()
         super.viewDidLoad()
     }
     

@@ -22,27 +22,32 @@ class SongBookVC: SongLyricsListVC {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(backButtonTapped)))
-        
         view.backgroundColor = .clear
+        
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(backButtonTapped)))
         
         return view
     }()
     
     var searching = false
     
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        (dataSource as? SongLyricDataSource)?.songBook = songBook
+    }
+    
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         navigationController?.navigationBar.addSubview(emptyBackButtonView)
+        navigationController?.navigationBar.barTintColor = .from(hex: songBook.color)
+        navigationController?.navigationBar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[emptyBackButtonView(==44)]", metrics: nil, views: ["emptyBackButtonView": emptyBackButtonView]))
+        navigationController?.navigationBar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[emptyBackButtonView(==44)]", metrics: nil, views: ["emptyBackButtonView": emptyBackButtonView]))
         
         if !searching {
             setTitle(songBook.name)
-            navigationController?.navigationBar.barTintColor = .from(hex: songBook.color)
             navigationItem.setRightBarButton(searchBarButton, animated: true)
-            
-            navigationController?.navigationBar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[emptyBackButtonView(==44)]", metrics: nil, views: ["emptyBackButtonView": emptyBackButtonView]))
-            navigationController?.navigationBar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[emptyBackButtonView(==44)]", metrics: nil, views: ["emptyBackButtonView": emptyBackButtonView]))
         } else {
             showSearchView(placeholder: "Zadejte název či číslo písně")
         }
@@ -116,6 +121,7 @@ class SongBookVC: SongLyricsListVC {
     
     @objc func backButtonTapped() {
         if navigationItem.rightBarButtonItem == nil {
+            searching = false
             searchView.searchField.text = ""
             searchView.searchField.resignFirstResponder()
             updateData(sender: searchView.searchField)
@@ -127,8 +133,6 @@ class SongBookVC: SongLyricsListVC {
             if showingFilter {
                 toggleFilters()
             }
-            
-            searching = false
         } else {
             navigationController?.popViewController(animated: true)
         }
@@ -136,23 +140,9 @@ class SongBookVC: SongLyricsListVC {
     
     @objc func showSearch() {
         navigationItem.setRightBarButton(nil, animated: true)
+        
+        searching = true
         showSearchView(placeholder: "Zadejte název či číslo písně")
         searchView.searchField.becomeFirstResponder()
-        searching = true
-    }
-    
-    // MARK: - UITableViewDelegate, UITableViewDataSource
-    
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = super.tableView(tableView, cellForRowAt: indexPath) as! SongLyricCell
-        
-        let songLyric = showingData[indexPath.row]
-        
-        let numbers = songLyric.numbers.filter { $0.contains(songBook.shortcut!) }
-        if numbers.count == 1 {
-            cell.numberLabel.text = numbers[0]
-        }
-        
-        return cell
     }
 }
