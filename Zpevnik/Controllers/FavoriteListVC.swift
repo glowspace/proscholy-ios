@@ -10,6 +10,8 @@ import UIKit
 
 class FavoriteListVC: SongLyricsListVC {
     
+    var realIndexPath: IndexPath?
+    
     lazy var noFavoritesView: UIView = {
         let view = UIView()
         
@@ -33,6 +35,9 @@ class FavoriteListVC: SongLyricsListVC {
     override func viewDidLoad() {
         dataSource = SongLyricDataSource(favorite: true)
         
+        tableView.allowsSelectionDuringEditing = true
+        tableView.setEditing(true, animated: true)
+        
         super.viewDidLoad()
     }
     
@@ -44,6 +49,18 @@ class FavoriteListVC: SongLyricsListVC {
         dataSource = SongLyricDataSource(favorite: true)
         
         tableView.reloadData()
+    }
+    
+    // MARK: - Data Handlers
+    
+    @objc override func updateData(sender: UITextField) {
+        super.updateData(sender: sender)
+        
+        if sender.text?.count ?? 0 > 0 {
+            tableView.setEditing(false, animated: true)
+        } else {
+            tableView.setEditing(true, animated: true)
+        }
     }
     
     // MARK: - UITableViewDataSource
@@ -61,5 +78,29 @@ class FavoriteListVC: SongLyricsListVC {
         }
         
         return numberOfRows
+    }
+    
+    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
+        realIndexPath = nil
+    }
+    
+    override func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
+        let sourceLyric = dataSource.showingData[realIndexPath?.row ?? sourceIndexPath.row]
+        let destinationLyric = dataSource.showingData[proposedDestinationIndexPath.row]
+        
+        let destinationFavoriteOrder = destinationLyric.favoriteOrder
+        destinationLyric.favoriteOrder = sourceLyric.favoriteOrder
+        sourceLyric.favoriteOrder = destinationFavoriteOrder
+        
+        dataSource.showingData[realIndexPath?.row ?? sourceIndexPath.row] = destinationLyric
+        dataSource.showingData[proposedDestinationIndexPath.row] = sourceLyric
+        
+        realIndexPath = proposedDestinationIndexPath
+        
+        return proposedDestinationIndexPath
     }
 }

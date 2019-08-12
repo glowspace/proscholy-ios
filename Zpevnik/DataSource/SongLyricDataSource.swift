@@ -28,9 +28,11 @@ class SongLyricDataSource: NSObject, DataSource {
     }
     
     var songBook: SongBook?
+    var favorite: Bool
     
     init(songBook: SongBook) {
         self.songBook = songBook
+        self.favorite = false
         
         if let records = songBook.records?.allObjects as? [SongBookRecord] {
             data = records.map { $0.songLyric! }
@@ -52,6 +54,8 @@ class SongLyricDataSource: NSObject, DataSource {
     }
     
     init(favorite: Bool = false) {
+        self.favorite = favorite
+        
         let predicate = favorite ? NSPredicate(format: "favoriteOrder != -1") : NSPredicate(format: "lyrics != nil")
         let sortDescriptors = favorite ? [NSSortDescriptor(key: "favoriteOrder", ascending: true)] : [NSSortDescriptor(key: "name", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare(_:)))]
         
@@ -91,7 +95,7 @@ class SongLyricDataSource: NSObject, DataSource {
                 numbers = $0.numbers
             }
             
-            return NSPredicate(format: "ANY %@ CONTAINS[cd] %@", numbers, searchText).evaluate(with: nil)
+            return NSPredicate(format: "ANY %@ CONTAINS[cd] %@", numbers, searchText).evaluate(with: nil) && !showingData.contains($0)
         })
         
         showingData.append(contentsOf: data.filter {
@@ -138,6 +142,7 @@ class SongLyricDataSource: NSObject, DataSource {
         guard let cell = cell as? SongLyricCell else { return }
         guard let songLyric = object as? SongLyric else { return }
 
+        cell.favorite = favorite
         cell.nameLabel.text = songLyric.name
         cell.numberLabel.text = songLyric.id
         

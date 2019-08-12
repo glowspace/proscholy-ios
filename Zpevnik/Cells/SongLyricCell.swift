@@ -44,28 +44,15 @@ class SongLyricCell: TableViewCell {
         return view
     }()
     
-    var nameLabelLeadingConstraint: NSLayoutConstraint!
+    var leadingConstraint: NSLayoutConstraint!
+    var trailingConstraint: NSLayoutConstraint!
+    
+    var favorite: Bool!
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        addSubview(containerView)
-        
-        containerView.addSubview(nameLabel)
-        containerView.addSubview(numberLabel)
-        
-        let views = [
-            "nameLabel": nameLabel,
-            "numberLabel": numberLabel
-        ]
-        
-        containerView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[nameLabel]-[numberLabel(==60)]-15-|", metrics: nil, views: views))
-        containerView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[nameLabel]|", metrics: nil, views: views))
-        containerView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[numberLabel]|", metrics: nil, views: views))
-        nameLabelLeadingConstraint = NSLayoutConstraint(item: containerView, attribute: .leading, relatedBy: .equal, toItem: self, attribute: .leading, multiplier: 1, constant: 8)
-        addConstraint(nameLabelLeadingConstraint)
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[containerView]|", metrics: nil, views: ["containerView": containerView]))
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[containerView]-|", metrics: nil, views: ["containerView": containerView]))
+        setViews()
     }
     
     required init?(coder aDecoder: NSCoder) {
@@ -76,17 +63,43 @@ class SongLyricCell: TableViewCell {
         super.setEditing(editing, animated: animated)
         
         if editing {
-            nameLabelLeadingConstraint.constant = 48
+            if favorite {
+                trailingConstraint.constant = -48
+            } else {
+                leadingConstraint.constant = 48
+            }
         } else {
-            nameLabelLeadingConstraint.constant = 8
+            if favorite {
+                trailingConstraint.constant = -8
+            } else {
+                leadingConstraint.constant = 8
+            }
         }
         
-        if animated {
-            UIView.animate(withDuration: 0.3, animations: {
-                self.layoutIfNeeded()
-            })
-        } else {
+        UIView.animate(withDuration: animated ? 0.3 : 0, animations: {
             self.layoutIfNeeded()
-        }
+        })
+    }
+    
+    private func setViews() {
+        addSubview(containerView)
+        
+        containerView.addSubview(nameLabel)
+        containerView.addSubview(numberLabel)
+        
+        let views = [
+            "nameLabel": nameLabel,
+            "numberLabel": numberLabel
+        ]
+        
+        containerView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[nameLabel]-[numberLabel(==60)]-|", metrics: nil, views: views))
+        containerView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[nameLabel]|", metrics: nil, views: views))
+        containerView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[numberLabel]|", metrics: nil, views: views))
+        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[containerView]-|", metrics: nil, views: ["containerView": containerView]))
+        
+        leadingConstraint = containerView.leadingAnchor.constraint(equalToSystemSpacingAfter: leadingAnchor, multiplier: 1)
+        leadingConstraint.isActive = true
+        trailingConstraint = containerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8)
+        trailingConstraint.isActive = true
     }
 }
