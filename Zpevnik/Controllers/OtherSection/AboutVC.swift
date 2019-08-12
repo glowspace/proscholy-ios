@@ -77,8 +77,12 @@ class AboutVC: ViewController {
         case .aboutApp:
             setTitle("O Aplikaci")
             
-            let description = """
-            Zpěvník pro scholy verze 1.2
+            var description = ""
+            if let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
+                description += String(format: "Zpěvník pro scholy verze %@\n", currentVersion)
+            }
+            
+            description += """
             Offline mobilní verze pro iOS.
 
             Autor mobilní aplikace: Patrik Dobiáš

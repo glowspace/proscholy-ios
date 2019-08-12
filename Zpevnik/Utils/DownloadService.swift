@@ -65,7 +65,7 @@ class DownloadService {
         }
         
         let queries = [
-            Query(type: "song_lyrics", fields: ["id", "lyrics", "name", "lang_string", "type",
+            Query(type: "song_lyrics", fields: ["id", "lyrics", "name", "lang_string", "type", "trashed",
                 Query(type: "song", fields: ["id", "name"]),
                 Query(type: "songbook_records", fields: ["id", "number",
                      Query(type: "songbook", fields: ["id"])]),

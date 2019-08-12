@@ -31,6 +31,8 @@ class AllSongLyricsListVC: SongLyricsListVC {
     }()
     
     override func viewDidLoad() {
+        dataSource = SongLyricDataSource()
+        
         super.viewDidLoad()
         
         tableView.allowsMultipleSelectionDuringEditing = true
@@ -43,12 +45,6 @@ class AllSongLyricsListVC: SongLyricsListVC {
         super.viewWillAppear(animated)
         
         showSearchView(placeholder: "Zadejte název či číslo písně")
-    }
-    
-    @objc override func updateData(sender: UITextField) {
-        super.updateData(sender: sender)
-        
-        dataSource.searchText = sender.text
     }
     
     // MARK: Private functions

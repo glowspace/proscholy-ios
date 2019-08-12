@@ -14,14 +14,12 @@ protocol DataSource {
 
     var data: [T] { get set }
     var showingData: [T] { get set }
+    
+    var searchText: String? { get set }
 
     // MARK: - Data Handlers
-
-    func loadData()
-
-    func updateData(sender: UITextField)
-
-    func getPredicates(forSearchText searchText: String) -> [NSPredicate]
+    
+    func updateData()
 
     // Mark: - Cell Settings
 

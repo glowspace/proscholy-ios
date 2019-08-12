@@ -10,8 +10,6 @@ import UIKit
 
 class SongBookVC: SongLyricsListVC {
     
-    var songBook: SongBook!
-    
     lazy var searchBarButton: UIBarButtonItem = {
         let barButtonItem = UIBarButtonItem(image: UIImage(named: "searchIcon"), style: .plain, target: self, action: #selector(showSearch))
         
@@ -29,12 +27,14 @@ class SongBookVC: SongLyricsListVC {
         return view
     }()
     
+    var songBook: SongBook!
+    
     var searching = false
     
     override func viewDidLoad() {
-        super.viewDidLoad()
+        dataSource = SongLyricDataSource(songBook: songBook)
         
-        dataSource.songBook = songBook
+        super.viewDidLoad()
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -60,63 +60,6 @@ class SongBookVC: SongLyricsListVC {
         searchView.searchField.resignFirstResponder()
     }
     
-    override func loadData() {
-        if let records = songBook.records?.allObjects as? [SongBookRecord] {
-            self.data = records.map {
-                $0.songLyric!
-            }
-        }
-        self.data = self.data.filter {
-            $0.lyrics != nil
-        }
-        
-        self.data.sort { (first, second) in
-            var firstNumber = -1
-            var secondNumber = -1
-            var firstMore = ""
-            var secondMore = ""
-            if let songBookRecords = first.songBookRecords?.allObjects as? [SongBookRecord] {
-                for songBookRecord in songBookRecords {
-                    if songBookRecord.songBook == songBook {
-                        firstNumber = Int(songBookRecord.number!.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression))!
-                        firstMore = songBookRecord.number!.replacingOccurrences(of: "[0-9]", with: "", options: .regularExpression)
-                        break
-                    }
-                }
-            }
-            if let songBookRecords = second.songBookRecords?.allObjects as? [SongBookRecord] {
-                for songBookRecord in songBookRecords {
-                    if songBookRecord.songBook == songBook {
-                        secondNumber = Int(songBookRecord.number!.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression))!
-                        secondMore = songBookRecord.number!.replacingOccurrences(of: "[0-9]", with: "", options: .regularExpression)
-                        break
-                    }
-                }
-            }
-            
-            if firstNumber == secondNumber {
-                return firstMore < secondMore
-            }
-            return firstNumber < secondNumber
-        }
-        
-        dataSource.showingData = data
-        showData()
-    }
-    
-    override func showData() {
-        if let searchText = searchView.searchField.text, searchText.count > 0 {
-            dataSource.showingData = dataSource.showingData.filter {
-                let numbers = $0.numbers.filter {
-                    $0.contains(songBook.shortcut!)
-                }
-                return NSPredicate(format: "ANY %@ CONTAINS[cd] %@", numbers, searchText).evaluate(with: nil)
-            }
-        }
-        
-        super.showData()
-    }
-    
     // MARK: - Handlers
     
     @objc func backButtonTapped() {
@@ -124,7 +67,7 @@ class SongBookVC: SongLyricsListVC {
             searching = false
             searchView.searchField.text = ""
             searchView.searchField.resignFirstResponder()
-            updateData(sender: searchView.searchField)
+            dataSource.updateData()
             
             setTitle(songBook.name)
             navigationItem.setRightBarButton(searchBarButton, animated: true)

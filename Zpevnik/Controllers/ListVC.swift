@@ -47,7 +47,12 @@ class ListVC<T: DataSource>: ViewController, UITableViewDelegate, UITableViewDat
         super.viewWillAppear(animated)
         
         searchView.searchField.updateFontSize()
-        loadData()
+        
+        dataSource.searchText = searchView.searchField.text
+        
+        dataSource.updateData()
+        
+        tableView.reloadData()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -73,7 +78,6 @@ class ListVC<T: DataSource>: ViewController, UITableViewDelegate, UITableViewDat
         
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[tableView]|", metrics: nil, views: ["tableView": tableView]))
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[tableView]|", metrics: nil, views: ["tableView": tableView]))
-//        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[tableView]|", metrics: nil, views: ["tableView": tableView]))
     }
     
     func showSearchView(placeholder: String) {
@@ -84,40 +88,10 @@ class ListVC<T: DataSource>: ViewController, UITableViewDelegate, UITableViewDat
     
     // MARK: - Data Handlers
     
-    func loadData() {
-        dataSource.loadData()
-//        if let data: [T] = CoreDataService.fetchData(sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], context: PersistenceService.context) {
-//            dataSource.data = data
-//
-//            updateData(sender: searchView.searchField)
-//        }
-//
-//        dataSource.dataSource.showingData = dataSource.data
-        showData()
-    }
-    
-    func showData() {
-        tableView.reloadData()
-    }
-    
-    func search(predicates: [NSPredicate]) {
-        dataSource.dataSource.showingData = []
-        
-        for predicate in predicates {
-            dataSource.dataSource.showingData.append(contentsOf: dataSource.data.filter {
-                predicate.evaluate(with: $0) && !dataSource.dataSource.showingData.contains($0)
-            })
-        }
-    }
-    
     @objc func updateData(sender: UITextField) {
-        if let searchText = sender.text, searchText.count > 0 {
-            search(predicates: dataSource.getPredicates(forSearchText: searchText))
-        } else {
-            dataSource.dataSource.showingData = dataSource.data
-        }
+        dataSource.searchText = sender.text
         
-        showData()
+        tableView.reloadData()
     }
     
     // MARK: - UITableViewDelegate, UITableViewDataSource
@@ -127,13 +101,13 @@ class ListVC<T: DataSource>: ViewController, UITableViewDelegate, UITableViewDat
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return dataSource.dataSource.showingData.count
+        return dataSource.showingData.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cellId", for: indexPath)
         
-        dataSource.setCell(cell, dataSource.dataSource.showingData[indexPath.row])
+        dataSource.setCell(cell, dataSource.showingData[indexPath.row])
         
         return cell
     }

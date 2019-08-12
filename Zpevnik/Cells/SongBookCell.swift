@@ -82,7 +82,7 @@ class SongBookCell: TableViewCell {
         ]
         
         addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[shortcutLabel(40)]-[nameLabel]-|", metrics: nil, views: views))
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-(>=8)-[shortcutLabel]", metrics: nil, views: views))
+        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[shortcutLabel]", metrics: nil, views: views))
         addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[nameLabel]-|", metrics: nil, views: views))
         addConstraint(NSLayoutConstraint(item: shortcutLabel, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1, constant: 0))
         addConstraint(NSLayoutConstraint(item: shortcutLabel, attribute: .width, relatedBy: .equal, toItem: shortcutLabel, attribute: .height, multiplier: 1, constant: 0))

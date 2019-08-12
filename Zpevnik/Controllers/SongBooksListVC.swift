@@ -41,14 +41,6 @@ class SongBooksListVC: ListVC<SongBookDataSource> {
         navigationController?.setNavigationBarHidden(false, animated: false)
     }
     
-    override func loadData() {
-        if let data: [SongBook] = CoreDataService.fetchData(predicate: NSPredicate(format: "isPrivate == false"), sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], context: PersistenceService.context) {
-            self.data = data
-            
-            updateData(sender: searchView.searchField)
-        }
-    }
-    
     // MARK: - UITableViewDelegate, UITableViewDataSource
     
     override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -67,9 +59,7 @@ class SongBooksListVC: ListVC<SongBookDataSource> {
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row > 0 {
-            var indexPath = indexPath
-            indexPath.row -= 1
-            return super.tableView(tableView, cellForRowAt: indexPath)
+            return super.tableView(tableView, cellForRowAt: IndexPath(row: indexPath.row - 1, section: indexPath.section))
         }
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "cellId") as! SongBookCell

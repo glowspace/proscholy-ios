@@ -16,6 +16,12 @@ extension SongLyric {
         
         guard let songLyric: SongLyric = CoreDataService.createOrGetObject(id: id, context: context) else { return nil }
         
+        if let trashed = data["trashed"] as? Bool, trashed {
+            context.delete(songLyric)
+            
+            return nil
+        }
+        
         songLyric.id = id
         songLyric.name = data["name"] as? String
         songLyric.lyrics = data["lyrics"] as? String
@@ -30,6 +36,18 @@ extension SongLyric {
     
     func isFavorite() -> Bool {
         return favoriteOrder > -1
+    }
+    
+    func getNumber(in songBook: SongBook) -> String? {
+        if let songBookRecords = songBookRecords?.allObjects as? [SongBookRecord] {
+            for songBookRecord in songBookRecords {
+                if songBookRecord.songBook == songBook {
+                    return songBook.shortcut! + songBookRecord.number!
+                }
+            }
+        }
+        
+        return nil
     }
     
     @objc var numbers: [String] {

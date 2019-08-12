@@ -31,6 +31,8 @@ class FavoriteListVC: SongLyricsListVC {
     }()
     
     override func viewDidLoad() {
+        dataSource = SongLyricDataSource(favorite: true)
+        
         super.viewDidLoad()
     }
     
@@ -39,15 +41,9 @@ class FavoriteListVC: SongLyricsListVC {
         
         showSearchView(placeholder: "Zadejte název či číslo písně")
         
-        loadData()
-    }
-    
-    override func loadData() {
-        if let data: [SongLyric] = CoreDataService.fetchData(predicate: NSPredicate(format: "favoriteOrder != -1"), sortDescriptors: [NSSortDescriptor(key: "favoriteOrder", ascending: true)], context: PersistenceService.context) {
-            self.data = data
-            
-            updateData(sender: searchView.searchField)
-        }
+        dataSource = SongLyricDataSource(favorite: true)
+        
+        tableView.reloadData()
     }
     
     // MARK: - UITableViewDataSource

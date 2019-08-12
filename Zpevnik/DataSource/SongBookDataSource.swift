@@ -9,34 +9,58 @@
 import UIKit
 import CoreData
 
-class SongBookDataSource: DataSource<SongBook> {
+class SongBookDataSource: NSObject, DataSource {
     
     var data: [SongBook]
     var showingData: [SongBook]
+    
+    var searchText: String? {
+        didSet {
+            updateData()
+        }
+    }
+    
+    override init() {
+        if let data: [SongBook] = CoreDataService.fetchData(predicate: NSPredicate(format: "isPrivate == false"), sortDescriptors: [NSSortDescriptor(key: "name", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare(_:)))], context: PersistenceService.context) {
+            self.data = data
+        } else {
+            data = []
+        }
+        
+        showingData = data
+        
+        super.init()
+    }
 
     // MARK: - Data Handlers
     
-    override func loadData() {
-        if let data: [SongBook] = CoreDataService.fetchData(sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], context: PersistenceService.context) {
-            self.data = data
-        }
-
-        showingData = data
-    }
-    
-    override func getPredicates(forSearchText searchText: String) -> [NSPredicate] {
+    private func search(searchText: String) {
         let predicates = [
             NSPredicate(format: "name BEGINSWITH[cd] %@", searchText),
             NSPredicate(format: "shortcut BEGINSWITH[cd] %@ AND NOT name CONTAINS[cd] %@", searchText, searchText),
             NSPredicate(format: "name CONTAINS[cd] %@ AND NOT name BEGINSWITH[cd] %@", searchText, searchText)
         ]
         
-        return predicates
+        showingData = []
+        
+        for predicate in predicates {
+            showingData.append(contentsOf: data.filter {
+                predicate.evaluate(with: $0) && !showingData.contains($0)
+            })
+        }
+    }
+    
+    func updateData() {
+        if let searchText = searchText, searchText.count > 0 {
+            search(searchText: searchText)
+        } else {
+            showingData = data
+        }
     }
     
     // Mark: - Cell Settings
     
-    override func setCell(_ cell: UITableViewCell, _ object: NSManagedObject) {
+    func setCell(_ cell: UITableViewCell, _ object: NSManagedObject) {
         guard let cell = cell as? SongBookCell else { return }
         guard let songBook = object as? SongBook else { return }
         
@@ -45,7 +69,7 @@ class SongBookDataSource: DataSource<SongBook> {
         cell.shortcutBackgroundColor = .from(hex: songBook.color)
     }
     
-    override func registerCell(_ tableView: UITableView, forCellReuseIdentifier identifier: String) {
+    func registerCell(_ tableView: UITableView, forCellReuseIdentifier identifier: String) {
         tableView.register(SongBookCell.self, forCellReuseIdentifier: identifier)
     }
 }

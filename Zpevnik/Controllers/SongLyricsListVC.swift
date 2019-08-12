@@ -29,7 +29,6 @@ class SongLyricsListVC: ListVC<SongLyricDataSource> {
     }()
     
     override func viewDidLoad() {
-        dataSource = SongLyricDataSource()
         super.viewDidLoad()
     }
     
@@ -45,39 +44,6 @@ class SongLyricsListVC: ListVC<SongLyricDataSource> {
         if isMovingFromParent && showingFilter {
             toggleFilters()
         }
-    }
-    
-    // MARK: - Data Handlers
-    
-    override func loadData() {
-        if let data: [SongLyric] = CoreDataService.fetchData(predicate: NSPredicate(format: "lyrics != nil"), sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], context: PersistenceService.context) {
-            self.data = data
-            
-            updateData(sender: searchView.searchField)
-        }
-    }
-    
-    override func showData() {
-        let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: filterVC.selectedTags.enumerated().map {
-            let (i, tags) = $0
-            let predicateFormat: String
-            
-            if tags is [Tag] {
-                predicateFormat = Tag.predicateFormat
-            } else if tags is [Language] {
-                predicateFormat = Language.predicateFormat
-            } else {
-                predicateFormat = ""
-            }
-            
-            return NSPredicate(format: predicateFormat + " OR %d == 1", tags.map { $0.name }, filterVC.usingFilter[i] ? 0 : 1)
-        })
-        
-        dataSource.showingData = dataSource.showingData.filter {
-            predicate.evaluate(with: $0)
-        }
-        
-        super.showData()
     }
     
     // MARK: - Filter VC
@@ -140,7 +106,7 @@ class SongLyricsListVC: ListVC<SongLyricDataSource> {
         
         if sender.state == .ended {
             if abs(filterVC.view.frame.origin.y) > filterVC.view.frame.height * 0.25 {
-                let duration = 0.3 // * Double((filterVC.view.frame.height + filterVC.view.frame.origin.y) / filterVC.view.frame.height)
+                let duration = 0.3
                 filterVC.removeFromParent()
                 UIView.animate(withDuration: duration, animations:  {
                     self.filterVC.view.frame.origin.y = -self.view.frame.height
@@ -156,7 +122,7 @@ class SongLyricsListVC: ListVC<SongLyricDataSource> {
                 }
                 showingFilter = false
             } else {
-                let duration = 0.3 // * Double(abs(filterVC.view.frame.origin.y) / filterVC.view.frame.height)
+                let duration = 0.3
                 self.filterVC.tagsViewTopConstraint.constant = filterVC.view.frame.height * 0.25
                 UIView.animate(withDuration: duration, animations: {
                     self.filterVC.view.frame.origin.y = -self.filterVC.view.frame.height * 0.25
@@ -193,7 +159,10 @@ class SongLyricsListVC: ListVC<SongLyricDataSource> {
 extension SongLyricsListVC: FilterDelegate {
     
     func updateSelected() {
-        updateData(sender: searchView.searchField)
+        dataSource.activeFilters = filterVC.usingFilter
+        dataSource.selectedTags = filterVC.selectedTags
+        
+        tableView.reloadData()
     }
 }
 
