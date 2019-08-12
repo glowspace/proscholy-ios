@@ -10,11 +10,24 @@ import UIKit
 import CoreData
 
 protocol DataSource {
-    func setCell(_ cell: UITableViewCell, _ object: NSManagedObject)
-    
-    func registerCell(_ tableView: UITableView, forCellReuseIdentifier identifier: String)
-    
+    associatedtype T: NSManagedObject
+
+    var data: [T] { get set }
+    var showingData: [T] { get set }
+
+    // MARK: - Data Handlers
+
+    func loadData()
+
+    func updateData(sender: UITextField)
+
     func getPredicates(forSearchText searchText: String) -> [NSPredicate]
+
+    // Mark: - Cell Settings
+
+    func setCell(_ cell: UITableViewCell, _ object: NSManagedObject)
+
+    func registerCell(_ tableView: UITableView, forCellReuseIdentifier identifier: String)
 }
 
 protocol SongLyricDelegate {

@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SongBooksListVC: ListVC<SongBook> {
+class SongBooksListVC: ListVC<SongBookDataSource> {
     
     lazy var allSongLyricsVC: AllSongLyricsListVC = {
         let vc = AllSongLyricsListVC()
@@ -60,7 +60,7 @@ class SongBooksListVC: ListVC<SongBook> {
             navigationController?.pushViewController(allSongLyricsVC, animated: true)
         } else {
             let songBookVC = SongBookVC()
-            songBookVC.songBook = showingData[indexPath.row - 1]
+            songBookVC.songBook = dataSource.showingData[indexPath.row - 1]
             navigationController?.pushViewController(songBookVC, animated: true)
         }
     }

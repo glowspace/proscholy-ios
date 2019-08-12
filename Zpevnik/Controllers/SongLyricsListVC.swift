@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SongLyricsListVC: ListVC<SongLyric> {
+class SongLyricsListVC: ListVC<SongLyricDataSource> {
     
     var currentSongLyricIndex: Int?
     
@@ -73,7 +73,7 @@ class SongLyricsListVC: ListVC<SongLyric> {
             return NSPredicate(format: predicateFormat + " OR %d == 1", tags.map { $0.name }, filterVC.usingFilter[i] ? 0 : 1)
         })
         
-        showingData = showingData.filter {
+        dataSource.showingData = dataSource.showingData.filter {
             predicate.evaluate(with: $0)
         }
         
@@ -185,7 +185,7 @@ class SongLyricsListVC: ListVC<SongLyric> {
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         currentSongLyricIndex = indexPath.row
         
-        songLyricVC.songLyric = showingData[indexPath.row]
+        songLyricVC.songLyric = dataSource.showingData[indexPath.row]
         navigationController?.pushViewController(songLyricVC, animated: true)
     }
 }
@@ -201,11 +201,11 @@ extension SongLyricsListVC: SongLyricDelegate {
     
     func changeSongLyric(_ controller: SongLyricVC, change: Int) {
         if var currentSongLyricIndex = currentSongLyricIndex {
-            currentSongLyricIndex = (currentSongLyricIndex + change) % showingData.count
+            currentSongLyricIndex = (currentSongLyricIndex + change) % dataSource.showingData.count
             if currentSongLyricIndex < 0 {
-                currentSongLyricIndex = showingData.count - 1
+                currentSongLyricIndex = dataSource.showingData.count - 1
             }
-            controller.songLyric = showingData[currentSongLyricIndex]
+            controller.songLyric = dataSource.showingData[currentSongLyricIndex]
             controller.updateSongLyrics()
             controller.scrollView.showsVerticalScrollIndicator = false
             controller.scrollView.setContentOffset(CGPoint(x: 0, y: 0), animated: false)

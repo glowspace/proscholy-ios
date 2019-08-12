@@ -48,7 +48,7 @@ class AllSongLyricsListVC: SongLyricsListVC {
     @objc override func updateData(sender: UITextField) {
         super.updateData(sender: sender)
         
-        (dataSource as? SongLyricDataSource)?.searchText = sender.text
+        dataSource.searchText = sender.text
     }
     
     // MARK: Private functions
@@ -67,7 +67,7 @@ class AllSongLyricsListVC: SongLyricsListVC {
         guard let indexPaths = tableView.indexPathsForSelectedRows else { return true }
         
         for indexPath in indexPaths {
-            if !showingData[indexPath.row].isFavorite() {
+            if !dataSource.showingData[indexPath.row].isFavorite() {
                 return true
             }
         }
@@ -84,14 +84,14 @@ class AllSongLyricsListVC: SongLyricsListVC {
                 tableView.setEditing(true, animated: true)
                 tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
                 
-                selectAllButton.isEnabled = showingData.count <= 50
+                selectAllButton.isEnabled = dataSource.showingData.count <= 50
                 navigationItem.setLeftBarButton(cancelButton, animated: true)
                 navigationItem.setRightBarButtonItems([selectAllButton, starButton], animated: true)
                 
                 navigationItem.titleView = nil
                 setTitle("1 píseň")
                 
-                if showingData[indexPath.row].isFavorite() {
+                if dataSource.showingData[indexPath.row].isFavorite() {
                     starButton.image = UIImage(named: "starIconFilled")
                 }
                 
@@ -113,7 +113,7 @@ class AllSongLyricsListVC: SongLyricsListVC {
     }
     
     @objc func selectAllLyrics() {
-        for i in 0..<showingData.count {
+        for i in 0..<dataSource.showingData.count {
             tableView.selectRow(at: IndexPath(row: i, section: 0), animated: true, scrollPosition: .none)
         }
     }
@@ -126,8 +126,8 @@ class AllSongLyricsListVC: SongLyricsListVC {
             var favoriteOrder = defaults.integer(forKey: "favoriteOrder")
             
             for indexPath in indexPaths {
-                if !showingData[indexPath.row].isFavorite() {
-                    showingData[indexPath.row].favoriteOrder = Int16(favoriteOrder)
+                if !dataSource.showingData[indexPath.row].isFavorite() {
+                    dataSource.showingData[indexPath.row].favoriteOrder = Int16(favoriteOrder)
                     favoriteOrder += 1
                 }
             }
@@ -137,7 +137,7 @@ class AllSongLyricsListVC: SongLyricsListVC {
             defaults.set(favoriteOrder, forKey: "favoriteOrder")
         } else {
             for indexPath in indexPaths {
-                showingData[indexPath.row].favoriteOrder = -1
+                dataSource.showingData[indexPath.row].favoriteOrder = -1
             }
             
             starButton.image = UIImage(named: "starIcon")

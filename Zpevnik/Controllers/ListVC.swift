@@ -9,7 +9,7 @@
 import UIKit
 import CoreData
 
-class ListVC<T: NSManagedObject>: ViewController, UITableViewDelegate, UITableViewDataSource, UIAdaptivePresentationControllerDelegate {
+class ListVC<T: DataSource>: ViewController, UITableViewDelegate, UITableViewDataSource, UIAdaptivePresentationControllerDelegate {
     
     lazy var searchView: SearchView = {
         let searchView = SearchView()
@@ -31,9 +31,7 @@ class ListVC<T: NSManagedObject>: ViewController, UITableViewDelegate, UITableVi
         return tableView
     }()
     
-    var dataSource: DataSource!
-    var data: [T]!
-    var showingData: [T]!
+    var dataSource: T!
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -87,13 +85,14 @@ class ListVC<T: NSManagedObject>: ViewController, UITableViewDelegate, UITableVi
     // MARK: - Data Handlers
     
     func loadData() {
-        if let data: [T] = CoreDataService.fetchData(sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], context: PersistenceService.context) {
-            self.data = data
-            
-            updateData(sender: searchView.searchField)
-        }
-        
-        showingData = data
+        dataSource.loadData()
+//        if let data: [T] = CoreDataService.fetchData(sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], context: PersistenceService.context) {
+//            dataSource.data = data
+//
+//            updateData(sender: searchView.searchField)
+//        }
+//
+//        dataSource.dataSource.showingData = dataSource.data
         showData()
     }
     
@@ -102,11 +101,11 @@ class ListVC<T: NSManagedObject>: ViewController, UITableViewDelegate, UITableVi
     }
     
     func search(predicates: [NSPredicate]) {
-        showingData = []
+        dataSource.dataSource.showingData = []
         
         for predicate in predicates {
-            showingData.append(contentsOf: data.filter {
-                predicate.evaluate(with: $0) && !showingData.contains($0)
+            dataSource.dataSource.showingData.append(contentsOf: dataSource.data.filter {
+                predicate.evaluate(with: $0) && !dataSource.dataSource.showingData.contains($0)
             })
         }
     }
@@ -115,7 +114,7 @@ class ListVC<T: NSManagedObject>: ViewController, UITableViewDelegate, UITableVi
         if let searchText = sender.text, searchText.count > 0 {
             search(predicates: dataSource.getPredicates(forSearchText: searchText))
         } else {
-            showingData = data
+            dataSource.dataSource.showingData = dataSource.data
         }
         
         showData()
@@ -128,13 +127,13 @@ class ListVC<T: NSManagedObject>: ViewController, UITableViewDelegate, UITableVi
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return showingData.count
+        return dataSource.dataSource.showingData.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cellId", for: indexPath)
         
-        dataSource.setCell(cell, showingData[indexPath.row])
+        dataSource.setCell(cell, dataSource.dataSource.showingData[indexPath.row])
         
         return cell
     }

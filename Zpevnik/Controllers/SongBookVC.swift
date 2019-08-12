@@ -34,7 +34,7 @@ class SongBookVC: SongLyricsListVC {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        (dataSource as? SongLyricDataSource)?.songBook = songBook
+        dataSource.songBook = songBook
     }
     
     override func viewWillAppear(_ animated: Bool) {
@@ -100,13 +100,13 @@ class SongBookVC: SongLyricsListVC {
             return firstNumber < secondNumber
         }
         
-        showingData = data
+        dataSource.showingData = data
         showData()
     }
     
     override func showData() {
         if let searchText = searchView.searchField.text, searchText.count > 0 {
-            showingData = showingData.filter {
+            dataSource.showingData = dataSource.showingData.filter {
                 let numbers = $0.numbers.filter {
                     $0.contains(songBook.shortcut!)
                 }

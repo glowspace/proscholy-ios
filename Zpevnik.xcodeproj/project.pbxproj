@@ -141,8 +141,8 @@
 		397BAD9F230150F500AB75FD /* DataSource */ = {
 			isa = PBXGroup;
 			children = (
-				397BADA02301510400AB75FD /* SongLyricDataSource.swift */,
 				397BADA22301510E00AB75FD /* SongBookDataSource.swift */,
+				397BADA02301510400AB75FD /* SongLyricDataSource.swift */,
 			);
 			path = DataSource;
 			sourceTree = "<group>";

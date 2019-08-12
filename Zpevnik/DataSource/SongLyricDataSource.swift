@@ -9,12 +9,31 @@
 import UIKit
 import CoreData
 
-class SongLyricDataSource: NSObject, DataSource {
+class SongLyricDataSource: DataSource<SongLyric> {
     
     var songBook: SongBook?
     var searchText: String?
     
-    func setCell(_ cell: UITableViewCell, _ object: NSManagedObject) {
+    // MARK: - Data Handlers
+    
+    override func loadData() {
+        
+    }
+    
+    override func getPredicates(forSearchText searchText: String) -> [NSPredicate] {
+        let predicates = [
+            NSPredicate(format: "name BEGINSWITH[cd] %@", searchText),
+            NSPredicate(format: "NOT name BEGINSWITH[cd] %@ AND name CONTAINS[cd] %@", searchText, searchText),
+            NSPredicate(format: "ANY numbers CONTAINS[cd] %@", searchText),
+            NSPredicate(format: "lyrics CONTAINS[cd] %@", searchText)
+        ]
+        
+        return predicates
+    }
+    
+    // Mark: - Cell Settings
+    
+    override func setCell(_ cell: UITableViewCell, _ object: NSManagedObject) {
         guard let cell = cell as? SongLyricCell else { return }
         guard let songLyric = object as? SongLyric else { return }
 
@@ -42,18 +61,7 @@ class SongLyricDataSource: NSObject, DataSource {
         }
     }
     
-    func registerCell(_ tableView: UITableView, forCellReuseIdentifier identifier: String) {
+    override func registerCell(_ tableView: UITableView, forCellReuseIdentifier identifier: String) {
         tableView.register(SongLyricCell.self, forCellReuseIdentifier: identifier)
-    }
-    
-    func getPredicates(forSearchText searchText: String) -> [NSPredicate] {
-        let predicates = [
-            NSPredicate(format: "name BEGINSWITH[cd] %@", searchText),
-            NSPredicate(format: "NOT name BEGINSWITH[cd] %@ AND name CONTAINS[cd] %@", searchText, searchText),
-            NSPredicate(format: "ANY numbers CONTAINS[cd] %@", searchText),
-            NSPredicate(format: "lyrics CONTAINS[cd] %@", searchText)
-        ]
-
-        return predicates
     }
 }
