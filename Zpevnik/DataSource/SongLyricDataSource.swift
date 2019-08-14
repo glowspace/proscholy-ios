@@ -99,7 +99,7 @@ class SongLyricDataSource: NSObject, DataSource {
         })
         
         showingData.append(contentsOf: data.filter {
-            NSPredicate(format: "lyrics CONTAINS[cd] %@", searchText).evaluate(with: $0) && !showingData.contains($0)
+            NSPredicate(format: "lyricsNoChords CONTAINS[cd] %@", searchText).evaluate(with: $0) && !showingData.contains($0)
         })
     }
     

@@ -60,4 +60,10 @@ extension SongLyric {
             return numbers
         }
     }
+    
+    @objc var lyricsNoChords: String {
+        get {
+            return lyrics!.replacingOccurrences(of: #"(\[([^\s\]])+\])"#, with: "", options: [.regularExpression])
+        }
+    }
 }
