@@ -23,5 +23,5 @@ class Constants {
     static func getDarkColor() -> UIColor? { return UserSettings.darkMode ? UIColor(white: 0.05, alpha: 1) : nil }
     static func getTableViewCellColor() -> UIColor? { return UserSettings.darkMode ? UIColor(white: 0.1, alpha: 1) : nil }
     
-    static let songsUpdateInterval: Double = 3600 * 24
+    static let songsUpdateInterval: Double = 3600 * 12
 }

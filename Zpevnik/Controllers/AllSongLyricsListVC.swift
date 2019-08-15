@@ -31,6 +31,8 @@ class AllSongLyricsListVC: SongLyricsListVC {
     }()
     
     override func viewDidLoad() {
+        dataSource = SongLyricDataSource()
+        
         super.viewDidLoad()
         
         tableView.allowsMultipleSelectionDuringEditing = true
@@ -61,7 +63,7 @@ class AllSongLyricsListVC: SongLyricsListVC {
         guard let indexPaths = tableView.indexPathsForSelectedRows else { return true }
         
         for indexPath in indexPaths {
-            if !showingData[indexPath.row].isFavorite() {
+            if !dataSource.showingData[indexPath.row].isFavorite() {
                 return true
             }
         }
@@ -78,14 +80,14 @@ class AllSongLyricsListVC: SongLyricsListVC {
                 tableView.setEditing(true, animated: true)
                 tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
                 
-                selectAllButton.isEnabled = showingData.count <= 50
+                selectAllButton.isEnabled = dataSource.showingData.count <= 50
                 navigationItem.setLeftBarButton(cancelButton, animated: true)
                 navigationItem.setRightBarButtonItems([selectAllButton, starButton], animated: true)
                 
                 navigationItem.titleView = nil
                 setTitle("1 píseň")
                 
-                if showingData[indexPath.row].isFavorite() {
+                if dataSource.showingData[indexPath.row].isFavorite() {
                     starButton.image = UIImage(named: "starIconFilled")
                 }
                 
@@ -107,7 +109,7 @@ class AllSongLyricsListVC: SongLyricsListVC {
     }
     
     @objc func selectAllLyrics() {
-        for i in 0..<showingData.count {
+        for i in 0..<dataSource.showingData.count {
             tableView.selectRow(at: IndexPath(row: i, section: 0), animated: true, scrollPosition: .none)
         }
     }
@@ -120,8 +122,8 @@ class AllSongLyricsListVC: SongLyricsListVC {
             var favoriteOrder = defaults.integer(forKey: "favoriteOrder")
             
             for indexPath in indexPaths {
-                if !showingData[indexPath.row].isFavorite() {
-                    showingData[indexPath.row].favoriteOrder = Int16(favoriteOrder)
+                if !dataSource.showingData[indexPath.row].isFavorite() {
+                    dataSource.showingData[indexPath.row].favoriteOrder = Int16(favoriteOrder)
                     favoriteOrder += 1
                 }
             }
@@ -131,7 +133,7 @@ class AllSongLyricsListVC: SongLyricsListVC {
             defaults.set(favoriteOrder, forKey: "favoriteOrder")
         } else {
             for indexPath in indexPaths {
-                showingData[indexPath.row].favoriteOrder = -1
+                dataSource.showingData[indexPath.row].favoriteOrder = -1
             }
             
             starButton.image = UIImage(named: "starIcon")
@@ -141,27 +143,6 @@ class AllSongLyricsListVC: SongLyricsListVC {
     }
     
     // MARK: - UITableViewDelegete, UITableViewDataSource
-    
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = super.tableView(tableView, cellForRowAt: indexPath) as! SongLyricCell
-        
-        if let searchText = searchView.searchField.text {
-            let songLyric = showingData[indexPath.row]
-            
-            let predicate = NSPredicate(format: "self CONTAINS[cd] %@", searchText)
-            let numbers = songLyric.numbers.filter {
-                predicate.evaluate(with: $0)
-            }
-            
-            if numbers.count > 0 && !songLyric.id!.contains(searchText) {
-                cell.numberLabel.text = numbers[0]
-            } else {
-                cell.numberLabel.text = songLyric.id
-            }
-        }
-        
-        return cell
-    }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if !tableView.isEditing {

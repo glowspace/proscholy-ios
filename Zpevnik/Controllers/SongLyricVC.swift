@@ -169,13 +169,12 @@ class SongLyricVC: ViewController {
     func updateSongLyrics() {
         if let layers = lyricsTextView.layer.sublayers {
             for layer in layers {
-                if layer is CATextLayer {
+                if layer is CATextLayer || layer is CAShapeLayer{
                     layer.removeFromSuperlayer()
                 }
             }
         }
         lyricsTextView.isScrollEnabled = true
-        lyricsTextView.textContainer.exclusionPaths = []
         
         setTitle(songLyric.name)
         
@@ -215,7 +214,7 @@ class SongLyricVC: ViewController {
         authorsLabel.font = .getFont(ofSize: CGFloat(UserSettings.fontSize))
         authorsLabel.text = text
         
-        lyricsTextView.attributedText = prepareLyrics()
+        showLyrics()
         
         lyricsTextView.translatesAutoresizingMaskIntoConstraints = true
         lyricsTextView.sizeToFit()
@@ -234,6 +233,7 @@ class SongLyricVC: ViewController {
             delegate?.changeSongLyric(self, change: -1)
         } else if gestureRecognizer.direction == .left {
             delegate?.changeSongLyric(self, change: 1)
+            next()
         }
     }
     
@@ -247,7 +247,7 @@ class SongLyricVC: ViewController {
     }
     
     @objc func changeFontSize(gestureRecognizer: UIPinchGestureRecognizer) {
-        if gestureRecognizer.state == .began || gestureRecognizer.state == .changed {
+        if (gestureRecognizer.state == .began || gestureRecognizer.state == .changed) {
             UserSettings.fontSize *= Float(gestureRecognizer.scale)
             updateSongLyrics()
             gestureRecognizer.scale = 1.0
@@ -281,12 +281,13 @@ class SongLyricVC: ViewController {
     
     struct Chord {
         var text: String
-        let start: String.Index
+        var start: Int
     }
     
     private func extractChords(_ lyrics: String?) throws -> (String?, [Chord]?) {
         guard let tmpLyrics = lyrics else { return (nil, nil) }
         var lyrics = tmpLyrics.replacingOccurrences(of: "\r", with: "")
+        lyrics += " "
         var chords: [Chord] = []
         
         var firstVerseChords: [Chord] = []
@@ -304,13 +305,13 @@ class SongLyricVC: ViewController {
             let length = range.upperBound - range.lowerBound
             
             if let range = Range(NSRange(location: start, length: length), in: lyrics), let chordRange = Range(NSRange(location: start + 1, length: length - 2), in: lyrics) {
-                var chord = Chord(text: String(lyrics[chordRange]), start: range.lowerBound)
+                var chord = Chord(text: String(lyrics[chordRange]), start: lyrics.distance(from: lyrics.startIndex, to: range.lowerBound))
                 
                 let chorusVerseBegin = lyrics.range(of: "R:")?.lowerBound ?? lyrics.startIndex
                 let firstVerseBegin = lyrics.range(of: "1.")?.lowerBound ?? lyrics.startIndex
                 
-                let distanceFromChorus = lyrics.distance(from: chorusVerseBegin, to: chord.start)
-                let distanceFromFirstVerse = lyrics.distance(from: firstVerseBegin, to: chord.start)
+                let distanceFromChorus = lyrics.distance(from: chorusVerseBegin, to: range.lowerBound)
+                let distanceFromFirstVerse = lyrics.distance(from: firstVerseBegin, to: range.lowerBound)
                 if chord.text != "%" && (distanceFromChorus < 0 || (distanceFromFirstVerse > 0 && distanceFromChorus >= distanceFromFirstVerse)) {
                     firstVerseChords.append(chord)
                 }
@@ -331,117 +332,158 @@ class SongLyricVC: ViewController {
         return (lyrics, chords)
     }
     
-    private func prepareLyrics() -> NSAttributedString {
-        //        let (lyrics, chords) = try extractChords(lyrics.replacingOccurrences(of: "\r", with: ""))
-        guard let lyrics = lyrics, let chords = chords else { return NSAttributedString() }
+    private func showLyrics() {
+        guard var lyrics = lyrics, var chords = chords else { return }
+        
         let showChords = UserSettings.showChords
         let fontSize = CGFloat(UserSettings.fontSize)
         let textColor = UserSettings.darkMode ? UIColor.white : UIColor.black
         
-        let style = NSMutableParagraphStyle()
-        let fontHeight = ("Ú" as NSString).size(withAttributes: [.font: UIFont.getFont(ofSize: fontSize)]).height * 1.2
-        style.lineSpacing = (showChords && chords.count > 0) ? fontHeight : 0
         lyricsTextView.textContainerInset = UIEdgeInsets(top: (showChords && chords.count > 0) ? fontSize : 0, left: 0, bottom: 10, right: 0)
         lyricsTextView.layoutIfNeeded()
+        
+        let fontHeight = ("Ú" as NSString).size(withAttributes: [.font: UIFont.getFont(ofSize: fontSize)]).height * 1.2
+        
+        let style = NSMutableParagraphStyle()
+        style.lineSpacing = (showChords && chords.count > 0) ? fontHeight : 0
+        
         let attributes: [NSAttributedString.Key: Any] = [.paragraphStyle: style, .font : UIFont.getFont(ofSize: fontSize), .foregroundColor: textColor]
+        
         var chordAttributes = attributes
         chordAttributes[.foregroundColor] = UIColor(red: 0, green: 122, blue: 255)
-        let parsedString = NSMutableAttributedString(string: lyrics, attributes: attributes)
         
-        lyricsTextView.attributedText = parsedString
-        lyricsTextView.layoutManager.ensureLayout(for: lyricsTextView.textContainer)
+        let textStorage = NSTextStorage(string: lyrics, attributes: attributes)
         
+        let layoutManager = NSLayoutManager()
+        
+        textStorage.addLayoutManager(layoutManager)
+        
+        let textContainer = NSTextContainer(size: lyricsTextView.textContainer.size)
+        textContainer.lineBreakMode = .byWordWrapping
+        
+        layoutManager.addTextContainer(textContainer)
+        
+        let minSpacing: CGFloat = fontSize / 2.0
         var previous: CGRect?
+        var newLines = 0
         
         if showChords {
-            for chord in chords {
+            for i in 0..<chords.count {
+                var chord = chords[i]
+                
                 let chordText = NSMutableAttributedString(string: chord.text, attributes: chordAttributes)
                 
-                let location = lyrics.distance(from: lyrics.startIndex, to: chord.start)
+                let layer = CATextLayer()
+                layer.contentsScale = UIScreen.main.scale
+                layer.string = chordText
                 
-                let start = lyricsTextView.position(from: lyricsTextView.beginningOfDocument, offset: location)!
-                let end = lyricsTextView.position(from: start, offset: 0)!
+                chord.start += newLines
                 
-                let tRange = lyricsTextView.textRange(from: start, to: end)!
-                let rect = lyricsTextView.firstRect(for: tRange)
-                
-                let x = rect.origin.x
-                let y = rect.origin.y - 0.8 * fontHeight
-                
-                let minSpacing: CGFloat = 8
-                
-                var frame = CGRect(origin: CGPoint(x: x, y: y), size: chordText.size())
-                if let previous = previous, frame.origin.y == previous.origin.y && frame.origin.x < previous.origin.x + previous.width + minSpacing {
-                    let diff = minSpacing - (frame.origin.x - (previous.origin.x + previous.width))
-                    frame.origin.x = previous.origin.x + previous.width + minSpacing
-                    if location > 0 {
-                        if location < lyrics.count {
-                            let start = lyricsTextView.position(from: lyricsTextView.beginningOfDocument, offset: location)!
-                            let end = lyricsTextView.position(from: start, offset: 1)!
+                if let rect = getRect(for: chord.start, textContainer: textContainer, layoutManager: layoutManager, offset: 0) {
+                    let x = rect.origin.x
+                    let y = rect.origin.y - 0.8 * fontHeight
+                    
+                    var frame = CGRect(origin: CGPoint(x: x, y: y), size: chordText.size())
+                    
+                    if let previous = previous, frame.origin.y == previous.origin.y && frame.origin.x < previous.origin.x + previous.width + minSpacing {
+                        let diff = minSpacing - (frame.origin.x - (previous.origin.x + previous.width))
+                        frame.origin.x = previous.origin.x + previous.width + minSpacing
+                        
+                        if frame.origin.x + frame.width > scrollView.frame.width - 16, let range = Range(NSRange(location: chord.start, length: 0), in: lyrics) {
+                            lyrics.insert("\n", at: range.lowerBound)
+                            textStorage.insert(NSAttributedString(string: "\n", attributes: attributes), at: chord.start)
                             
-                            let tRange = lyricsTextView.textRange(from: start, to: end)!
-                            let rect2 = lyricsTextView.firstRect(for: tRange)
-                            if rect.height == rect2.height {
-                                parsedString.addAttribute(.kern, value: diff, range: NSRange(location: location - 1, length: 1))
+                            chord.start += 1
+                            newLines += 1
+                        } else if chord.start > 0 && lyrics[lyrics.index(lyrics.startIndex, offsetBy: chord.start)] != "\n" {
+                            if let rect2 = getRect(for: chord.start, textContainer: textContainer, layoutManager: layoutManager, offset: 1), abs(rect.height - rect2.height) < fontSize / 2.0 {
+                                textStorage.addAttribute(.kern, value: diff, range: NSRange(location: chord.start - 1, length: 1))
                             }
-                        } else {
-                            parsedString.addAttribute(.kern, value: diff, range: NSRange(location: location - 1, length: 1))
                         }
+                    } else if frame.origin.x + frame.width > scrollView.frame.width - 16, let range = Range(NSRange(location: chord.start, length: 0), in: lyrics) {
+                        lyrics.insert("\n", at: range.lowerBound)
+                        textStorage.insert(NSAttributedString(string: "\n", attributes: attributes), at: chord.start)
+                        
+                        chord.start += 1
+                        newLines += 1
                     }
-                    lyricsTextView.attributedText = parsedString
-                    lyricsTextView.layoutManager.ensureLayout(for: lyricsTextView.textContainer)
+                    
+                    previous = frame
                 }
                 
-                previous = frame
+                chords[i] = chord
             }
             
             previous = nil
             
-            for chord in chords {
+            for i in 0..<chords.count {
+                let chord = chords[i]
+                
                 let chordText = NSMutableAttributedString(string: chord.text, attributes: chordAttributes)
                 
                 let layer = CATextLayer()
+                layer.contentsScale = UIScreen.main.scale
                 layer.string = chordText
                 
-                let location = lyrics.distance(from: lyrics.startIndex, to: chord.start)
-                
-                let start = lyricsTextView.position(from: lyricsTextView.beginningOfDocument, offset: location)!
-                let end = lyricsTextView.position(from: start, offset: 0)!
-                
-                let tRange = lyricsTextView.textRange(from: start, to: end)!
-                let rect = lyricsTextView.firstRect(for: tRange)
-                
-                let x = rect.origin.x
-                let y = rect.origin.y - 0.8 * fontHeight
-                
-                let minSpacing: CGFloat = 8
-                
-                var frame = CGRect(origin: CGPoint(x: x, y: y), size: chordText.size())
-                if let previous = previous, frame.origin.y == previous.origin.y && frame.origin.x < previous.origin.x + previous.width + minSpacing {
-                    frame.origin.x = previous.origin.x + previous.width + minSpacing
+                if let rect = getRect(for: chord.start, textContainer: textContainer, layoutManager: layoutManager, offset: 0) {
+                    let x = rect.origin.x
+                    let y = rect.origin.y - 0.8 * fontHeight
+                    
+                    var frame = CGRect(origin: CGPoint(x: x, y: y), size: chordText.size())
+                    
+                    if chord.start > 0 {
+                        if let diff = textStorage.attribute(.kern, at: chord.start - 1, effectiveRange: nil) as? CGFloat, diff > minSpacing / 4 && String(lyrics[lyrics.index(lyrics.startIndex, offsetBy: chord.start - 1)]).rangeOfCharacter(from: CharacterSet.letters) != nil && String(lyrics[lyrics.index(lyrics.startIndex, offsetBy: chord.start)]).rangeOfCharacter(from: CharacterSet.letters) != nil {
+                            let path = UIBezierPath()
+                            path.move(to: CGPoint(x: 0, y: frame.height))
+                            path.addLine(to: CGPoint(x: diff, y: frame.height))
+                            let lineLayer = CAShapeLayer()
+                            lineLayer.path = path.cgPath
+                            lineLayer.strokeColor = UIColor.white.cgColor
+                            lineLayer.lineWidth = 1.0
+                            lineLayer.frame = CGRect(origin: CGPoint(x: x - diff, y: rect.origin.y), size: chordText.size())
+                            lyricsTextView.layer.addSublayer(lineLayer)
+                        }
+                    }
+                    
+                    if let previous = previous, frame.origin.y == previous.origin.y && frame.origin.x < previous.origin.x + previous.width + minSpacing {
+                        frame.origin.x = previous.origin.x + previous.width + minSpacing
+                    }
+                    
+                    layer.frame = frame
+                    lyricsTextView.layer.addSublayer(layer)
+                    
+                    previous = frame
                 }
                 
-                layer.frame = frame
-                layer.contentsScale = UIScreen.main.scale
-                lyricsTextView.layer.addSublayer(layer)
-                
-                previous = frame
+                chords[i] = chord
             }
         }
         
-//        let middleY = scrollView.contentOffset.y + scrollView.frame.height / 2
-//        let middleX = scrollView.frame.width / 2
-//        
-//        middle = lyricsTextView.characterRange(at: CGPoint(x: middleX, y: middleY))?.start
+        lyricsTextView.attributedText = textStorage
+    }
+    
+    private func getRect(for location: Int, textContainer: NSTextContainer, layoutManager: NSLayoutManager, offset: Int) -> CGRect? {
+        var glyphRange = NSRange()
         
-        return parsedString
+        layoutManager.characterRange(forGlyphRange: NSRange(location: location, length: offset), actualGlyphRange: &glyphRange)
+        
+        var rect = layoutManager.boundingRect(forGlyphRange: glyphRange, in: textContainer)
+        rect.origin.y += lyricsTextView.textContainerInset.top
+        
+        return rect
     }
     
     // MARK: - Debug
     
     func next() {
         DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(20), execute: {
-            self.delegate?.changeSongLyric(self, change: 1)
+            if UserSettings.fontSize == Constants.maxFontSize {
+                self.delegate?.changeSongLyric(self, change: 1)
+                UserSettings.fontSize = Constants.minFontSize
+            } else {
+                UserSettings.fontSize += 5
+                self.updateSongLyrics()
+            }
             self.next()
         })
     }

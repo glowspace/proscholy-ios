@@ -79,6 +79,13 @@ class LaunchVC: ViewController {
         super.viewDidAppear(animated)
         
         let defaults = UserDefaults.standard
+        let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+        
+        if let version = defaults.string(forKey: "version"), version == currentVersion { } else {
+            defaults.removeObject(forKey: "lastUpdate")
+            defaults.removeObject(forKey: "defaultDataLoaded")
+            defaults.set(currentVersion, forKey: "version")
+        }
         
         if let lastUpdate = defaults.string(forKey: "lastUpdate") {
             let dateFormatter = DateFormatter()

@@ -63,50 +63,13 @@ extension MenuVC: UITableViewDelegate, UITableViewDataSource {
             break
         case 1:
             let aboutVC = AboutVC()
-            aboutVC.setTitle("O Zpěvníku")
-            
-            let description = """
-            Zpěvník ProScholy.cz, který přichází na pomoc všem scholám, křesťanským kapelám, společenstvím a všem, kdo se chtějí modlit hudbou!
-
-            Projekt vzniká se svolením České biskupské konference.
-
-            Další informace o stavu a rozvoji projektu naleznete na https://zpevnik.proscholy.cz
-            """
-            
-            let attributedDescription = NSMutableAttributedString(string: description, attributes: [.font: UIFont.getFont(ofSize: 15)])
-            
-            if let range = description.range(of: "České biskupské konference") {
-                attributedDescription.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: 18), range: NSRange(range, in: description))
-            }
-            
-            aboutVC.descriptionTextView.attributedText = attributedDescription
-            
+            aboutVC.state = .aboutSongBook
+                       
             navigationController?.pushViewController(aboutVC, animated: true)
             break
         case 2:
             let aboutVC = AboutVC()
-            aboutVC.setTitle("O Aplikaci")
-            
-            let description = """
-            Zpěvník pro scholy verze 1.2
-            Offline mobilní verze pro iOS.
-
-            Autor mobilní aplikace: Patrik Dobiáš
-            
-            Na vývoji se stále pracuje.
-            
-            Případné chyby, připomínky, nápady či postřehy k této aplikaci, prosím, uveďte na adresu patrikdobidobias@icloud.com
-            """
-            
-            let attributedDescription = NSMutableAttributedString(string: description, attributes: [.font: UIFont.getFont(ofSize: 15)])
-            
-            for version in ["1.0", "1.1", "1.2"] {
-                if let range = description.range(of: "Verze " + version) {
-                    attributedDescription.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: 18), range: NSRange(range, in: description))
-                }
-            }
-            
-            aboutVC.descriptionTextView.attributedText = attributedDescription
+            aboutVC.state = .aboutApp
             
             navigationController?.pushViewController(aboutVC, animated: true)
             break

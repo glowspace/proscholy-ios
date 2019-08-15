@@ -16,6 +16,12 @@ extension SongLyric {
         
         guard let songLyric: SongLyric = CoreDataService.createOrGetObject(id: id, context: context) else { return nil }
         
+        if let trashed = data["trashed"] as? Bool, trashed {
+            context.delete(songLyric)
+            
+            return nil
+        }
+        
         songLyric.id = id
         songLyric.name = data["name"] as? String
         songLyric.lyrics = data["lyrics"] as? String
@@ -32,6 +38,18 @@ extension SongLyric {
         return favoriteOrder > -1
     }
     
+    func getNumber(in songBook: SongBook) -> String? {
+        if let songBookRecords = songBookRecords?.allObjects as? [SongBookRecord] {
+            for songBookRecord in songBookRecords {
+                if songBookRecord.songBook == songBook {
+                    return songBook.shortcut! + songBookRecord.number!
+                }
+            }
+        }
+        
+        return nil
+    }
+    
     @objc var numbers: [String] {
         get {
             guard let songBookRecords = songBookRecords?.allObjects as? [SongBookRecord] else { return [] }
@@ -42,29 +60,10 @@ extension SongLyric {
             return numbers
         }
     }
-}
-
-extension SongLyric: SongDataSource {
     
-    func setCell(_ cell: UITableViewCell) {
-        guard let cell = cell as? SongLyricCell else { return }
-        
-        cell.nameLabel.text = name
-        cell.numberLabel.text = id!
-    }
-    
-    static func registerCell(_ tableView: UITableView, forCellReuseIdentifier identifier: String) {
-        tableView.register(SongLyricCell.self, forCellReuseIdentifier: identifier)
-    }
-    
-    static func getPredicates(forSearchText searchText: String) -> [NSPredicate] {
-        let predicates = [
-            NSPredicate(format: "name BEGINSWITH[cd] %@", searchText),
-            NSPredicate(format: "NOT name BEGINSWITH[cd] %@ AND name CONTAINS[cd] %@", searchText, searchText),
-            NSPredicate(format: "ANY numbers CONTAINS[cd] %@", searchText),
-            NSPredicate(format: "lyrics CONTAINS[cd] %@", searchText)
-        ]
-        
-        return predicates
+    @objc var lyricsNoChords: String {
+        get {
+            return lyrics!.replacingOccurrences(of: #"(\[([^\s\]])+\])"#, with: "", options: [.regularExpression])
+        }
     }
 }

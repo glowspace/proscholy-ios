@@ -9,12 +9,23 @@
 import UIKit
 import CoreData
 
-protocol SongDataSource: NSManagedObject {
-    func setCell(_ cell: UITableViewCell)
+protocol DataSource {
+    associatedtype T: NSManagedObject
+
+    var data: [T] { get set }
+    var showingData: [T] { get set }
     
-    static func registerCell(_ tableView: UITableView, forCellReuseIdentifier identifier: String)
+    var searchText: String? { get set }
+
+    // MARK: - Data Handlers
     
-    static func getPredicates(forSearchText searchText: String) -> [NSPredicate]
+    func updateData()
+
+    // Mark: - Cell Settings
+
+    func setCell(_ cell: UITableViewCell, _ object: NSManagedObject)
+
+    func registerCell(_ tableView: UITableView, forCellReuseIdentifier identifier: String)
 }
 
 protocol SongLyricDelegate {

@@ -7,8 +7,9 @@
 //
 
 import UIKit
+import CoreData
 
-class ListVC<T: SongDataSource>: ViewController, UITableViewDelegate, UITableViewDataSource, UIAdaptivePresentationControllerDelegate {
+class ListVC<T: DataSource>: ViewController, UITableViewDelegate, UITableViewDataSource, UIAdaptivePresentationControllerDelegate {
     
     lazy var searchView: SearchView = {
         let searchView = SearchView()
@@ -30,15 +31,14 @@ class ListVC<T: SongDataSource>: ViewController, UITableViewDelegate, UITableVie
         return tableView
     }()
     
-    var data: [T]!
-    var showingData: [T]!
+    var dataSource: T!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
         setViews()
         
-        T.registerCell(tableView, forCellReuseIdentifier: "cellId")
+        dataSource.registerCell(tableView, forCellReuseIdentifier: "cellId")
         
         hideKeyboardWhenTappedAround()
     }
@@ -47,7 +47,12 @@ class ListVC<T: SongDataSource>: ViewController, UITableViewDelegate, UITableVie
         super.viewWillAppear(animated)
         
         searchView.searchField.updateFontSize()
-        loadData()
+        
+        dataSource.searchText = searchView.searchField.text
+        
+        dataSource.updateData()
+        
+        tableView.reloadData()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -73,7 +78,6 @@ class ListVC<T: SongDataSource>: ViewController, UITableViewDelegate, UITableVie
         
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[tableView]|", metrics: nil, views: ["tableView": tableView]))
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[tableView]|", metrics: nil, views: ["tableView": tableView]))
-//        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-8-[tableView]|", metrics: nil, views: ["tableView": tableView]))
     }
     
     func showSearchView(placeholder: String) {
@@ -84,39 +88,10 @@ class ListVC<T: SongDataSource>: ViewController, UITableViewDelegate, UITableVie
     
     // MARK: - Data Handlers
     
-    func loadData() {
-        if let data: [T] = CoreDataService.fetchData(sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], context: PersistenceService.context) {
-            self.data = data
-            
-            updateData(sender: searchView.searchField)
-        }
-        
-        showingData = data
-        showData()
-    }
-    
-    func showData() {
-        tableView.reloadData()
-    }
-    
-    func search(predicates: [NSPredicate]) {
-        showingData = []
-        
-        for predicate in predicates {
-            showingData.append(contentsOf: data.filter {
-                predicate.evaluate(with: $0) && !showingData.contains($0)
-            })
-        }
-    }
-    
     @objc func updateData(sender: UITextField) {
-        if let searchText = sender.text, searchText.count > 0 {
-            search(predicates: T.getPredicates(forSearchText: searchText))
-        } else {
-            showingData = data
-        }
+        dataSource.searchText = sender.text
         
-        showData()
+        tableView.reloadData()
     }
     
     // MARK: - UITableViewDelegate, UITableViewDataSource
@@ -125,19 +100,37 @@ class ListVC<T: SongDataSource>: ViewController, UITableViewDelegate, UITableVie
         searchView.searchField.resignFirstResponder()
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) { }
-    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return showingData.count
+        return dataSource.showingData.count
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cellId", for: indexPath)
         
-        showingData[indexPath.row].setCell(cell)
+        dataSource.setCell(cell, dataSource.showingData[indexPath.row])
         
         return cell
     }
     
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) { }
+    
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) { }
+    
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return .none
+    }
+    
+    func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        return false
+    }
+    
+    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) { }
+    
+    func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
+        return proposedDestinationIndexPath
+    }
+
+    func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        return false
+    }
 }

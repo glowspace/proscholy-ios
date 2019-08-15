@@ -15,7 +15,7 @@ extension UIColor {
     }
     
     static func from(hex: String?) -> UIColor {
-        guard let hex = hex else { return .red }
+        let hex = hex ?? "#303F9F"
         var cString: String = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
         
         if(cString.hasPrefix("#")) {

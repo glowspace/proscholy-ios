@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SongBooksListVC: ListVC<SongBook> {
+class SongBooksListVC: ListVC<SongBookDataSource> {
     
     lazy var allSongLyricsVC: AllSongLyricsListVC = {
         let vc = AllSongLyricsListVC()
@@ -17,6 +17,7 @@ class SongBooksListVC: ListVC<SongBook> {
     }()
     
     override func viewDidLoad() {
+        dataSource = SongBookDataSource()
         super.viewDidLoad()
         
         searchView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[searchField]-|", metrics: nil, views: ["searchField": searchView.searchField]))
@@ -28,22 +29,16 @@ class SongBooksListVC: ListVC<SongBook> {
         allSongLyricsVC.searchView.searchField.text = ""
         
         showSearchView(placeholder: "Zadejte název či zkratku zpěvníku")
+        
         navigationController?.navigationBar.barTintColor = Constants.getMiddleColor()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
+        // needed to correctly update placeholder font size in next VC
         navigationController?.setNavigationBarHidden(true, animated: false)
         navigationController?.setNavigationBarHidden(false, animated: false)
-    }
-    
-    override func loadData() {
-        if let data: [SongBook] = CoreDataService.fetchData(predicate: NSPredicate(format: "isPrivate == false"), sortDescriptors: [NSSortDescriptor(key: "name", ascending: true)], context: PersistenceService.context) {
-            self.data = data
-            
-            updateData(sender: searchView.searchField)
-        }
     }
     
     // MARK: - UITableViewDelegate, UITableViewDataSource
@@ -57,16 +52,14 @@ class SongBooksListVC: ListVC<SongBook> {
             navigationController?.pushViewController(allSongLyricsVC, animated: true)
         } else {
             let songBookVC = SongBookVC()
-            songBookVC.songBook = showingData[indexPath.row - 1]
+            songBookVC.songBook = dataSource.showingData[indexPath.row - 1]
             navigationController?.pushViewController(songBookVC, animated: true)
         }
     }
     
     override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         if indexPath.row > 0 {
-            var indexPath = indexPath
-            indexPath.row -= 1
-            return super.tableView(tableView, cellForRowAt: indexPath)
+            return super.tableView(tableView, cellForRowAt: IndexPath(row: indexPath.row - 1, section: indexPath.section))
         }
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "cellId") as! SongBookCell

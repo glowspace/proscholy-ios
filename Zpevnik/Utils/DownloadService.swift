@@ -65,7 +65,7 @@ class DownloadService {
         }
         
         let queries = [
-            Query(type: "song_lyrics", fields: ["id", "lyrics", "name", "lang_string", "type",
+            Query(type: "song_lyrics", fields: ["id", "lyrics", "name", "lang_string", "type", "trashed",
                 Query(type: "song", fields: ["id", "name"]),
                 Query(type: "songbook_records", fields: ["id", "number",
                      Query(type: "songbook", fields: ["id"])]),
@@ -86,7 +86,7 @@ class DownloadService {
         
         URLSession(configuration: sessionConfig).dataTask(with: url) { (data, response, error) in
             guard error == nil else {
-                completionHandler()
+                loadSongDataFromFile(completionHandler)
                 return
             }
             
@@ -101,10 +101,9 @@ class DownloadService {
                 
                 completionHandler()
             } catch {
-                print(error)
-                completionHandler()
+                loadSongDataFromFile(completionHandler)
             }
-            }.resume()
+        }.resume()
     }
     
     private static func loadSongDataFromFile(_ completionHandler: @escaping () -> Void) {

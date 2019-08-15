@@ -10,8 +10,6 @@ import UIKit
 
 class SongBookVC: SongLyricsListVC {
     
-    var songBook: SongBook!
-    
     lazy var searchBarButton: UIBarButtonItem = {
         let barButtonItem = UIBarButtonItem(image: UIImage(named: "searchIcon"), style: .plain, target: self, action: #selector(showSearch))
         
@@ -22,27 +20,34 @@ class SongBookVC: SongLyricsListVC {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         
-        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(backButtonTapped)))
-        
         view.backgroundColor = .clear
+        
+        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(backButtonTapped)))
         
         return view
     }()
     
+    var songBook: SongBook!
+    
     var searching = false
+    
+    override func viewDidLoad() {
+        dataSource = SongLyricDataSource(songBook: songBook)
+        
+        super.viewDidLoad()
+    }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
         navigationController?.navigationBar.addSubview(emptyBackButtonView)
+        navigationController?.navigationBar.barTintColor = .from(hex: songBook.color)
+        navigationController?.navigationBar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[emptyBackButtonView(==44)]", metrics: nil, views: ["emptyBackButtonView": emptyBackButtonView]))
+        navigationController?.navigationBar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[emptyBackButtonView(==44)]", metrics: nil, views: ["emptyBackButtonView": emptyBackButtonView]))
         
         if !searching {
             setTitle(songBook.name)
-            navigationController?.navigationBar.barTintColor = .from(hex: songBook.color)
             navigationItem.setRightBarButton(searchBarButton, animated: true)
-            
-            navigationController?.navigationBar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[emptyBackButtonView(==44)]", metrics: nil, views: ["emptyBackButtonView": emptyBackButtonView]))
-            navigationController?.navigationBar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[emptyBackButtonView(==44)]", metrics: nil, views: ["emptyBackButtonView": emptyBackButtonView]))
         } else {
             showSearchView(placeholder: "Zadejte název či číslo písně")
         }
@@ -55,70 +60,14 @@ class SongBookVC: SongLyricsListVC {
         searchView.searchField.resignFirstResponder()
     }
     
-    override func loadData() {
-        if let records = songBook.records?.allObjects as? [SongBookRecord] {
-            self.data = records.map {
-                $0.songLyric!
-            }
-        }
-        self.data = self.data.filter {
-            $0.lyrics != nil
-        }
-        
-        self.data.sort { (first, second) in
-            var firstNumber = -1
-            var secondNumber = -1
-            var firstMore = ""
-            var secondMore = ""
-            if let songBookRecords = first.songBookRecords?.allObjects as? [SongBookRecord] {
-                for songBookRecord in songBookRecords {
-                    if songBookRecord.songBook == songBook {
-                        firstNumber = Int(songBookRecord.number!.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression))!
-                        firstMore = songBookRecord.number!.replacingOccurrences(of: "[0-9]", with: "", options: .regularExpression)
-                        break
-                    }
-                }
-            }
-            if let songBookRecords = second.songBookRecords?.allObjects as? [SongBookRecord] {
-                for songBookRecord in songBookRecords {
-                    if songBookRecord.songBook == songBook {
-                        secondNumber = Int(songBookRecord.number!.replacingOccurrences(of: "[^0-9]", with: "", options: .regularExpression))!
-                        secondMore = songBookRecord.number!.replacingOccurrences(of: "[0-9]", with: "", options: .regularExpression)
-                        break
-                    }
-                }
-            }
-            
-            if firstNumber == secondNumber {
-                return firstMore < secondMore
-            }
-            return firstNumber < secondNumber
-        }
-        
-        showingData = data
-        showData()
-    }
-    
-    override func showData() {
-        if let searchText = searchView.searchField.text, searchText.count > 0 {
-            showingData = showingData.filter {
-                let numbers = $0.numbers.filter {
-                    $0.contains(songBook.shortcut!)
-                }
-                return NSPredicate(format: "ANY %@ CONTAINS[cd] %@", numbers, searchText).evaluate(with: nil)
-            }
-        }
-        
-        super.showData()
-    }
-    
     // MARK: - Handlers
     
     @objc func backButtonTapped() {
         if navigationItem.rightBarButtonItem == nil {
+            searching = false
             searchView.searchField.text = ""
             searchView.searchField.resignFirstResponder()
-            updateData(sender: searchView.searchField)
+            dataSource.updateData()
             
             setTitle(songBook.name)
             navigationItem.setRightBarButton(searchBarButton, animated: true)
@@ -127,8 +76,6 @@ class SongBookVC: SongLyricsListVC {
             if showingFilter {
                 toggleFilters()
             }
-            
-            searching = false
         } else {
             navigationController?.popViewController(animated: true)
         }
@@ -136,23 +83,9 @@ class SongBookVC: SongLyricsListVC {
     
     @objc func showSearch() {
         navigationItem.setRightBarButton(nil, animated: true)
+        
+        searching = true
         showSearchView(placeholder: "Zadejte název či číslo písně")
         searchView.searchField.becomeFirstResponder()
-        searching = true
-    }
-    
-    // MARK: - UITableViewDelegate, UITableViewDataSource
-    
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = super.tableView(tableView, cellForRowAt: indexPath) as! SongLyricCell
-        
-        let songLyric = showingData[indexPath.row]
-        
-        let numbers = songLyric.numbers.filter { $0.contains(songBook.shortcut!) }
-        if numbers.count == 1 {
-            cell.numberLabel.text = numbers[0]
-        }
-        
-        return cell
     }
 }
