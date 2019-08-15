@@ -36,6 +36,8 @@ class UserSettings {
     }
     static var showBottomOptions = false
     
+    static var favoriteOrderLast = 0
+    
     static func load() {
         let defaults = UserDefaults.standard
         
@@ -66,6 +68,10 @@ class UserSettings {
         if defaults.object(forKey: "showBottomOptions") != nil {
             showBottomOptions = defaults.bool(forKey: "showBottomOptions")
         }
+        
+        if defaults.object(forKey: "favoriteOrder") != nil {
+            favoriteOrderLast = defaults.integer(forKey: "favoriteOrder")
+        }
     }
     
     static func save() {
@@ -78,6 +84,7 @@ class UserSettings {
         defaults.set(fontSize, forKey: "fontSize")
         defaults.set(darkMode, forKey: "darkMode")
         defaults.set(showBottomOptions, forKey: "showBottomOptions")
+        defaults.set(favoriteOrderLast, forKey: "favoriteOrder")
     }
     
     private static func prepareDarkMode(_ darkMode: Bool) {

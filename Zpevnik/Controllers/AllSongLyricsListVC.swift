@@ -116,21 +116,16 @@ class AllSongLyricsListVC: SongLyricsListVC {
     
     @objc func starSelected() {
         guard let indexPaths = tableView.indexPathsForSelectedRows else { return }
-        let defaults = UserDefaults.standard
         
         if shouldAddToFavorites() {
-            var favoriteOrder = defaults.integer(forKey: "favoriteOrder")
-            
             for indexPath in indexPaths {
                 if !dataSource.showingData[indexPath.row].isFavorite() {
-                    dataSource.showingData[indexPath.row].favoriteOrder = Int16(favoriteOrder)
-                    favoriteOrder += 1
+                    dataSource.showingData[indexPath.row].favoriteOrder = Int16(UserSettings.favoriteOrderLast)
+                    UserSettings.favoriteOrderLast += 1
                 }
             }
             
             starButton.image = UIImage(named: "starIconFilled")
-            
-            defaults.set(favoriteOrder, forKey: "favoriteOrder")
         } else {
             for indexPath in indexPaths {
                 dataSource.showingData[indexPath.row].favoriteOrder = -1

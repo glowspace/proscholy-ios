@@ -259,12 +259,9 @@ class SongLyricVC: ViewController {
             songLyric.favoriteOrder = -1
             starButton.image = UIImage(named: "starIcon")
         } else {
-            let defaults = UserDefaults.standard
-            let favoriteOrder = defaults.integer(forKey: "favoriteOrder")
+            songLyric.favoriteOrder = Int16(UserSettings.favoriteOrderLast)
+            UserSettings.favoriteOrderLast += 1
             
-            songLyric.favoriteOrder = Int16(favoriteOrder)
-            
-            defaults.set(favoriteOrder + 1, forKey: "favoriteOrder")
             PersistenceService.saveContext()
             starButton.image = UIImage(named: "starIconFilled")
         }
