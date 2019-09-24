@@ -50,7 +50,9 @@ class SettingsVC: ViewController {
 //        cells.append(createSettingCell(title: "Posuvky", isOn: UserSettings.showSliders, action: #selector(slidersToggle)))
         cells.append(createSettingCell(title: "Akordy", isOn: UserSettings.showChords, action: #selector(showChordsToggle)))
         cells.append(createFontSizeCell())
-        cells.append(createSettingCell(title: "Tmavý mód", isOn: UserSettings.darkMode, action: #selector(darkModeToggle)))
+        if #available(iOS 13, *) { } else {
+            cells.append(createSettingCell(title: "Tmavý mód", isOn: UserSettings.darkMode, action: #selector(darkModeToggle)))
+        }
 //        cells.append(createSettingCell(title: "Zobrazit spodní nabídku", isOn: UserSettings.showBottomOptions, action: #selector(bottomOptionsToggle)))
     }
     
@@ -161,7 +163,11 @@ extension SettingsVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return section == 0 ? 1 : 3
+        if #available(iOS 13, *) {
+            return section == 0 ? 1 : 2
+        } else {
+            return section == 0 ? 1 : 3
+        }
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {

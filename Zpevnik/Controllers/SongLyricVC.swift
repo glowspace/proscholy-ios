@@ -93,10 +93,18 @@ class SongLyricVC: ViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        view.backgroundColor = Constants.getDarkColor() ?? .white
-        scrollView.backgroundColor = Constants.getDarkColor() ?? .white
-        
-        navigationController?.navigationBar.barTintColor = Constants.getMiddleColor()
+        if #available(iOS 13, *) {
+            view.backgroundColor = Constants.getDarkColor(traitCollection.userInterfaceStyle) ?? .white
+            lyricsTextView.backgroundColor = Constants.getDarkColor(traitCollection.userInterfaceStyle) ?? .white
+            scrollView.backgroundColor = Constants.getDarkColor(traitCollection.userInterfaceStyle) ?? .white
+            
+            navigationController?.navigationBar.barTintColor = Constants.getMiddleColor(traitCollection.userInterfaceStyle)
+        } else {
+            view.backgroundColor = Constants.getDarkColor() ?? .white
+            scrollView.backgroundColor = Constants.getDarkColor() ?? .white
+            
+            navigationController?.navigationBar.barTintColor = Constants.getMiddleColor()
+        }
         
         updateSongLyrics()
     }
@@ -233,7 +241,6 @@ class SongLyricVC: ViewController {
             delegate?.changeSongLyric(self, change: -1)
         } else if gestureRecognizer.direction == .left {
             delegate?.changeSongLyric(self, change: 1)
-            next()
         }
     }
     
@@ -334,7 +341,13 @@ class SongLyricVC: ViewController {
         
         let showChords = UserSettings.showChords
         let fontSize = CGFloat(UserSettings.fontSize)
-        let textColor = UserSettings.darkMode ? UIColor.white : UIColor.black
+        let textColor: UIColor
+        
+        if #available(iOS 13, *) {
+            textColor = traitCollection.userInterfaceStyle == .dark ? .white : .black
+        } else {
+            textColor = UserSettings.darkMode ? .white : .black
+        }
         
         lyricsTextView.textContainerInset = UIEdgeInsets(top: (showChords && chords.count > 0) ? fontSize : 0, left: 0, bottom: 10, right: 0)
         lyricsTextView.layoutIfNeeded()
@@ -344,7 +357,8 @@ class SongLyricVC: ViewController {
         let style = NSMutableParagraphStyle()
         style.lineSpacing = (showChords && chords.count > 0) ? fontHeight : 0
         
-        let attributes: [NSAttributedString.Key: Any] = [.paragraphStyle: style, .font : UIFont.getFont(ofSize: fontSize), .foregroundColor: textColor]
+        let attributes: [NSAttributedString.Key: Any]
+        attributes = [.paragraphStyle: style, .font : UIFont.getFont(ofSize: fontSize), .foregroundColor: textColor]
         
         var chordAttributes = attributes
         chordAttributes[.foregroundColor] = UIColor(red: 0, green: 122, blue: 255)
@@ -546,13 +560,17 @@ extension SongLyricVC: UITableViewDelegate, UITableViewDataSource {
             
             self.toggleMore()
             
-            UserSettings.darkMode = !UserSettings.darkMode
-            UICollectionViewCell.appearance().backgroundColor = nil
+            if #available(iOS 13, *) { } else {
+                UserSettings.darkMode = !UserSettings.darkMode
+                UICollectionViewCell.appearance().backgroundColor = nil
+            }
             
             let activityViewController = UIActivityViewController(activityItems: textToShare, applicationActivities: nil)
             activityViewController.popoverPresentationController?.sourceView = view
             activityViewController.completionWithItemsHandler = { activity, completed, items, error in
-                UserSettings.darkMode = !UserSettings.darkMode
+                if #available(iOS 13, *) { } else {
+                    UserSettings.darkMode = !UserSettings.darkMode
+                }
             }
             
             self.present(activityViewController, animated: true)

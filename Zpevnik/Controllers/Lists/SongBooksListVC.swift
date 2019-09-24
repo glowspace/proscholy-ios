@@ -10,12 +10,6 @@ import UIKit
 
 class SongBooksListVC: ListVC<SongBookDataSource> {
     
-    lazy var allSongLyricsVC: AllSongLyricsListVC = {
-        let vc = AllSongLyricsListVC()
-        
-        return vc
-    }()
-    
     override func viewDidLoad() {
         dataSource = SongBookDataSource()
         super.viewDidLoad()
@@ -26,11 +20,13 @@ class SongBooksListVC: ListVC<SongBookDataSource> {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        allSongLyricsVC.searchView.searchField.text = ""
-        
         showSearchView(placeholder: "Zadejte název či zkratku zpěvníku")
         
-        navigationController?.navigationBar.barTintColor = Constants.getMiddleColor()
+        if #available(iOS 13, *) {
+            navigationController?.navigationBar.barTintColor = Constants.getMiddleColor(traitCollection.userInterfaceStyle)
+        } else {
+            navigationController?.navigationBar.barTintColor = Constants.getMiddleColor()
+        }
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -49,7 +45,7 @@ class SongBooksListVC: ListVC<SongBookDataSource> {
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if indexPath.row == 0 {
-            navigationController?.pushViewController(allSongLyricsVC, animated: true)
+            navigationController?.pushViewController(AllSongLyricsListVC(), animated: true)
         } else {
             let songBookVC = SongBookVC()
             songBookVC.songBook = dataSource.showingData[indexPath.row - 1]
@@ -63,6 +59,10 @@ class SongBooksListVC: ListVC<SongBookDataSource> {
         }
         
         let cell = tableView.dequeueReusableCell(withIdentifier: "cellId") as! SongBookCell
+        
+        if #available(iOS 13, *) {
+            cell.selectedBackgroundView?.backgroundColor = Constants.getMiddleColor(traitCollection.userInterfaceStyle) ?? UIColor(white: 0.85, alpha: 1)
+        }
         
         cell.shortcutLabel.text = "A-Z"
         cell.nameLabel.text = "Rejstřík"

@@ -48,7 +48,11 @@ class AboutVC: ViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        view.backgroundColor = Constants.getDarkColor() ?? .groupTableViewBackground
+        if #available(iOS 13, *) {
+            view.backgroundColor = Constants.getDarkColor(traitCollection.userInterfaceStyle) ?? .groupTableViewBackground
+        } else {
+            view.backgroundColor = Constants.getDarkColor() ?? .groupTableViewBackground
+        }
     }
     
     private func setDescription() {
@@ -66,7 +70,7 @@ class AboutVC: ViewController {
                 Další informace o stavu a rozvoji projektu naleznete na https://zpevnik.proscholy.cz
                 """
             
-            let attributedDescription = NSMutableAttributedString(string: description, attributes: [.font: UIFont.getFont(ofSize: 15)])
+            let attributedDescription = NSMutableAttributedString(string: description, attributes: [.font: UIFont.getFont(ofSize: 15), .foregroundColor: traitCollection.userInterfaceStyle == .dark ? UIColor.white : UIColor.black])
             
             if let range = description.range(of: "České biskupské konference") {
                 attributedDescription.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: 18), range: NSRange(range, in: description))
@@ -92,7 +96,7 @@ class AboutVC: ViewController {
             Případné chyby, připomínky, nápady či postřehy k této aplikaci, prosím, uveďte na adresu patrikdobidobias@icloud.com
             """
             
-            let attributedDescription = NSMutableAttributedString(string: description, attributes: [.font: UIFont.getFont(ofSize: 15)])
+            let attributedDescription = NSMutableAttributedString(string: description, attributes: [.font: UIFont.getFont(ofSize: 15), .foregroundColor: traitCollection.userInterfaceStyle == .dark ? UIColor.white : UIColor.black])
             
             for version in ["1.0", "1.1", "1.2"] {
                 if let range = description.range(of: "Verze " + version) {
@@ -102,6 +106,18 @@ class AboutVC: ViewController {
             
             descriptionTextView.attributedText = attributedDescription
             break
+        }
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        if #available(iOS 13, *) {
+            view.backgroundColor = Constants.getDarkColor(traitCollection.userInterfaceStyle) ?? .groupTableViewBackground
+            
+            let attributedDescription = NSMutableAttributedString(string: descriptionTextView.attributedText.string, attributes: [.font: UIFont.getFont(ofSize: 15), .foregroundColor: traitCollection.userInterfaceStyle == .dark ? UIColor.white : UIColor.black])
+            
+            descriptionTextView.attributedText = attributedDescription
         }
     }
 }

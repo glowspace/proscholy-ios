@@ -33,12 +33,16 @@ class MenuVC: ViewController {
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[tableView]|", metrics: nil, views: ["tableView": tableView]))
         
         setTitle("Zpěvník pro scholy", iconImage: UIImage(named: "logo"))
+
+        tableView.reloadData()
     }
     
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
-        tableView.reloadData()
+        
+        if #available(iOS 13, *) {
+            navigationController?.navigationBar.barTintColor = Constants.getMiddleColor(traitCollection.userInterfaceStyle)
+        }
     }
 }
 
@@ -50,6 +54,10 @@ extension MenuVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cellId", for: indexPath)
+        
+        if #available(iOS 13, *) {
+            cell.selectedBackgroundView?.backgroundColor = Constants.getMiddleColor(traitCollection.userInterfaceStyle) ?? UIColor(white: 0.85, alpha: 1)
+        }
         
         cell.textLabel?.text = ["Nastavení", "O zpěvníku", "O aplikaci", "Webová verze", "Zpětná vazba"][indexPath.row]
         

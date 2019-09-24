@@ -88,22 +88,24 @@ class UserSettings {
     }
     
     private static func prepareDarkMode(_ darkMode: Bool) {
-        UINavigationBar.appearance().barTintColor = Constants.getMiddleColor()
-        UITabBar.appearance().barTintColor = Constants.getMiddleColor()
-        
-        UITableView.appearance().backgroundColor = Constants.getDarkColor() ?? .groupTableViewBackground
-        UITableView.appearance().separatorColor = Constants.getLightColor()
-        UITableViewCell.appearance().backgroundColor = Constants.getTableViewCellColor() ?? .white
+        if #available(iOS 13, *) { } else {
+            UINavigationBar.appearance().barTintColor = Constants.getMiddleColor()
+            UITabBar.appearance().barTintColor = Constants.getMiddleColor()
+            
+            UITableView.appearance().backgroundColor = Constants.getDarkColor() ?? .groupTableViewBackground
+            UITableView.appearance().separatorColor = Constants.getLightColor()
+            UITableViewCell.appearance().backgroundColor = Constants.getTableViewCellColor() ?? .white
 
-        UICollectionViewCell.appearance().backgroundColor = Constants.getMiddleColor() ?? .white
+            UICollectionViewCell.appearance().backgroundColor = Constants.getMiddleColor() ?? .white
 
-        UITextView.appearance().backgroundColor = Constants.getDarkColor()
-        UITextView.appearance().textColor = darkMode ? .white : .black
+            UITextView.appearance().backgroundColor = Constants.getDarkColor()
+            UITextView.appearance().textColor = darkMode ? .white : .black
 
-        UILabel.appearance().darkMode = darkMode
+            UILabel.appearance().darkMode = darkMode
 
-        SearchView.appearance().backgroundColor = Constants.getMiddleColor() ?? .white
+            SearchView.appearance().backgroundColor = Constants.getMiddleColor() ?? .white
 
-        UITextField.appearance().textColor = darkMode ? .white : .black
+            UITextField.appearance().textColor = darkMode ? .white : .black
+        }
     }
 }

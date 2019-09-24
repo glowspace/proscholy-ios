@@ -11,7 +11,12 @@ import UIKit
 class LaunchVC: ViewController {
     
     let backgroundImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: UserSettings.darkMode ? "backgroundDark" : "background"))
+        let imageView: UIImageView
+        if #available(iOS 13, *) {
+            imageView = UIImageView(image: UIImage(named: "background"))
+        } else {
+            imageView = UIImageView(image: UIImage(named: UserSettings.darkMode ? "backgroundDark" : "background"))
+        }
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         imageView.contentMode = .scaleAspectFill
@@ -21,7 +26,12 @@ class LaunchVC: ViewController {
     }()
     
     let titleImageView: UIImageView = {
-        let imageView = UIImageView(image: UIImage(named: UserSettings.darkMode ? "homeScreenTitleDark" : "homeScreenTitle"))
+        let imageView: UIImageView
+        if #available(iOS 13, *) {
+            imageView = UIImageView(image: UIImage(named: "homeScreenTitle"))
+        } else {
+            imageView = UIImageView(image: UIImage(named: UserSettings.darkMode ? "homeScreenTitleDark" : "homeScreenTitle"))
+        }
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         return imageView
@@ -38,7 +48,12 @@ class LaunchVC: ViewController {
     }()
     
     let loadingIndicator: UIActivityIndicatorView = {
-        let indicator = UIActivityIndicatorView(style: UserSettings.darkMode ? .white : .gray)
+        let indicator: UIActivityIndicatorView
+        if #available(iOS 13, *) {
+            indicator = UIActivityIndicatorView()
+        } else {
+            indicator = UIActivityIndicatorView(style: UserSettings.darkMode ? .white : .gray)
+        }
         indicator.translatesAutoresizingMaskIntoConstraints = false
         
         return indicator
@@ -96,7 +111,9 @@ class LaunchVC: ViewController {
             if date.timeIntervalSince(last) > Constants.songsUpdateInterval {
                 updateSongLyrics()
             } else {
-                navigationController?.present(TabBarController(), animated: false)
+                let vc = TabBarController()
+                vc.modalPresentationStyle = .overFullScreen
+                navigationController?.present(vc, animated: false)
             }
         } else {
             updateSongLyrics()
@@ -110,7 +127,9 @@ class LaunchVC: ViewController {
             }
         }) {
             DispatchQueue.main.async {
-                self.navigationController?.present(TabBarController(), animated: false)
+                let vc = TabBarController()
+                vc.modalPresentationStyle = .overFullScreen
+                self.navigationController?.present(vc, animated: false)
                 self.loadingIndicator.stopAnimating()
             }
         }
