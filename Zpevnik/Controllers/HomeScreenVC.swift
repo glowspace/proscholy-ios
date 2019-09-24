@@ -89,12 +89,6 @@ class HomeScreenVC: ViewController {
         return stackView
     }()
     
-    lazy var allSongLyricsVC: AllSongLyricsListVC = {
-        let vc = AllSongLyricsListVC()
-        
-        return vc
-    }()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -110,15 +104,18 @@ class HomeScreenVC: ViewController {
         
         searchView.searchField.updateFontSize()
         
-        if UserSettings.darkMode {
-            backgroundImageView.image = UIImage(named: "backgroundDark")
-            titleImageView.image = UIImage(named: "homeScreenTitleDark")
-        } else {
+        if #available(iOS 13, *) {
             backgroundImageView.image = UIImage(named: "background")
             titleImageView.image = UIImage(named: "homeScreenTitle")
+        } else {
+            if UserSettings.darkMode {
+                backgroundImageView.image = UIImage(named: "backgroundDark")
+                titleImageView.image = UIImage(named: "homeScreenTitleDark")
+            } else {
+                backgroundImageView.image = UIImage(named: "background")
+                titleImageView.image = UIImage(named: "homeScreenTitle")
+            }
         }
-        
-        allSongLyricsVC.searchView.searchField.text = ""
         
         navigationController?.setNavigationBarHidden(true, animated: animated)
     }
@@ -207,7 +204,7 @@ class HomeScreenVC: ViewController {
     }
     
     @objc func search() {
-        let lyricsListVC = allSongLyricsVC
+        let lyricsListVC = AllSongLyricsListVC()
         lyricsListVC.searchView.searchField.text = searchView.searchField.text
         navigationController?.pushViewController(lyricsListVC, animated: true)
     }

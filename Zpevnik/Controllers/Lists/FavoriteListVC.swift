@@ -69,8 +69,10 @@ class FavoriteListVC: SongLyricsListVC {
         let numberOfRows = super.tableView(tableView, numberOfRowsInSection: section)
         
         if numberOfRows == 0 {
-            if let label = noFavoritesView.subviews[0] as? UILabel {
-                label.darkMode = UserSettings.darkMode
+            if #available(iOS 13, *) { } else {
+                if let label = noFavoritesView.subviews[0] as? UILabel {
+                    label.darkMode = UserSettings.darkMode
+                }
             }
             tableView.backgroundView = noFavoritesView
         } else {

@@ -107,6 +107,10 @@ class ListVC<T: DataSource>: ViewController, UITableViewDelegate, UITableViewDat
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "cellId", for: indexPath)
         
+        if #available(iOS 13, *) {
+            cell.selectedBackgroundView?.backgroundColor = Constants.getMiddleColor(traitCollection.userInterfaceStyle) ?? UIColor(white: 0.85, alpha: 1)
+        }
+        
         dataSource.setCell(cell, dataSource.showingData[indexPath.row])
         
         return cell

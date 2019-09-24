@@ -18,6 +18,10 @@ class Constants {
     static let serifFont = "Courier"
     static let sansSerifFont = "Chalkduster"
     
+    static func getLightColor(_ darkMode: UIUserInterfaceStyle) -> UIColor? { return darkMode == .dark ? .darkGray : nil }
+    static func getMiddleColor(_ darkMode: UIUserInterfaceStyle) -> UIColor? { return darkMode == .dark ? UIColor(white: 0.15, alpha: 1) : nil }
+    static func getDarkColor(_ darkMode: UIUserInterfaceStyle) -> UIColor? { return darkMode == .dark ? UIColor(white: 0.05, alpha: 1) : nil }
+    
     static func getLightColor() -> UIColor? { return UserSettings.darkMode ? .darkGray : nil }
     static func getMiddleColor() -> UIColor? { return UserSettings.darkMode ? UIColor(white: 0.15, alpha: 1) : nil }
     static func getDarkColor() -> UIColor? { return UserSettings.darkMode ? UIColor(white: 0.05, alpha: 1) : nil }

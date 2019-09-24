@@ -80,14 +80,22 @@ extension UILabel {
 class NavigationController : UINavigationController {
     
     override var preferredStatusBarStyle : UIStatusBarStyle {
-        return UserSettings.darkMode ? .lightContent : .default
+        if #available(iOS 13, *) {
+            return .default
+        } else {
+            return UserSettings.darkMode ? .lightContent : .default
+        }
     }
 }
 
 class ViewController: UIViewController {
 
     override var preferredStatusBarStyle : UIStatusBarStyle {
-        return UserSettings.darkMode ? .lightContent : .default
+        if #available(iOS 13, *) {
+            return .default
+        } else {
+            return UserSettings.darkMode ? .lightContent : .default
+        }
     }
 }
 
@@ -164,25 +172,31 @@ class TextField: UITextField {
     override func layoutSublayers(of layer: CALayer) {
         super.layoutSublayers(of: layer)
         
-        if let clearButton = value(forKey: "_clearButton") as? UIButton {
-            let templateImage = clearButton.imageView?.image?.withRenderingMode(.alwaysTemplate)
-            clearButton.setImage(templateImage, for: .normal)
-            clearButton.tintColor = UserSettings.darkMode ? .white : .black
+        if #available(iOS 13, *) { } else {
+            if let clearButton = value(forKey: "_clearButton") as? UIButton {
+                let templateImage = clearButton.imageView?.image?.withRenderingMode(.alwaysTemplate)
+                clearButton.setImage(templateImage, for: .normal)
+                clearButton.tintColor = UserSettings.darkMode ? .white : .black
+            }
         }
     }
     
     override func draw(_ rect: CGRect) {
         super.draw(rect)
         
-        if let placeholderLabel = value(forKey: "placeholderLabel") as? UILabel {
-            placeholderLabel.textColor = .lightGray
+        if #available(iOS 13, *) { } else {
+            if let placeholderLabel = value(forKey: "placeholderLabel") as? UILabel {
+                placeholderLabel.textColor = .lightGray
+            }
         }
     }
     
     override func layoutSubviews() {
         super.layoutSubviews()
         
-        keyboardAppearance = UserSettings.darkMode ? .dark : .default
+        if #available(iOS 13, *) { } else {
+            keyboardAppearance = UserSettings.darkMode ? .dark : .default
+        }
     }
 }
 
@@ -224,7 +238,9 @@ class TableViewCell: UITableViewCell {
     override func draw(_ rect: CGRect) {
         super.draw(rect)
         
-        selectedBackgroundView?.backgroundColor = Constants.getMiddleColor() ?? UIColor(white: 0.85, alpha: 1)
+        if #available(iOS 13, *) { } else {
+            selectedBackgroundView?.backgroundColor = Constants.getMiddleColor() ?? UIColor(white: 0.85, alpha: 1)
+        }
     }
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {

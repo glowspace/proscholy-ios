@@ -28,6 +28,12 @@ class SongLyricsListVC: ListVC<SongLyricDataSource> {
         return button
     }()
     
+    lazy var panGesture: UIPanGestureRecognizer = {
+        let panGesture = UIPanGestureRecognizer(target: self, action: #selector(didPan(sender:)))
+        
+        return panGesture
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
     }
@@ -35,7 +41,12 @@ class SongLyricsListVC: ListVC<SongLyricDataSource> {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        filterButton.tintColor = Constants.getLightColor() ?? .black
+        if #available(iOS 13, *) {
+            navigationController?.navigationBar.barTintColor = Constants.getMiddleColor(traitCollection.userInterfaceStyle)
+            filterButton.tintColor = Constants.getLightColor(traitCollection.userInterfaceStyle) ?? .black
+        } else {
+            filterButton.tintColor = Constants.getLightColor() ?? .black
+        }
     }
     
     override func viewDidDisappear(_ animated: Bool) {
@@ -72,13 +83,14 @@ class SongLyricsListVC: ListVC<SongLyricDataSource> {
             filterShadow?.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(toggleFilters)))
             view.addSubview(filterShadow!)
             view.addSubview(filterVC.view)
-            filterVC.view.addGestureRecognizer(UIPanGestureRecognizer(target: self, action: #selector(didPan(sender:))))
             
             tableView.isUserInteractionEnabled = false
             UIView.animate(withDuration: 0.3) {
                 self.filterVC.view.frame.origin.y = -height * 0.25
                 self.filterShadow?.backgroundColor = UIColor.black.withAlphaComponent(0.3)
             }
+            
+            view.addGestureRecognizer(panGesture)
         } else {
             filterVC.removeFromParent()
             UIView.animate(withDuration: 0.3, animations:  {
@@ -89,6 +101,8 @@ class SongLyricsListVC: ListVC<SongLyricDataSource> {
                 self.filterShadow?.removeFromSuperview()
                 self.tableView.isUserInteractionEnabled = true
             }
+            
+            view.removeGestureRecognizer(panGesture)
         }
         showingFilter = !showingFilter
     }
@@ -98,6 +112,7 @@ class SongLyricsListVC: ListVC<SongLyricDataSource> {
         if filterVC.view.frame.origin.y + filterVC.view.frame.height - y > 50 {
             return
         }
+        
         filterVC.view.frame.origin.y = y - filterVC.view.frame.height
         
         if filterVC.view.frame.origin.y > -filterVC.view.frame.height * 0.25 {

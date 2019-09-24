@@ -11,7 +11,11 @@ import UIKit
 class TabBarController: UITabBarController {
     
     override var preferredStatusBarStyle : UIStatusBarStyle {
-        return UserSettings.darkMode ? .lightContent : .default
+        if #available(iOS 13, *) {
+            return .default
+        } else {
+            return UserSettings.darkMode ? .lightContent : .default
+        }
     }
     
     override func viewDidLoad() {

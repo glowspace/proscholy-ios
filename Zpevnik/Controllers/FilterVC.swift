@@ -121,8 +121,13 @@ class FilterVC: ViewController {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        view.backgroundColor = Constants.getMiddleColor() ?? .white
-        tagsView.backgroundColor = Constants.getMiddleColor() ?? .white
+        if #available(iOS 13, *) {
+            view.backgroundColor = Constants.getMiddleColor(traitCollection.userInterfaceStyle) ?? .white
+            tagsView.backgroundColor = Constants.getMiddleColor(traitCollection.userInterfaceStyle) ?? .white
+        } else {
+            view.backgroundColor = Constants.getMiddleColor() ?? .white
+            tagsView.backgroundColor = Constants.getMiddleColor() ?? .white
+        }
     }
     
     override func viewDidAppear(_ animated: Bool) {
@@ -193,6 +198,15 @@ extension FilterVC {
         }
         
         delegate?.updateSelected()
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+
+        if #available(iOS 13, *) {
+            view.backgroundColor = Constants.getMiddleColor(traitCollection.userInterfaceStyle) ?? .white
+            tagsView.backgroundColor = Constants.getMiddleColor(traitCollection.userInterfaceStyle) ?? .white
+        } 
     }
 }
 
