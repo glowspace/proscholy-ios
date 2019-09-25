@@ -112,7 +112,9 @@ class LaunchVC: ViewController {
                 updateSongLyrics()
             } else {
                 let vc = TabBarController()
-                vc.modalPresentationStyle = .overFullScreen
+                if #available(iOS 13, *) {
+                    vc.modalPresentationStyle = .overFullScreen
+                }
                 navigationController?.present(vc, animated: false)
             }
         } else {
@@ -128,7 +130,9 @@ class LaunchVC: ViewController {
         }) {
             DispatchQueue.main.async {
                 let vc = TabBarController()
-                vc.modalPresentationStyle = .overFullScreen
+                if #available(iOS 13, *) {
+                    vc.modalPresentationStyle = .overFullScreen
+                }
                 self.navigationController?.present(vc, animated: false)
                 self.loadingIndicator.stopAnimating()
             }

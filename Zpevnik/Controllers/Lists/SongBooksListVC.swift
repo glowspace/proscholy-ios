@@ -62,6 +62,8 @@ class SongBooksListVC: ListVC<SongBookDataSource> {
         
         if #available(iOS 13, *) {
             cell.selectedBackgroundView?.backgroundColor = Constants.getMiddleColor(traitCollection.userInterfaceStyle) ?? UIColor(white: 0.85, alpha: 1)
+            
+            cell.backgroundColor = Constants.getTableViewCellColor() ?? .white
         }
         
         cell.shortcutLabel.text = "A-Z"

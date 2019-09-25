@@ -43,6 +43,8 @@ class MenuVC: ViewController {
         if #available(iOS 13, *) {
             navigationController?.navigationBar.barTintColor = Constants.getMiddleColor(traitCollection.userInterfaceStyle)
         }
+        
+        tableView.reloadData()
     }
 }
 

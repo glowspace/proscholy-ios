@@ -91,6 +91,8 @@ class ListVC<T: DataSource>: ViewController, UITableViewDelegate, UITableViewDat
     @objc func updateData(sender: UITextField) {
         dataSource.searchText = sender.text
         
+        tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
+        
         tableView.reloadData()
     }
     
@@ -109,6 +111,8 @@ class ListVC<T: DataSource>: ViewController, UITableViewDelegate, UITableViewDat
         
         if #available(iOS 13, *) {
             cell.selectedBackgroundView?.backgroundColor = Constants.getMiddleColor(traitCollection.userInterfaceStyle) ?? UIColor(white: 0.85, alpha: 1)
+            
+            cell.backgroundColor = Constants.getTableViewCellColor() ?? .white
         }
         
         dataSource.setCell(cell, dataSource.showingData[indexPath.row])

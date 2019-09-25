@@ -30,6 +30,7 @@ class SongLyricsListVC: ListVC<SongLyricDataSource> {
     
     lazy var panGesture: UIPanGestureRecognizer = {
         let panGesture = UIPanGestureRecognizer(target: self, action: #selector(didPan(sender:)))
+        panGesture.maximumNumberOfTouches = 1
         
         return panGesture
     }()
