@@ -88,7 +88,7 @@ extension MenuVC: UITableViewDelegate, UITableViewDataSource {
             UIApplication.shared.open(url)
             break
         case 4:
-            guard let url = URL(string: "https://forms.gle/cQHPxkEwWbzMVNYd7") else { return }
+            guard let url = URL(string: "https://docs.google.com/forms/d/e/1FAIpQLSfI0143gkLBtMbWQnSa9nzpOoBNMokZrOIS5mUreSR41E_B7A/viewform?usp=pp_url&entry.1865829262=ano,+verzi+pro+iOS") else { return }
             UIApplication.shared.open(url)
             break
         default:

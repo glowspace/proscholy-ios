@@ -75,7 +75,7 @@ class SongLyricDataSource: NSObject, DataSource {
     private func search(searchText: String) {
         let predicates = [
             NSPredicate(format: "name BEGINSWITH[cd] %@", searchText),
-            NSPredicate(format: "NOT name BEGINSWITH[cd] %@ AND name CONTAINS[cd] %@", searchText, searchText)
+            NSPredicate(format: "name CONTAINS[cd] %@", searchText, searchText)
         ]
         
         showingData = []
@@ -86,7 +86,7 @@ class SongLyricDataSource: NSObject, DataSource {
             })
         }
         
-        showingData.append(contentsOf: data.filter {
+        var dataContainingId = data.filter {
             let numbers: [String]
             
             if let songBook = songBook {
@@ -96,7 +96,37 @@ class SongLyricDataSource: NSObject, DataSource {
             }
             
             return NSPredicate(format: "ANY %@ CONTAINS[cd] %@", numbers, searchText).evaluate(with: nil) && !showingData.contains($0)
-        })
+        }
+        
+        dataContainingId.sort { (first, second) in
+            let predicate = NSPredicate(format: "self CONTAINS[cd] %@", searchText)
+            
+            let firstNumbers = first.numbers.filter {
+                predicate.evaluate(with: $0)
+            }
+            
+            let secondNumbers = second.numbers.filter {
+                predicate.evaluate(with: $0)
+            }
+            
+            let firstShowingNumber: String, secondShowingNumber: String
+            
+            if firstNumbers.count > 0 && !first.id!.contains(searchText) {
+                firstShowingNumber = firstNumbers[0]
+            } else {
+                firstShowingNumber = first.id!
+            }
+            
+            if secondNumbers.count > 0 && !second.id!.contains(searchText) {
+                secondShowingNumber = secondNumbers[0]
+            } else {
+                secondShowingNumber = second.id!
+            }
+            
+            return firstShowingNumber.compare(secondShowingNumber, options: .numeric) == .orderedAscending
+        }
+        
+        showingData.append(contentsOf: dataContainingId)
         
         showingData.append(contentsOf: data.filter {
             NSPredicate(format: "lyricsNoChords CONTAINS[cd] %@", searchText).evaluate(with: $0) && !showingData.contains($0)

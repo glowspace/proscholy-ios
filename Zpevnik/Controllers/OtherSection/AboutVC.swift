@@ -70,7 +70,12 @@ class AboutVC: ViewController {
                 Další informace o stavu a rozvoji projektu naleznete na https://zpevnik.proscholy.cz
                 """
             
-            let attributedDescription = NSMutableAttributedString(string: description, attributes: [.font: UIFont.getFont(ofSize: 15), .foregroundColor: traitCollection.userInterfaceStyle == .dark ? UIColor.white : UIColor.black])
+            let attributedDescription: NSMutableAttributedString
+            if #available(iOS 12.0, *) {
+                attributedDescription = NSMutableAttributedString(string: description, attributes: [.font: UIFont.getFont(ofSize: 15), .foregroundColor: traitCollection.userInterfaceStyle == .dark ? UIColor.white : UIColor.black])
+            } else {
+                attributedDescription = NSMutableAttributedString(string: description, attributes: [.font: UIFont.getFont(ofSize: 15), .foregroundColor: UIColor.black])
+            }
             
             if let range = description.range(of: "České biskupské konference") {
                 attributedDescription.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: 18), range: NSRange(range, in: description))
@@ -96,7 +101,12 @@ class AboutVC: ViewController {
             Případné chyby, připomínky, nápady či postřehy k této aplikaci, prosím, uveďte na adresu patrikdobidobias@icloud.com
             """
             
-            let attributedDescription = NSMutableAttributedString(string: description, attributes: [.font: UIFont.getFont(ofSize: 15), .foregroundColor: traitCollection.userInterfaceStyle == .dark ? UIColor.white : UIColor.black])
+            let attributedDescription: NSMutableAttributedString
+            if #available(iOS 12.0, *) {
+                attributedDescription = NSMutableAttributedString(string: description, attributes: [.font: UIFont.getFont(ofSize: 15), .foregroundColor: traitCollection.userInterfaceStyle == .dark ? UIColor.white : UIColor.black])
+            } else {
+                attributedDescription = NSMutableAttributedString(string: description, attributes: [.font: UIFont.getFont(ofSize: 15), .foregroundColor: UIColor.black])
+            }
             
             for version in ["1.0", "1.1", "1.2"] {
                 if let range = description.range(of: "Verze " + version) {

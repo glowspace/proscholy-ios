@@ -97,7 +97,11 @@ class SongLyricCell: TableViewCell {
         containerView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[numberLabel]|", metrics: nil, views: views))
         addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[containerView]-|", metrics: nil, views: ["containerView": containerView]))
         
-        leadingConstraint = containerView.leadingAnchor.constraint(equalToSystemSpacingAfter: leadingAnchor, multiplier: 1)
+        if #available(iOS 11.0, *) {
+            leadingConstraint = containerView.leadingAnchor.constraint(equalToSystemSpacingAfter: leadingAnchor, multiplier: 1)
+        } else {
+            leadingConstraint = NSLayoutConstraint(item: containerView, attribute: .leading, relatedBy: .equal, toItem: self, attribute: .leading, multiplier: 1, constant: 8)
+        }
         leadingConstraint.isActive = true
         trailingConstraint = containerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8)
         trailingConstraint.isActive = true

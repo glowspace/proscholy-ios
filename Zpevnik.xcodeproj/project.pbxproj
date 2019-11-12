@@ -13,6 +13,7 @@
 		391AE0EE22FACD5900E7F5BC /* Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 391AE0EC22FACD5900E7F5BC /* Tag.swift */; };
 		391AE0EF22FACD5900E7F5BC /* SongBookRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 391AE0ED22FACD5900E7F5BC /* SongBookRecord.swift */; };
 		391AE0F122FACD7C00E7F5BC /* AlignedCollectionViewFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 391AE0F022FACD7C00E7F5BC /* AlignedCollectionViewFlowLayout.swift */; };
+		392FFCA2234A8C1A00296903 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 392FFCA1234A8C1A00296903 /* LaunchScreen.storyboard */; };
 		3939FA6E22FC129600F9AED1 /* AboutVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3939FA6D22FC129600F9AED1 /* AboutVC.swift */; };
 		3939FA7222FC1F1900F9AED1 /* LanguageTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3939FA7122FC1F1900F9AED1 /* LanguageTag.swift */; };
 		3939FA7422FC541C00F9AED1 /* Song.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3939FA7322FC541C00F9AED1 /* Song.swift */; };
@@ -67,6 +68,7 @@
 		391AE0EC22FACD5900E7F5BC /* Tag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tag.swift; sourceTree = "<group>"; };
 		391AE0ED22FACD5900E7F5BC /* SongBookRecord.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongBookRecord.swift; sourceTree = "<group>"; };
 		391AE0F022FACD7C00E7F5BC /* AlignedCollectionViewFlowLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlignedCollectionViewFlowLayout.swift; sourceTree = "<group>"; };
+		392FFCA1234A8C1A00296903 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3939FA6D22FC129600F9AED1 /* AboutVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutVC.swift; sourceTree = "<group>"; };
 		3939FA7122FC1F1900F9AED1 /* LanguageTag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageTag.swift; sourceTree = "<group>"; };
 		3939FA7322FC541C00F9AED1 /* Song.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Song.swift; sourceTree = "<group>"; };
@@ -216,6 +218,7 @@
 		39F7BA2022E7090F00FDFF90 = {
 			isa = PBXGroup;
 			children = (
+				392FFCA1234A8C1A00296903 /* LaunchScreen.storyboard */,
 				39F7BA2B22E7090F00FDFF90 /* Zpevnik */,
 				39F7BA2A22E7090F00FDFF90 /* Products */,
 			);
@@ -345,6 +348,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				399205BE22F86C3F00E392A7 /* Cocogoose.ttf in Resources */,
+				392FFCA2234A8C1A00296903 /* LaunchScreen.storyboard in Resources */,
 				39F9C2B122F6368D004F0712 /* Assets.xcassets in Resources */,
 				399205B822F78B8400E392A7 /* data.json in Resources */,
 			);
@@ -530,18 +534,19 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = appIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_TEAM = FQHP4NZDDV;
 				INFOPLIST_FILE = Zpevnik/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.4;
+				MARKETING_VERSION = 1.5;
 				PRODUCT_BUNDLE_IDENTIFIER = cz.proscholy.id.Zpevnik;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Debug;
 		};
@@ -550,18 +555,19 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = appIcon;
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 17;
+				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_TEAM = FQHP4NZDDV;
 				INFOPLIST_FILE = Zpevnik/Info.plist;
+				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.4;
+				MARKETING_VERSION = 1.5;
 				PRODUCT_BUNDLE_IDENTIFIER = cz.proscholy.id.Zpevnik;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = 1;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
