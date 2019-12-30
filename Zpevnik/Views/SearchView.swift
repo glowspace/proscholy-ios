@@ -10,8 +10,8 @@ import UIKit
 
 class SearchView: UIView {
     
-    lazy var searchField: TextField = {
-        let textField = TextField()
+    lazy var searchField: TextField_12 = {
+        let textField = TextField_12()
         textField.translatesAutoresizingMaskIntoConstraints = false
         
         textField.contentVerticalAlignment = .center

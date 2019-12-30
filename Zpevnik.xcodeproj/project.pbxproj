@@ -39,6 +39,7 @@
 		3997798922F7605B00CE6FF6 /* SliderTrackLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3997798822F7605B00CE6FF6 /* SliderTrackLayer.swift */; };
 		3997798E22F76A4A00CE6FF6 /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3997798D22F76A4A00CE6FF6 /* UserSettings.swift */; };
 		3997799022F7714A00CE6FF6 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3997798F22F7714A00CE6FF6 /* Constants.swift */; };
+		3998C3A1237AB80900FF66BA /* Enums.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3998C3A0237AB80900FF66BA /* Enums.swift */; };
 		399D062F22EF4FE1003C7D56 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 399D062E22EF4FE1003C7D56 /* SearchView.swift */; };
 		39CB0FDB22F70279001342E9 /* ButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39CB0FDA22F70279001342E9 /* ButtonView.swift */; };
 		39CB0FDD22F70DA8001342E9 /* SettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39CB0FDC22F70DA8001342E9 /* SettingsVC.swift */; };
@@ -94,6 +95,7 @@
 		3997798822F7605B00CE6FF6 /* SliderTrackLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderTrackLayer.swift; sourceTree = "<group>"; };
 		3997798D22F76A4A00CE6FF6 /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettings.swift; sourceTree = "<group>"; };
 		3997798F22F7714A00CE6FF6 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		3998C3A0237AB80900FF66BA /* Enums.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Enums.swift; sourceTree = "<group>"; };
 		399D062E22EF4FE1003C7D56 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
 		39CB0FDA22F70279001342E9 /* ButtonView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ButtonView.swift; sourceTree = "<group>"; };
 		39CB0FDC22F70DA8001342E9 /* SettingsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsVC.swift; sourceTree = "<group>"; };
@@ -159,6 +161,16 @@
 			path = OtherSection;
 			sourceTree = "<group>";
 		};
+		397F1A6623BA369B0086CB9A /* View Components */ = {
+			isa = PBXGroup;
+			children = (
+				39F9C2B422F6EE2C004F0712 /* FittableFontLabel.swift */,
+				39F9C2B322F6EE2C004F0712 /* UILabelExtension.swift */,
+				391AE0F022FACD7C00E7F5BC /* AlignedCollectionViewFlowLayout.swift */,
+			);
+			path = "View Components";
+			sourceTree = "<group>";
+		};
 		3997798722F75E8C00CE6FF6 /* Slider */ = {
 			isa = PBXGroup;
 			children = (
@@ -172,9 +184,7 @@
 		3997798A22F768DC00CE6FF6 /* Third-party */ = {
 			isa = PBXGroup;
 			children = (
-				39F9C2B422F6EE2C004F0712 /* FittableFontLabel.swift */,
-				39F9C2B322F6EE2C004F0712 /* UILabelExtension.swift */,
-				391AE0F022FACD7C00E7F5BC /* AlignedCollectionViewFlowLayout.swift */,
+				397F1A6623BA369B0086CB9A /* View Components */,
 			);
 			path = "Third-party";
 			sourceTree = "<group>";
@@ -259,6 +269,7 @@
 				397B625A22E9BE4300B9CCEC /* Protocols.swift */,
 				399205B922F8122C00E392A7 /* Reachability.swift */,
 				3997798D22F76A4A00CE6FF6 /* UserSettings.swift */,
+				3998C3A0237AB80900FF66BA /* Enums.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -406,6 +417,7 @@
 				3939FA7222FC1F1900F9AED1 /* LanguageTag.swift in Sources */,
 				3982AD52233A317700EB0F8F /* ListVC.swift in Sources */,
 				397BADA32301510E00AB75FD /* SongBookDataSource.swift in Sources */,
+				3998C3A1237AB80900FF66BA /* Enums.swift in Sources */,
 				397B625B22E9BE4300B9CCEC /* Protocols.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -537,12 +549,16 @@
 				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_TEAM = FQHP4NZDDV;
 				INFOPLIST_FILE = Zpevnik/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.5;
+				OTHER_LDFLAGS = (
+					"-weak_framework",
+					SwiftUI,
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = cz.proscholy.id.Zpevnik;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
@@ -558,12 +574,16 @@
 				CURRENT_PROJECT_VERSION = 20;
 				DEVELOPMENT_TEAM = FQHP4NZDDV;
 				INFOPLIST_FILE = Zpevnik/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 10.3;
+				IPHONEOS_DEPLOYMENT_TARGET = 12.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
 				MARKETING_VERSION = 1.5;
+				OTHER_LDFLAGS = (
+					"-weak_framework",
+					SwiftUI,
+				);
 				PRODUCT_BUNDLE_IDENTIFIER = cz.proscholy.id.Zpevnik;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 5.0;
