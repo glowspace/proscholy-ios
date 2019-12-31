@@ -56,11 +56,11 @@ extension UILabel {
             if let text = text, ["Domů", "Zpěvníky", "Oblíbené", "Ostatní"].contains(text) {
                 return
             }
-            if darkMode {
-                textColor = .white
-            } else {
-                textColor = .black
-            }
+//            if darkMode {
+//                textColor = .white
+//            } else {
+//                textColor = .black
+//            }
         }
     }
     

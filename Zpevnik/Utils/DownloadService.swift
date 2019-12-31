@@ -47,11 +47,11 @@ class DownloadService {
     }
     
     static func updateSongs(_ updater: @escaping (String) -> Void, _ completionHandler: @escaping () -> Void) {
-        if Reachability.networkIsReachableOverWifi() {
-            downloadSongData(updater, completionHandler)
-        } else {
+//        if Reachability.networkIsReachableOverWifi() {
+//            downloadSongData(updater, completionHandler)
+//        } else {
             loadSongDataFromFile(completionHandler)
-        }
+//        }
     }
     
     // MARK: - Data Loading

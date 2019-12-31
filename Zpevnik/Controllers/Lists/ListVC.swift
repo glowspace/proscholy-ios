@@ -20,7 +20,7 @@ class ListVC<T: DataSource>: ViewController, UITableViewDelegate, UITableViewDat
     }()
     
     lazy var tableView: UITableView = {
-        let tableView = UITableView()
+        let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         tableView.dataSource = self
@@ -121,6 +121,8 @@ class ListVC<T: DataSource>: ViewController, UITableViewDelegate, UITableViewDat
         
         return cell
     }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? { return nil }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) { }
     

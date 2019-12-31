@@ -10,6 +10,13 @@ import UIKit
 
 class TabBarController: UITabBarController {
     
+    enum tabBarMenu: Int {
+        case home
+        case songBook
+        case favorite
+        case settings
+    }
+    
     override var preferredStatusBarStyle : UIStatusBarStyle {
         if #available(iOS 13, *) {
             return .default
@@ -27,6 +34,14 @@ class TabBarController: UITabBarController {
         let menuVC = createNavigationController(controller: MenuVC(), title: "Ostatní", image: UIImage(named: "menuIcon"), selectedImage: nil, tag: 3)
         
         setViewControllers([homeListVC, songBookListVC, favoriteListVC, menuVC], animated: false)
+        
+        tabBar.tintColor = UIColor(named: "logoBlue")
+    }
+    
+    override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
+        guard let menuItemSelected = tabBar.items?.firstIndex(of: item), let tabBarMenuItem = tabBarMenu(rawValue: menuItemSelected) else { return }
+
+        setTintColor(forMenuItem: tabBarMenuItem)
     }
     
     private func createNavigationController(controller: UIViewController, title: String, image: UIImage?, selectedImage: UIImage?, tag: Int) -> NavigationController {
@@ -37,5 +52,20 @@ class TabBarController: UITabBarController {
         navigationController.view.backgroundColor = .white
         
         return navigationController
+    }
+    
+    private func setTintColor(forMenuItem tabBarMenuItem: tabBarMenu) {
+        switch(tabBarMenuItem) {
+        case .home:
+            tabBar.tintColor = UIColor(named: "logoBlue")
+            break
+        case .songBook:
+            tabBar.tintColor = UIColor(named: "logoGreen")
+            break
+        case .favorite:
+            break
+        case .settings:
+            break
+        }
     }
 }
