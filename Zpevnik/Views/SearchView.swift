@@ -10,6 +10,9 @@ import UIKit
 
 class SearchView: UIView {
     
+    private let leadingView: UIView?
+    private let trailingView: UIView?
+    
     lazy var searchField: TextField = {
         let textField = TextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
@@ -18,35 +21,64 @@ class SearchView: UIView {
         
         textField.delegate = self
         
-        textField.font = UIFont.getFont(ofSize: 17)
+        textField.font = UIFont.getFont(ofSize: 20)
         textField.clearButtonMode = .always
         textField.returnKeyType = .search
         
         return textField
     }()
     
-    override var intrinsicContentSize: CGSize {
-        return UIView.layoutFittingExpandedSize
-    }
-    
-    override init(frame: CGRect) {
-        super.init(frame: frame)
+    init(leadingView: UIView? = nil, trailingView: UIView? = nil) {
+        self.leadingView = leadingView
+        self.trailingView = trailingView
+        
+        super.init(frame: .zero)
         
         translatesAutoresizingMaskIntoConstraints = false
         
-        layer.borderWidth = 0.5
-        layer.borderColor = UIColor.lightGray.cgColor
-        layer.cornerRadius = 8
+        updateBorder()
+        setViews()
+    }
+    
+    func updateBorder() {
+        layer.borderWidth = 1
+        if #available(iOS 13, *) {
+            layer.borderColor = UIColor.systemGray5.cgColor
+        } else {
+            layer.borderColor = UIColor.lightGray.cgColor
+        }
+        layer.cornerRadius = 10
         clipsToBounds = true
-        
-        let views = [
-            "searchField": searchField
-        ]
-        
+    }
+    
+    private func setViews() {
         addSubview(searchField)
         
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-15-[searchField]", metrics: nil, views: views))
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[searchField]-|", metrics: nil, views: views))
+        if let leadingView = leadingView {
+            leadingView.translatesAutoresizingMaskIntoConstraints = false
+            
+            addSubview(leadingView)
+            addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[leadingView]-[searchField]", metrics: nil, views: ["searchField": searchField, "leadingView": leadingView]))
+            addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-4-[leadingView]-4-|", metrics: nil, views: ["leadingView": leadingView]))
+            
+            leadingView.widthAnchor.constraint(equalTo: leadingView.heightAnchor).isActive = true
+        } else {
+            addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[searchField]", metrics: nil, views: ["searchField": searchField]))
+        }
+        
+        if let trailingView = trailingView {
+            trailingView.translatesAutoresizingMaskIntoConstraints = false
+            
+            addSubview(trailingView)
+            addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[searchField]-[trailingView]-|", metrics: nil, views: ["searchField": searchField, "trailingView": trailingView]))
+            addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-4-[trailingView]-4-|", metrics: nil, views: ["trailingView": trailingView]))
+            
+            trailingView.widthAnchor.constraint(equalTo: trailingView.heightAnchor).isActive = true
+        } else {
+            addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[searchField]-|", metrics: nil, views: ["searchField": searchField]))
+        }
+        
+        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[searchField]|", metrics: nil, views: ["searchField": searchField]))
     }
     
     required init?(coder aDecoder: NSCoder) {

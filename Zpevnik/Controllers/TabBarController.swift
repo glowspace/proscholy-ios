@@ -28,14 +28,14 @@ class TabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let homeListVC = createNavigationController(controller: HomeScreenVC(), title: "Domů", image: UIImage(named: "homeIcon"), selectedImage: UIImage(named: "homeIconFilled"), tag: 0)
+        let homeListVC = createNavigationController(controller: HomeViewVC(), title: "Domů", image: UIImage(named: "homeIcon"), selectedImage: UIImage(named: "homeIconFilled"), tag: 0)
         let songBookListVC = createNavigationController(controller: SongBooksListVC(), title: "Zpěvníky", image: UIImage(named: "songBookIcon"), selectedImage: UIImage(named: "songBookIcon"), tag: 1)
         let favoriteListVC = createNavigationController(controller: FavoriteListVC(), title: "Oblíbené", image: UIImage(named: "starIcon"), selectedImage: UIImage(named: "starIconFilled"), tag: 2)
         let menuVC = createNavigationController(controller: MenuVC(), title: "Ostatní", image: UIImage(named: "menuIcon"), selectedImage: nil, tag: 3)
         
         setViewControllers([homeListVC, songBookListVC, favoriteListVC, menuVC], animated: false)
         
-        tabBar.tintColor = UIColor(named: "logoBlue")
+        tabBar.tintColor = .blue
     }
     
     override func tabBar(_ tabBar: UITabBar, didSelect item: UITabBarItem) {
@@ -57,10 +57,10 @@ class TabBarController: UITabBarController {
     private func setTintColor(forMenuItem tabBarMenuItem: tabBarMenu) {
         switch(tabBarMenuItem) {
         case .home:
-            tabBar.tintColor = UIColor(named: "logoBlue")
+            tabBar.tintColor = .blue
             break
         case .songBook:
-            tabBar.tintColor = UIColor(named: "logoGreen")
+            tabBar.tintColor = .green
             break
         case .favorite:
             break
