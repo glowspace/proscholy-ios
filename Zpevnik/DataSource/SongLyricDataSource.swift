@@ -16,32 +16,44 @@ class SongLyricDataSource: NSObject {
     private var allSongLyrics: [SongLyric]
     var showingSongLyrics: [SongLyric]
     
+    private let lastSearchedKey: String
     var searchText: String
     
-    override init() {
+    init(_ lastSearchedKey: String) {
         context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
         context.parent = PersistenceService.context
         
         allSongLyrics = []
         showingSongLyrics = []
         
+        self.lastSearchedKey = lastSearchedKey
         searchText = ""
         
         super.init()
     }
     
-    func updateData(_ searchText: String? = nil, _ completionHandler: @escaping () -> Void) {
+    func showAll(_ completionHandler: @escaping () -> Void) {
+        context.perform {
+            if self.allSongLyrics.count == 0 {
+                self.loadData()
+            }
+            
+            self.showingSongLyrics = self.allSongLyrics
+            
+            DispatchQueue.main.async {
+                completionHandler()
+            }
+        }
+    }
+    
+    func search(_ searchText: String?, _ completionHandler: @escaping () -> Void) {
         self.searchText = searchText ?? ""
         
         context.perform {
             if self.searchText.count > 0 {
                 self.search()
             } else {
-                if self.allSongLyrics.count == 0 {
-                    self.loadData()
-                }
-                
-                self.showingSongLyrics = self.allSongLyrics
+                self.showLastSearched()
             }
             
             DispatchQueue.main.async {
@@ -65,7 +77,9 @@ class SongLyricDataSource: NSObject {
         showingSongLyrics = []
         
         let predicates = [
+            NSPredicate(format: "name BEGINSWITH[c] %@", searchText),
             NSPredicate(format: "name BEGINSWITH[cd] %@", searchText),
+            NSPredicate(format: "name CONTAINS[c] %@", searchText, searchText),
             NSPredicate(format: "name CONTAINS[cd] %@", searchText, searchText)
         ]
         
@@ -116,6 +130,18 @@ class SongLyricDataSource: NSObject {
         showingSongLyrics.append(contentsOf: allSongLyrics.filter {
             NSPredicate(format: "lyricsNoChords CONTAINS[cd] %@", searchText).evaluate(with: $0) && !showingSongLyrics.contains($0)
         })
+    }
+    
+    private func showLastSearched() {
+        let defaults = UserDefaults.standard
+        
+        let lastSearched = defaults.array(forKey: "lastSearchedHome") as? [String] ?? []
+        
+        showingSongLyrics = allSongLyrics.filter {
+            lastSearched.contains($0.id!)
+        }.sorted {
+            lastSearched.firstIndex(of: $0.id!)! > lastSearched.firstIndex(of: $1.id!)!
+        }
     }
 }
 

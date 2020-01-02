@@ -10,23 +10,22 @@ import UIKit
 
 class HomeViewVC: ViewController {
     
-    private let dataSource = SongLyricDataSource()
+    private let dataSource = SongLyricDataSource("lastSearchedHome")
     
-    private lazy var searchView: SearchView = {
-        let searchIconView = UIImageView(image: UIImage(named: "searchIcon"))
-        if #available(iOS 13, *) {
-            searchIconView.tintColor = .systemGray2
-        }
+    private var isSearching = false
+    
+    private lazy var searchView: SearchView = {        
+        let searchView = SearchView(leadingButton: UIButton(type: .custom), trailingButton: UIButton(type: .custom))
         
-        let filterIconView = UIImageView(image: UIImage(named: "filterIcon"))
-        if #available(iOS 13, *) {
-            filterIconView.tintColor = .systemGray2
-        }
+        searchView.searchField.delegate = self
+        searchView.searchField.addTarget(self, action: #selector(search(sender:)), for: .editingChanged)
         
-        let searchView = SearchView(leadingView: searchIconView, trailingView: filterIconView)
+        searchView.leadingButton?.setImage(.search, for: .normal)
+        searchView.trailingButton?.setImage(.filter, for: .normal)
+        
+        searchView.leadingButton?.addTarget(self, action: #selector(toggleSearch), for: .touchUpInside)
         
         searchView.searchField.placeholder = "Zadejte slovo nebo číslo"
-        searchView.searchField.addTarget(self, action: #selector(search(sender:)), for: .editingChanged)
         
         return searchView
     }()
@@ -56,7 +55,7 @@ class HomeViewVC: ViewController {
             view.backgroundColor = .systemBackground
         }
         
-        dataSource.updateData {
+        dataSource.showAll {
             self.tableView.reloadData()
         }
         
@@ -90,7 +89,7 @@ class HomeViewVC: ViewController {
             "tableView": tableView
         ]
         
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[searchView]-|", metrics: nil, views: views))
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[searchView]-8-|", metrics: nil, views: views))
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[tableView]|", metrics: nil, views: views))
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[searchView(==36)]-[tableView]-|", metrics: nil, views: views))
         
@@ -122,29 +121,99 @@ extension HomeViewVC: UITableViewDelegate {
         if dataSource.searchText.count > 0 {
             return nil
         }
-
+        
+        if isSearching {
+            if #available(iOS 13, *) {
+                return TableViewHeader("Nedávno vyhledané", .secondaryLabel)
+            }
+            
+            return TableViewHeader("Nedávno vyhledané", .gray)
+        }
+        
         return TableViewHeader("Abecední seznam všech písní", .blue)
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         let songLyricVC = SongLyricVC()
+        let songLyric = dataSource.showingSongLyrics[indexPath.row]
         
-        songLyricVC.songLyric = dataSource.showingSongLyrics[indexPath.row]
+        if isSearching {
+            let defaults = UserDefaults.standard
+            
+            var lastSearched = defaults.array(forKey: "lastSearchedHome") as? [String] ?? []
+            
+            if let index = lastSearched.firstIndex(of: songLyric.id!) {
+                lastSearched.remove(at: index)
+            }
+            
+            lastSearched.append(songLyric.id!)
+            
+            defaults.set(lastSearched, forKey: "lastSearchedHome")
+            
+            if dataSource.searchText.count == 0 {
+                dataSource.search(nil) {
+                    self.tableView.reloadData()
+                }
+            }
+        }
+        
+        songLyricVC.songLyric = songLyric
         
         navigationController?.pushViewController(songLyricVC, animated: true)
     }
 }
 
-extension HomeViewVC {
+// MARK: - UITextFieldDelegate
+
+extension HomeViewVC: UITextFieldDelegate {
+    
+    @objc func toggleSearch() {
+        if isSearching {
+            isSearching = false
+            
+            searchView.searchField.resignFirstResponder()
+            searchView.searchField.text = ""
+            searchView.leadingButton?.setImage(.search, for: .normal)
+            
+            search(sender: searchView.searchField)
+            
+            dataSource.showAll {
+                self.tableView.reloadData()
+            }
+        } else {
+            searchView.searchField.becomeFirstResponder()
+        }
+    }
     
     @objc func search(sender: UITextField) {
-        self.dataSource.updateData(sender.text) {
+        dataSource.search(sender.text) {
             self.tableView.reloadData()
             
             if self.tableView.visibleCells.count > 0 {
                 self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
             }
         }
+    }
+    
+    func textFieldDidBeginEditing(_ textField: UITextField) {
+        searchView.leadingButton?.setImage(.back, for: .normal)
+        isSearching = true
+        
+        if dataSource.searchText.count == 0 {
+            dataSource.search(nil) {
+                self.tableView.reloadData()
+                
+                if self.tableView.visibleCells.count > 0 {
+                    self.tableView.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
+                }
+            }
+        }
+    }
+    
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        textField.resignFirstResponder()
+        
+        return true
     }
 }
 
