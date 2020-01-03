@@ -8,7 +8,28 @@
 
 import UIKit
 
+extension UIImage {
+    
+    static var add: UIImage? { return UIImage(named: "addIcon") }
+    static var back: UIImage? { return UIImage(named: "backIcon") }
+    static var filter: UIImage? { return UIImage(named: "filterIcon") }
+    static var home: UIImage? { return UIImage(named: "homeIcon") }
+    static var homeFilled: UIImage? { return UIImage(named: "homeIconFilled") }
+    static var person: UIImage? { return UIImage(named: "personIcon") }
+    static var personFilled: UIImage? { return UIImage(named: "personIconFilled") }
+    static var search: UIImage? { return UIImage(named: "searchIcon") }
+    static var selectAll: UIImage? { return UIImage(named: "selectAllIcon") }
+    static var songBook: UIImage? { return UIImage(named: "songBookIcon") }
+    static var star: UIImage? { return UIImage(named: "starIcon") }
+    static var starFilled: UIImage? { return UIImage(named: "starIconFilled") }
+}
+
 extension UIColor {
+    
+    static var blue: UIColor { return UIColor(named: "blue") ?? .systemBlue }
+    static var green: UIColor { return UIColor(named: "green") ?? .systemGreen }
+    static var red: UIColor { return UIColor(named: "red") ?? .systemRed }
+    static var yellow: UIColor { return UIColor(named: "yellow") ?? .systemYellow }
     
     convenience init(red: Int, green: Int, blue: Int) {
         self.init(red: CGFloat(red) / 255.0, green: CGFloat(green) / 255.0, blue: CGFloat(blue) / 255.0, alpha: 1.0)
@@ -150,11 +171,11 @@ extension UITextField {
         self.layoutIfNeeded()
         
         if let placeholder = self.placeholder {
-            var fontSize: CGFloat = 25
+            var fontSize: CGFloat = self.font?.pointSize ?? 20
+            
             while true {
                 if (placeholder as NSString).size(withAttributes: [.font: UIFont.getFont(ofSize: fontSize)]).width < self.frame.size.width - 60 {
-                    self.adjustsFontSizeToFitWidth = true
-                    self.minimumFontSize = fontSize
+                    self.font = UIFont.getFont(ofSize: fontSize)
                     break
                 }
                 
@@ -235,23 +256,23 @@ class PaddingLabel: UILabel {
 
 class TableViewCell: UITableViewCell {
     
-    override func draw(_ rect: CGRect) {
-        super.draw(rect)
+//    override func draw(_ rect: CGRect) {
+//        super.draw(rect)
         
-        if #available(iOS 13, *) { } else {
-            selectedBackgroundView?.backgroundColor = Constants.getMiddleColor() ?? UIColor(white: 0.85, alpha: 1)
-        }
-    }
+//        if #available(iOS 13, *) { } else {
+//            selectedBackgroundView?.backgroundColor = Constants.getMiddleColor() ?? UIColor(white: 0.85, alpha: 1)
+//        }
+//    }
     
-    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-        super.init(style: style, reuseIdentifier: reuseIdentifier)
-        
-        selectedBackgroundView = UIView()
-    }
-    
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
+//    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+//        super.init(style: style, reuseIdentifier: reuseIdentifier)
+//
+//        selectedBackgroundView = UIView()
+//    }
+//
+//    required init?(coder aDecoder: NSCoder) {
+//        fatalError("init(coder:) has not been implemented")
+//    }
 }
 
 extension String {
