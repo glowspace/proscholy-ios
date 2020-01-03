@@ -6,4 +6,8 @@
 //  Copyright © 2020 Patrik Dobiáš. All rights reserved.
 //
 
-import Foundation
+import UIKit
+
+class UserViewVC: ViewController {
+    
+}
