@@ -13,8 +13,7 @@ class TabBarController: UITabBarController {
     enum tabBarMenu: Int {
         case home
         case songBook
-        case favorite
-        case settings
+        case user
     }
     
     override var preferredStatusBarStyle : UIStatusBarStyle {
@@ -28,12 +27,11 @@ class TabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let homeListVC = createNavigationController(controller: HomeViewVC(), title: "Domů", image: UIImage(named: "homeIcon"), selectedImage: UIImage(named: "homeIconFilled"), tag: 0)
-        let songBookListVC = createNavigationController(controller: SongBooksListVC(), title: "Zpěvníky", image: UIImage(named: "songBookIcon"), selectedImage: UIImage(named: "songBookIcon"), tag: 1)
-        let favoriteListVC = createNavigationController(controller: FavoriteListVC(), title: "Oblíbené", image: UIImage(named: "starIcon"), selectedImage: UIImage(named: "starIconFilled"), tag: 2)
-        let menuVC = createNavigationController(controller: MenuVC(), title: "Ostatní", image: UIImage(named: "menuIcon"), selectedImage: nil, tag: 3)
+        let homeViewVC = createNavigationController(controller: HomeViewVC(), title: "Domů", image: .home, selectedImage: .homeFilled, tag: 0)
+        let songBooksVC = createNavigationController(controller: SongBooksListVC(), title: "Zpěvníky", image: .songBook, selectedImage: .songBook, tag: 1)
+        let userViewVC = createNavigationController(controller: UserViewVC(), title: "Já", image: .person, selectedImage: .personFilled, tag: 2)
         
-        setViewControllers([homeListVC, songBookListVC, favoriteListVC, menuVC], animated: false)
+        setViewControllers([homeViewVC, songBooksVC, userViewVC], animated: false)
         
         tabBar.tintColor = .blue
     }
@@ -62,9 +60,8 @@ class TabBarController: UITabBarController {
         case .songBook:
             tabBar.tintColor = .green
             break
-        case .favorite:
-            break
-        case .settings:
+        case .user:
+            tabBar.tintColor = .red
             break
         }
     }

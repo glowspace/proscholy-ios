@@ -24,11 +24,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         window?.rootViewController = NavigationController(rootViewController: LaunchVC())
         
-        UINavigationBar.appearance().isTranslucent = false
-        
-        let image = UIImage(named: "backIcon")
-        UINavigationBar.appearance().backIndicatorImage = image
-        UINavigationBar.appearance().backIndicatorTransitionMaskImage = image
+        UINavigationBar.appearance().backIndicatorImage = .back
+        UINavigationBar.appearance().backIndicatorTransitionMaskImage = .back
         
         return true
     }
