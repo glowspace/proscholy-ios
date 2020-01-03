@@ -14,7 +14,9 @@ class SongLyricDataSource: NSObject {
     private let context: NSManagedObjectContext
     
     private var allSongLyrics: [SongLyric]
-    var showingSongLyrics: [SongLyric]
+    private var showingSongLyrics: [SongLyric]
+    
+    var showingCount: Int { return showingSongLyrics.count }
     
     private let lastSearchedKey: String
     var searchText: String
@@ -31,6 +33,45 @@ class SongLyricDataSource: NSObject {
         
         super.init()
     }
+    
+    func allFavorite(_ indexes: [Int]) -> Bool {
+        for i in indexes {
+            if showingSongLyrics[i].isFavorite() == false {
+                return false
+            }
+        }
+        
+        return indexes.count > 0
+    }
+    
+    func toggleFavorites(_ indexes: [Int]) -> Bool {
+        if indexes.count == 0 { return false }
+        
+        let favorite = allFavorite(indexes)
+        
+        for i in indexes {
+            if favorite {
+                showingSongLyrics[i].favoriteOrder = -1
+            } else {
+                showingSongLyrics[i].favoriteOrder = Int16(UserSettings.favoriteOrderLast)
+            }
+        }
+        
+        do {
+            try context.save()
+        } catch { }
+        
+        return !favorite
+    }
+    
+    func songLyric(at index: Int) -> SongLyric? {
+        return showingSongLyrics[index]
+    }
+}
+
+// MARK: - Data Handlers
+
+extension SongLyricDataSource {
     
     func showAll(_ completionHandler: @escaping () -> Void) {
         context.perform {
@@ -180,11 +221,5 @@ extension SongLyricDataSource: UITableViewDataSource {
         } else {
             cell.numberLabel.text = songLyric.id
         }
-            
-    //        if let songBook = songBook {
-    //            if let number = songLyric.getNumber(in: songBook) {
-    //                cell.numberLabel.text = number
-    //            }
-    //        }
     }
 }

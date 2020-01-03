@@ -14,6 +14,20 @@ class HomeViewVC: ViewController {
     
     private var isSearching = false
     
+    private var tableViewTopToSearchView: NSLayoutConstraint?
+    private var tableViewTopToView: NSLayoutConstraint?
+    
+    private lazy var starButton: UIBarButtonItem = { createBarButtonItem(image: .star, selector: #selector(starSelected)) }()
+    private lazy var addToListButton: UIBarButtonItem = { createBarButtonItem(image: .add, selector: #selector(addToList)) }()
+    private lazy var selectAllButton: UIBarButtonItem = { createBarButtonItem(image: .selectAll, selector: #selector(selectAllLyrics)) }()
+    
+    private lazy var cancelButton: UIBarButtonItem = {
+        let barButtonItem = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(disableSelection))
+        barButtonItem.tintColor = .blue
+        
+        return barButtonItem
+    }()
+    
     private lazy var searchView: SearchView = {        
         let searchView = SearchView(leadingButton: UIButton(type: .custom), trailingButton: UIButton(type: .custom))
         
@@ -45,6 +59,11 @@ class HomeViewVC: ViewController {
             tableView.backgroundColor = .systemBackground
         }
         
+        tableView.allowsMultipleSelectionDuringEditing = true
+        
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(activateSongSelection(_: )))
+        tableView.addGestureRecognizer(longPress)
+        
         return tableView
     }()
     
@@ -58,6 +77,9 @@ class HomeViewVC: ViewController {
         dataSource.showAll {
             self.tableView.reloadData()
         }
+        
+        navigationItem.setLeftBarButton(cancelButton, animated: false)
+        navigationItem.setRightBarButtonItems([selectAllButton, addToListButton, starButton], animated: false)
         
         setViews()
     }
@@ -81,19 +103,32 @@ class HomeViewVC: ViewController {
     }
     
     private func setViews() {
-        view.addSubview(searchView)
+        addSearchView()
         view.addSubview(tableView)
         
-        let views = [
-            "searchView": searchView,
-            "tableView": tableView
-        ]
+        tableViewTopToSearchView = tableView.topAnchor.constraint(equalToSystemSpacingBelow: searchView.bottomAnchor, multiplier: 1)
+        tableViewTopToView = tableView.topAnchor.constraint(equalTo: view.topAnchor)
         
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[searchView]-8-|", metrics: nil, views: views))
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[tableView]|", metrics: nil, views: views))
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[searchView(==36)]-[tableView]-|", metrics: nil, views: views))
+        tableViewTopToSearchView?.isActive = true
+        tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
         
         searchView.searchField.updateFontSize()
+    }
+    
+    private func addSearchView() {
+        view.addSubview(searchView)
+        
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[searchView]-8-|", metrics: nil, views: ["searchView": searchView]))
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[searchView(==36)]", metrics: nil, views: ["searchView": searchView]))
+    }
+    
+    private func createBarButtonItem(image: UIImage?, selector: Selector) -> UIBarButtonItem {
+        let barButtonItem = UIBarButtonItem(image: image, style: .plain, target: self, action: selector)
+        barButtonItem.tintColor = .blue
+        
+        return barButtonItem
     }
 }
 
@@ -134,9 +169,14 @@ extension HomeViewVC: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let songLyricVC = SongLyricVC()
-        let songLyric = dataSource.showingSongLyrics[indexPath.row]
+        if tableView.isEditing {
+            updateSelection(tableView.indexPathsForSelectedRows?.count ?? 0)
+            return
+        }
         
+        guard let songLyric = dataSource.songLyric(at: indexPath.row) else { return }
+        let songLyricVC = SongLyricVC()
+    
         if isSearching {
             let defaults = UserDefaults.standard
             
@@ -160,6 +200,10 @@ extension HomeViewVC: UITableViewDelegate {
         songLyricVC.songLyric = songLyric
         
         navigationController?.pushViewController(songLyricVC, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+        updateSelection(tableView.indexPathsForSelectedRows?.count ?? 0)
     }
 }
 
@@ -214,6 +258,81 @@ extension HomeViewVC: UITextFieldDelegate {
         textField.resignFirstResponder()
         
         return true
+    }
+}
+
+// MARK: - Multiple Selection Handlers
+
+extension HomeViewVC {
+    
+    private func updateSelection(_ selectedCount: Int) {
+        if selectedCount == 0 {
+            setTitle("0 písní")
+        } else if selectedCount == 1 {
+            setTitle("1 píseň")
+        } else if selectedCount < 5 {
+            setTitle(String(format: "%d písně", selectedCount))
+        } else {
+            setTitle(String(format: "%d písní", selectedCount))
+        }
+        
+        starButton.isEnabled = selectedCount != 0
+        addToListButton.isEnabled = selectedCount != 0
+        starButton.image = dataSource.allFavorite(tableView.indexPathsForSelectedRows?.map { $0.row } ?? []) ? .starFilled: .star
+    }
+    
+    @objc func activateSongSelection(_ recognizer: UILongPressGestureRecognizer) {
+        if !tableView.isEditing && recognizer.state == .began {
+            let touchPoint = recognizer.location(in: tableView)
+            if let indexPath = tableView.indexPathForRow(at: touchPoint) {
+                tableView.setEditing(true, animated: true)
+                tableView.selectRow(at: indexPath, animated: true, scrollPosition: .none)
+
+                updateSelection(1)
+                
+                searchView.removeFromSuperview()
+                tableViewTopToSearchView?.isActive = false
+                tableViewTopToView?.isActive = true
+
+                navigationController?.setNavigationBarHidden(false, animated: false)
+                tabBarController?.tabBar.isHidden = true
+            }
+        }
+    }
+    
+    @objc func starSelected() {
+        guard let indexPaths = tableView.indexPathsForSelectedRows else { return }
+        
+        starButton.image = dataSource.toggleFavorites(indexPaths.map { $0.row} ) ? .starFilled : .star
+    }
+    
+    @objc func addToList() {
+        
+    }
+    
+    @objc func selectAllLyrics() {
+        let selectedAll = tableView.indexPathsForSelectedRows?.count == dataSource.showingCount
+        
+        for i in 0..<dataSource.showingCount {
+            if selectedAll {
+                tableView.deselectRow(at: IndexPath(row: i, section: 0), animated: true)
+            } else {
+                tableView.selectRow(at: IndexPath(row: i, section: 0), animated: true, scrollPosition: .none)
+            }
+        }
+        
+        updateSelection(tableView.indexPathsForSelectedRows?.count ?? 0)
+    }
+    
+    @objc func disableSelection() {
+        tableView.setEditing(false, animated: true)
+        
+        addSearchView()
+        tableViewTopToView?.isActive = false
+        tableViewTopToSearchView?.isActive = true
+        
+        navigationController?.setNavigationBarHidden(true, animated: false)
+        tabBarController?.tabBar.isHidden = false
     }
 }
 
