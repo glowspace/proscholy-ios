@@ -8,68 +8,121 @@
 
 import UIKit
 
-class SongBooksListVC: ListVC<SongBookDataSource> {
+class SongBooksListVC: SearchViewVC {
+    
+    private let dataSource = SongBookDataSource()
+    
+    private lazy var songBooksCollection: UICollectionView = {
+        let collectionView = UICollectionView(frame: CGRect.zero, collectionViewLayout: UICollectionViewFlowLayout())
+        collectionView.translatesAutoresizingMaskIntoConstraints = false
+        
+        collectionView.dataSource = dataSource
+        collectionView.delegate = self
+        
+        collectionView.register(SongBookCell.self, forCellWithReuseIdentifier: "songBookCell")
+        
+        if #available(iOS 13, *) {
+            collectionView.backgroundColor = .systemBackground
+        }
+        
+        return collectionView
+    }()
     
     override func viewDidLoad() {
-        dataSource = SongBookDataSource()
         super.viewDidLoad()
         
-        searchView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[searchField]-|", metrics: nil, views: ["searchField": searchView.searchField]))
+        dataSource.showAll {
+            self.songBooksCollection.reloadData()
+        }
+        
+        setViews()
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
+    private func setViews() {
+        setPlaceholder("Zadejte název či zkratku zpěvníku")
+        searchView.searchField.addTarget(self, action: #selector(search(sender:)), for: .editingChanged)
         
-        showSearchView(placeholder: "Zadejte název či zkratku zpěvníku")
+        view.addSubview(songBooksCollection)
         
-        if #available(iOS 13, *) {
-            navigationController?.navigationBar.barTintColor = Constants.getMiddleColor(traitCollection.userInterfaceStyle)
-        } else {
-            navigationController?.navigationBar.barTintColor = Constants.getMiddleColor()
+        songBooksCollection.topAnchor.constraint(equalToSystemSpacingBelow: searchView.bottomAnchor, multiplier: 1).isActive = true
+        songBooksCollection.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+        songBooksCollection.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        songBooksCollection.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+    }
+}
+
+// MARK: - UICollectionViewDelegate, UICollectionViewDelegateFlowLayout
+
+extension SongBooksListVC: UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+    
+    private var spacing: CGFloat { return 15 }
+    
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        searchView.searchField.resignFirstResponder()
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, insetForSectionAt section: Int) -> UIEdgeInsets {
+        return UIEdgeInsets(top: 0, left: spacing, bottom: 0, right: spacing)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
+        return spacing
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumInteritemSpacingForSectionAt section: Int) -> CGFloat {
+        return spacing
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        let width = collectionView.frame.width / 2 - 3 * spacing / 2
+        
+        return CGSize(width: width, height: 3 * width / 4 + 30)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        
+    }
+}
+
+// MARK: - UITextFieldDelegate
+
+extension SongBooksListVC {
+    
+    @objc override func toggleSearch() {
+        super.toggleSearch()
+        
+        if !isSearching {
+            dataSource.showAll {
+                self.songBooksCollection.reloadData()
+            }
         }
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        // needed to correctly update placeholder font size in next VC
-        navigationController?.setNavigationBarHidden(true, animated: false)
-        navigationController?.setNavigationBarHidden(false, animated: false)
-    }
-    
-    // MARK: - UITableViewDelegate, UITableViewDataSource
-    
-    override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return super.tableView(tableView, numberOfRowsInSection: section) + 1
-    }
-    
-    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if indexPath.row == 0 {
-            navigationController?.pushViewController(AllSongLyricsListVC(), animated: true)
-        } else {
-            let songBookVC = SongBookVC()
-            songBookVC.songBook = dataSource.showingData[indexPath.row - 1]
-            navigationController?.pushViewController(songBookVC, animated: true)
-        }
-    }
-    
-    override func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        if indexPath.row > 0 {
-            return super.tableView(tableView, cellForRowAt: IndexPath(row: indexPath.row - 1, section: indexPath.section))
-        }
-        
-        let cell = tableView.dequeueReusableCell(withIdentifier: "cellId") as! SongBookCell
-        
-        if #available(iOS 13, *) {
-            cell.selectedBackgroundView?.backgroundColor = Constants.getMiddleColor(traitCollection.userInterfaceStyle) ?? UIColor(white: 0.85, alpha: 1)
+    @objc func search(sender: UITextField) {
+        dataSource.search(sender.text) {
+            self.songBooksCollection.reloadData()
             
-            cell.backgroundColor = Constants.getTableViewCellColor(traitCollection.userInterfaceStyle) ?? .white
+            if self.songBooksCollection.visibleCells.count > 0 {
+                self.songBooksCollection.showsVerticalScrollIndicator = false
+                self.songBooksCollection.scrollToItem(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
+                self.songBooksCollection.showsVerticalScrollIndicator = true
+            }
         }
+    }
+    
+    override func textFieldDidBeginEditing(_ textField: UITextField) {
+        super.textFieldDidBeginEditing(textField)
         
-        cell.shortcutLabel.text = "A-Z"
-        cell.nameLabel.text = "Rejstřík"
-        cell.shortcutBackgroundColor = .from(hex: nil)
-        
-        return cell
+        if dataSource.searchText.count == 0 {
+            dataSource.search(nil) {
+                self.songBooksCollection.reloadData()
+                
+                if self.songBooksCollection.visibleCells.count > 0 {
+                    self.songBooksCollection.showsVerticalScrollIndicator = false
+                    self.songBooksCollection.scrollToItem(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
+                    self.songBooksCollection.showsVerticalScrollIndicator = true
+                }
+            }
+        }
     }
 }

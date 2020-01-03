@@ -9,67 +9,118 @@
 import UIKit
 import CoreData
 
-class SongBookDataSource: NSObject, DataSource {
+class SongBookDataSource: NSObject {
     
-    var data: [SongBook]
-    var showingData: [SongBook]
+    private let context: NSManagedObjectContext
     
-    var searchText: String? {
-        didSet {
-            updateData()
-        }
-    }
+    private var allSongBooks: [SongBook]
+    private var showingSongBooks: [SongBook]
+    
+    var showingCount: Int { return showingSongBooks.count }
+
+    var searchText: String
     
     override init() {
-        if let data: [SongBook] = CoreDataService.fetchData(predicate: NSPredicate(format: "isPrivate == false"), sortDescriptors: [NSSortDescriptor(key: "name", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare(_:)))], context: PersistenceService.context) {
-            self.data = data
-        } else {
-            data = []
-        }
+        context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        context.parent = PersistenceService.context
         
-        showingData = data
+        allSongBooks = []
+        showingSongBooks = []
+        
+        searchText = ""
         
         super.init()
     }
-
-    // MARK: - Data Handlers
     
-    private func search(searchText: String) {
+}
+
+// MARK: - Data Handlers
+
+extension SongBookDataSource {
+    
+    func showAll(_ completionHandler: @escaping () -> Void) {
+        self.searchText = ""
+        
+        context.perform {
+            if self.allSongBooks.count == 0 {
+                self.loadData()
+            }
+            
+            self.showingSongBooks = self.allSongBooks
+            
+            DispatchQueue.main.async {
+                completionHandler()
+            }
+        }
+    }
+    
+    func search(_ searchText: String?, _ completionHandler: @escaping () -> Void) {
+        self.searchText = searchText ?? ""
+        
+        context.perform {
+            if self.searchText.count > 0 {
+                self.search()
+            } else {
+               self.showingSongBooks = self.allSongBooks
+            }
+            
+            DispatchQueue.main.async {
+                completionHandler()
+            }
+        }
+    }
+    
+    private func loadData() {
+        let predicate = NSPredicate(format: "isPrivate == false")
+        let sortDescriptors = [NSSortDescriptor(key: "name", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare(_:)))]
+        
+        if let data: [SongBook] = CoreDataService.fetchData(predicate: predicate, sortDescriptors: sortDescriptors, context: context) {
+            self.allSongBooks = data
+        } else {
+            self.allSongBooks = []
+        }
+    }
+    
+    private func search() {
+        showingSongBooks = []
+        
         let predicates = [
+            NSPredicate(format: "name BEGINSWITH[c] %@", searchText),
             NSPredicate(format: "name BEGINSWITH[cd] %@", searchText),
-            NSPredicate(format: "shortcut BEGINSWITH[cd] %@ AND NOT name CONTAINS[cd] %@", searchText, searchText),
-            NSPredicate(format: "name CONTAINS[cd] %@ AND NOT name BEGINSWITH[cd] %@", searchText, searchText)
+            NSPredicate(format: "shortcut BEGINSWITH[cd] %@", searchText),
+            NSPredicate(format: "name CONTAINS[c] %@", searchText),
+            NSPredicate(format: "name CONTAINS[cd] %@", searchText)
         ]
         
-        showingData = []
-        
         for predicate in predicates {
-            showingData.append(contentsOf: data.filter {
-                predicate.evaluate(with: $0) && !showingData.contains($0)
+            showingSongBooks.append(contentsOf: allSongBooks.filter {
+                predicate.evaluate(with: $0) && !showingSongBooks.contains($0)
             })
         }
     }
+}
+
+// MARK: - UICollectionViewDataSource
+
+extension SongBookDataSource: UICollectionViewDataSource {
     
-    func updateData() {
-        if let searchText = searchText, searchText.count > 0 {
-            search(searchText: searchText)
-        } else {
-            showingData = data
-        }
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return showingCount
     }
     
-    // Mark: - Cell Settings
-    
-    func setCell(_ cell: UITableViewCell, _ object: NSManagedObject) {
-        guard let cell = cell as? SongBookCell else { return }
-        guard let songBook = object as? SongBook else { return }
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "songBookCell", for: indexPath) 
         
-        cell.shortcutLabel.text = songBook.shortcut
-        cell.nameLabel.text = songBook.name
-        cell.shortcutBackgroundColor = .from(hex: songBook.color)
+        if indexPath.row < showingCount {
+            setCell(cell, showingSongBooks[indexPath.row])
+        }
+        
+        return cell
     }
     
-    func registerCell(_ tableView: UITableView, forCellReuseIdentifier identifier: String) {
-        tableView.register(SongBookCell.self, forCellReuseIdentifier: identifier)
+    private func setCell(_ cell: UICollectionViewCell, _ songBook: SongBook) {
+        guard let cell = cell as? SongBookCell else { return }
+        
+        cell.songBookName = songBook.name
     }
 }
