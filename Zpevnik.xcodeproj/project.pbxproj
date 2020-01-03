@@ -9,12 +9,12 @@
 /* Begin PBXBuildFile section */
 		391AE0E422FAC9CF00E7F5BC /* FilterTagCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 391AE0E322FAC9CF00E7F5BC /* FilterTagCell.swift */; };
 		391AE0E622FACD2F00E7F5BC /* Author.swift in Sources */ = {isa = PBXBuildFile; fileRef = 391AE0E522FACD2F00E7F5BC /* Author.swift */; };
-		391AE0EB22FACD4D00E7F5BC /* Zpevnik.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 391AE0E722FACD4D00E7F5BC /* Zpevnik.xcdatamodeld */; };
 		391AE0EE22FACD5900E7F5BC /* Tag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 391AE0EC22FACD5900E7F5BC /* Tag.swift */; };
 		391AE0EF22FACD5900E7F5BC /* SongBookRecord.swift in Sources */ = {isa = PBXBuildFile; fileRef = 391AE0ED22FACD5900E7F5BC /* SongBookRecord.swift */; };
 		391AE0F122FACD7C00E7F5BC /* AlignedCollectionViewFlowLayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 391AE0F022FACD7C00E7F5BC /* AlignedCollectionViewFlowLayout.swift */; };
 		391B94D323BBB94800509728 /* DataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 391B94D223BBB94800509728 /* DataSource.swift */; };
 		391B94D723BD040B00509728 /* TableViewHeader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 391B94D623BD040B00509728 /* TableViewHeader.swift */; };
+		391F764623BE2AEE008BDD0F /* Zpevnik.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 391F764223BE2AEE008BDD0F /* Zpevnik.xcdatamodeld */; };
 		392FFCA2234A8C1A00296903 /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 392FFCA1234A8C1A00296903 /* LaunchScreen.storyboard */; };
 		3939FA6E22FC129600F9AED1 /* AboutVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3939FA6D22FC129600F9AED1 /* AboutVC.swift */; };
 		3939FA7222FC1F1900F9AED1 /* LanguageTag.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3939FA7122FC1F1900F9AED1 /* LanguageTag.swift */; };
@@ -64,14 +64,14 @@
 /* Begin PBXFileReference section */
 		391AE0E322FAC9CF00E7F5BC /* FilterTagCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterTagCell.swift; sourceTree = "<group>"; };
 		391AE0E522FACD2F00E7F5BC /* Author.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Author.swift; sourceTree = "<group>"; };
-		391AE0E822FACD4D00E7F5BC /* Zpevnik v3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Zpevnik v3.xcdatamodel"; sourceTree = "<group>"; };
-		391AE0E922FACD4D00E7F5BC /* Zpevnik.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Zpevnik.xcdatamodel; sourceTree = "<group>"; };
-		391AE0EA22FACD4D00E7F5BC /* Zpevnik v2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Zpevnik v2.xcdatamodel"; sourceTree = "<group>"; };
 		391AE0EC22FACD5900E7F5BC /* Tag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tag.swift; sourceTree = "<group>"; };
 		391AE0ED22FACD5900E7F5BC /* SongBookRecord.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongBookRecord.swift; sourceTree = "<group>"; };
 		391AE0F022FACD7C00E7F5BC /* AlignedCollectionViewFlowLayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AlignedCollectionViewFlowLayout.swift; sourceTree = "<group>"; };
 		391B94D223BBB94800509728 /* DataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataSource.swift; sourceTree = "<group>"; };
 		391B94D623BD040B00509728 /* TableViewHeader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TableViewHeader.swift; sourceTree = "<group>"; };
+		391F764323BE2AEE008BDD0F /* Zpevnik v3.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Zpevnik v3.xcdatamodel"; sourceTree = "<group>"; };
+		391F764423BE2AEE008BDD0F /* Zpevnik.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = Zpevnik.xcdatamodel; sourceTree = "<group>"; };
+		391F764523BE2AEE008BDD0F /* Zpevnik v2.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = "Zpevnik v2.xcdatamodel"; sourceTree = "<group>"; };
 		392FFCA1234A8C1A00296903 /* LaunchScreen.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		3939FA6D22FC129600F9AED1 /* AboutVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AboutVC.swift; sourceTree = "<group>"; };
 		3939FA7122FC1F1900F9AED1 /* LanguageTag.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageTag.swift; sourceTree = "<group>"; };
@@ -224,7 +224,7 @@
 				391AE0ED22FACD5900E7F5BC /* SongBookRecord.swift */,
 				391AE0EC22FACD5900E7F5BC /* Tag.swift */,
 				3939FA7122FC1F1900F9AED1 /* LanguageTag.swift */,
-				391AE0E722FACD4D00E7F5BC /* Zpevnik.xcdatamodeld */,
+				391F764223BE2AEE008BDD0F /* Zpevnik.xcdatamodeld */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -395,7 +395,6 @@
 				391AE0EF22FACD5900E7F5BC /* SongBookRecord.swift in Sources */,
 				399205BC22F8340200E392A7 /* FilterVC.swift in Sources */,
 				397BADA12301510400AB75FD /* SongLyricDataSource.swift in Sources */,
-				391AE0EB22FACD4D00E7F5BC /* Zpevnik.xcdatamodeld in Sources */,
 				397B626322EC2E2900B9CCEC /* SongBook.swift in Sources */,
 				39F7BA5422E74D3C00FDFF90 /* SongBookCell.swift in Sources */,
 				3982AD55233A317700EB0F8F /* SongBooksListVC.swift in Sources */,
@@ -411,6 +410,7 @@
 				3997799022F7714A00CE6FF6 /* Constants.swift in Sources */,
 				3939FA6E22FC129600F9AED1 /* AboutVC.swift in Sources */,
 				3982AD51233A317700EB0F8F /* SongLyricsListVC.swift in Sources */,
+				391F764623BE2AEE008BDD0F /* Zpevnik.xcdatamodeld in Sources */,
 				3982AD53233A317700EB0F8F /* FavoriteListVC.swift in Sources */,
 				39F7BA2D22E7090F00FDFF90 /* AppDelegate.swift in Sources */,
 				391AE0E422FAC9CF00E7F5BC /* FilterTagCell.swift in Sources */,
@@ -619,14 +619,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCVersionGroup section */
-		391AE0E722FACD4D00E7F5BC /* Zpevnik.xcdatamodeld */ = {
+		391F764223BE2AEE008BDD0F /* Zpevnik.xcdatamodeld */ = {
 			isa = XCVersionGroup;
 			children = (
-				391AE0E822FACD4D00E7F5BC /* Zpevnik v3.xcdatamodel */,
-				391AE0E922FACD4D00E7F5BC /* Zpevnik.xcdatamodel */,
-				391AE0EA22FACD4D00E7F5BC /* Zpevnik v2.xcdatamodel */,
+				391F764323BE2AEE008BDD0F /* Zpevnik v3.xcdatamodel */,
+				391F764423BE2AEE008BDD0F /* Zpevnik.xcdatamodel */,
+				391F764523BE2AEE008BDD0F /* Zpevnik v2.xcdatamodel */,
 			);
-			currentVersion = 391AE0E822FACD4D00E7F5BC /* Zpevnik v3.xcdatamodel */;
+			currentVersion = 391F764323BE2AEE008BDD0F /* Zpevnik v3.xcdatamodel */;
 			path = Zpevnik.xcdatamodeld;
 			sourceTree = "<group>";
 			versionGroupType = wrapper.xcdatamodel;

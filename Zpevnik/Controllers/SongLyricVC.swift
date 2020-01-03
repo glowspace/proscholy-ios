@@ -107,6 +107,14 @@ class SongLyricVC: ViewController {
         }
         
         updateSongLyrics()
+        
+        (UIApplication.shared.delegate as! AppDelegate).restrictRotation = .all
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        (UIApplication.shared.delegate as! AppDelegate).restrictRotation = .portrait
     }
     
     override func viewDidDisappear(_ animated: Bool) {
