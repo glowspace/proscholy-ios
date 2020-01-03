@@ -74,6 +74,8 @@ class SongLyricDataSource: NSObject {
 extension SongLyricDataSource {
     
     func showAll(_ completionHandler: @escaping () -> Void) {
+        self.searchText = ""
+        
         context.perform {
             if self.allSongLyrics.count == 0 {
                 self.loadData()
@@ -191,13 +193,13 @@ extension SongLyricDataSource {
 extension SongLyricDataSource: UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return showingSongLyrics.count
+        return showingCount
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "songCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: "songLyricCell", for: indexPath)
         
-        if indexPath.row < showingSongLyrics.count {
+        if indexPath.row < showingCount {
             setCell(cell, showingSongLyrics[indexPath.row])
         }
         
