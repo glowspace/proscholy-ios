@@ -42,7 +42,7 @@ extension SongLyric {
         if let songBookRecords = songBookRecords?.allObjects as? [SongBookRecord] {
             for songBookRecord in songBookRecords {
                 if songBookRecord.songBook == songBook {
-                    return songBook.shortcut! + songBookRecord.number!
+                    return (songBook.shortcut ?? "") + songBookRecord.number!
                 }
             }
         }
@@ -51,12 +51,12 @@ extension SongLyric {
     }
     
     @objc var numbers: [String] {
-        get {
+        get {            
             guard let songBookRecords = songBookRecords?.allObjects as? [SongBookRecord] else { return [] }
-            
-            var numbers = songBookRecords.map {$0.songBook!.shortcut! + $0.number!}
+
+            var numbers = songBookRecords.map {($0.songBook!.shortcut ?? "") + $0.number!}
             numbers.append(id!)
-            
+
             return numbers
         }
     }
