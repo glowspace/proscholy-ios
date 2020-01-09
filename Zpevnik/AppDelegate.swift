@@ -22,7 +22,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         UserSettings.load()
         
-        window?.rootViewController = NavigationController(rootViewController: LaunchVC())
+        let defaults = UserDefaults.standard
+        let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
+        
+        if let version = defaults.string(forKey: "version"), version == currentVersion { } else {
+            defaults.removeObject(forKey: "lastUpdate")
+            defaults.removeObject(forKey: "defaultDataLoaded")
+            defaults.set(currentVersion, forKey: "version")
+        }
+        
+        window?.rootViewController = LaunchVC()
         
         UINavigationBar.appearance().backIndicatorImage = .back
         UINavigationBar.appearance().backIndicatorTransitionMaskImage = .back

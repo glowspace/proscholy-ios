@@ -20,7 +20,6 @@ class SearchView: UIView {
         textField.contentVerticalAlignment = .center
         
         textField.font = UIFont.getFont(ofSize: 20)
-        textField.clearButtonMode = .always
         textField.returnKeyType = .search
         
         textField.enablesReturnKeyAutomatically = true
@@ -55,7 +54,7 @@ class SearchView: UIView {
     private func setViews() {
         addSubview(searchField)
         
-        leadingButton?.imageEdgeInsets = UIEdgeInsets(top: 6,left: 6,bottom: 6,right: 6)
+        leadingButton?.imageEdgeInsets = UIEdgeInsets(top: 6, left: 6, bottom: 6, right: 6)
         trailingButton?.imageEdgeInsets = UIEdgeInsets(top: 6, left: 6, bottom: 6, right: 6)
         
         if #available(iOS 13, *) {
@@ -67,7 +66,7 @@ class SearchView: UIView {
             leadingButton.translatesAutoresizingMaskIntoConstraints = false
             
             addSubview(leadingButton)
-            addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-4-[leadingButton][searchField]", metrics: nil, views: ["searchField": searchField, "leadingButton": leadingButton]))
+            addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[leadingButton][searchField]", metrics: nil, views: ["searchField": searchField, "leadingButton": leadingButton]))
             addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[leadingButton]|", metrics: nil, views: ["leadingButton": leadingButton]))
             
             leadingButton.widthAnchor.constraint(equalTo: leadingButton.heightAnchor).isActive = true
@@ -79,7 +78,7 @@ class SearchView: UIView {
             trailingButton.translatesAutoresizingMaskIntoConstraints = false
             
             addSubview(trailingButton)
-            addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[searchField][trailingButton]-4-|", metrics: nil, views: ["searchField": searchField, "trailingButton": trailingButton]))
+            addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[searchField][trailingButton]|", metrics: nil, views: ["searchField": searchField, "trailingButton": trailingButton]))
             addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[trailingButton]|", metrics: nil, views: ["trailingButton": trailingButton]))
             
             trailingButton.widthAnchor.constraint(equalTo: trailingButton.heightAnchor).isActive = true

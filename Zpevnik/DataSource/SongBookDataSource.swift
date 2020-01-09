@@ -32,6 +32,9 @@ class SongBookDataSource: NSObject {
         super.init()
     }
     
+    func songBook(at index: Int) -> SongBook? {
+        return showingSongBooks[index]
+    }
 }
 
 // MARK: - Data Handlers

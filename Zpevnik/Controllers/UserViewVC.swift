@@ -8,6 +8,6 @@
 
 import UIKit
 
-class UserViewVC: ViewController {
+class UserViewVC: SearchViewVC {
     
 }

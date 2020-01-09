@@ -21,6 +21,7 @@ class SearchViewVC: VC {
         searchView.trailingButton?.setImage(.filter, for: .normal)
         
         searchView.leadingButton?.addTarget(self, action: #selector(toggleSearch), for: .touchUpInside)
+        searchView.searchField.addTarget(self, action: #selector(searchTextChanged(sender:)), for: .editingChanged)
         
         return searchView
     }()
@@ -43,7 +44,7 @@ class SearchViewVC: VC {
         view.addSubview(searchView)
         
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[searchView]-8-|", metrics: nil, views: ["searchView": searchView]))
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[searchView(==36)]", metrics: nil, views: ["searchView": searchView]))
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[searchView(==44)]", metrics: nil, views: ["searchView": searchView]))
     }
     
     internal func setPlaceholder(_ placeholder: String) {
@@ -51,6 +52,8 @@ class SearchViewVC: VC {
         searchView.searchField.updateFontSize()
     }
 }
+
+// MARK: UITextFieldDelegate
 
 extension SearchViewVC: UITextFieldDelegate {
     
@@ -60,10 +63,15 @@ extension SearchViewVC: UITextFieldDelegate {
             
             searchView.searchField.resignFirstResponder()
             searchView.searchField.text = ""
+            searchView.searchField.clearButtonMode = .never
             searchView.leadingButton?.setImage(.search, for: .normal)
         } else {
             searchView.searchField.becomeFirstResponder()
         }
+    }
+    
+    @objc func searchTextChanged(sender: UITextField) {
+        searchView.searchField.clearButtonMode = (sender.text?.count ?? 0) > 0 ? .always : .never
     }
     
     func textFieldDidBeginEditing(_ textField: UITextField) {

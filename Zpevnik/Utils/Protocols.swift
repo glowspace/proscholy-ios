@@ -9,41 +9,16 @@
 import UIKit
 import CoreData
 
-protocol DataSource {
-    associatedtype T: NSManagedObject
-
-    var data: [T] { get set }
-    var showingData: [T] { get set }
+protocol FilterDelegate {
     
-    var searchText: String? { get set }
-
-    // MARK: - Data Handlers
-    
-    func updateData()
-
-    // Mark: - Cell Settings
-
-    func setCell(_ cell: UITableViewCell, _ object: NSManagedObject)
-
-    func registerCell(_ tableView: UITableView, forCellReuseIdentifier identifier: String)
+    func activeFiltersChanged()
 }
+
+
+
+
 
 protocol SongLyricDelegate {
+    
     func changeSongLyric(_ controller: SongLyricVC, change: Int)
-}
-
-protocol FilterDelegate {
-    func updateSelected() 
-}
-
-protocol FilterTag {
-    var title: String { get }
-    
-    var elements: [FilterAble] { get }
-}
-
-protocol FilterAble {
-    var name: String? { get }
-    
-    static var predicateFormat: String { get }
 }

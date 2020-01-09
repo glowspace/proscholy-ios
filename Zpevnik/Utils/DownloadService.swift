@@ -47,21 +47,29 @@ class DownloadService {
     }
     
     static func updateSongs(_ updater: @escaping (String) -> Void, _ completionHandler: @escaping () -> Void) {
-//        if Reachability.networkIsReachableOverWifi() {
-//            downloadSongData(updater, completionHandler)
-//        } else {
+        if !isUpdateNeeded() {
+            completionHandler()
+            return
+        }
+        
+        if Reachability.networkIsReachableOverWifi() {
+            do {
+                try download(updater, completionHandler)
+            } catch {
+                loadSongDataFromFile(completionHandler)
+            }
+        } else {
             loadSongDataFromFile(completionHandler)
-//        }
+        }
     }
     
     // MARK: - Data Loading
     
-    private static func downloadSongData(_ updater: @escaping (String) -> Void, _ completionHandler: @escaping () -> Void) {
+    private static func download(_ updater: @escaping (String) -> Void, _ completionHandler: @escaping () -> Void) throws {
         let defaults = UserDefaults.standard
-        var arguments = [String: String]()
-        
+        var songLyricsArguments = [String: String]()
         if let lastUpdate = defaults.string(forKey: "lastUpdate") {
-            arguments["updated_after"] = lastUpdate
+            songLyricsArguments["updated_after"] = lastUpdate
         }
         
         let queries = [
@@ -70,21 +78,27 @@ class DownloadService {
                 Query(type: "songbook_records", fields: ["id", "number",
                      Query(type: "songbook", fields: ["id"])]),
                 Query(type: "authors", fields: ["id", "name"]),
-                Query(type: "tags", fields: ["id"])], arguments: arguments),
+                Query(type: "tags", fields: ["id"])], arguments: songLyricsArguments),
             Query(type: "songbooks", fields: ["id", "name", "shortcut", "is_private", "color"]),
             Query(type: "tags", fields: ["id", "name",
                  Query(type: "parent_tag", fields: ["id"])])
         ]
         
-        guard let encodedUrl = generateQuery("https://zpevnik.proscholy.cz", queries).addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed), let url = URL(string: encodedUrl) else { return }
+        var arguments: [String: String] = queries.reduce(into: [:]) { result, query in result["query", default: "{"] += query.generate() }
+        arguments["query", default: "{"] += "}"
         
-        updater("Aktualizace databáze písní.")
+        guard let url = URL(string: "https://zpevnik.proscholy.cz/graphql") else { return }
+        
+        var request = URLRequest(url: url)
+        request.httpMethod = "POST"
+        request.httpBody = try JSONSerialization.data(withJSONObject: arguments)
+        request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
         
         let sessionConfig = URLSessionConfiguration.default
         sessionConfig.timeoutIntervalForRequest = 10.0
         sessionConfig.timeoutIntervalForResource = 10.0
         
-        URLSession(configuration: sessionConfig).dataTask(with: url) { (data, response, error) in
+        URLSession(configuration: sessionConfig).dataTask(with: request) { (data, response, error) in
             guard error == nil else {
                 loadSongDataFromFile(completionHandler)
                 return
@@ -95,11 +109,13 @@ class DownloadService {
             do {
                 updater("Příprava písní")
                 
-                try prepareData(data)
-                
-                setLastUpdate(defaults)
-                
-                completionHandler()
+                if try prepareData(data) {
+                    setLastUpdate(defaults)
+                    
+                    completionHandler()
+                } else {
+                    loadSongDataFromFile(completionHandler)
+                }
             } catch {
                 loadSongDataFromFile(completionHandler)
             }
@@ -116,7 +132,7 @@ class DownloadService {
         
         do {
             guard let path = Bundle.main.path(forResource: "data", ofType: "json") else { return }
-            try prepareData(Data(contentsOf: URL(fileURLWithPath: path)))
+            _ = try prepareData(Data(contentsOf: URL(fileURLWithPath: path)))
             
             defaults.set(true, forKey: "defaultDataLoaded")
             
@@ -124,24 +140,20 @@ class DownloadService {
         } catch { }
     }
     
-    private static func prepareData(_ data: Data) throws {
-        guard let jsonData = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else { return }
+    private static func prepareData(_ data: Data) throws -> Bool {
+        guard let jsonData = try JSONSerialization.jsonObject(with: data, options: []) as? [String: Any] else { return false }
         
-        let context = PersistenceService.persistentContainer.newBackgroundContext()
+        let context = PersistenceService.backgroundContext
         
-        guard let data = jsonData["data"] as? [String: Any] else { return }
+        guard let data = jsonData["data"] as? [String: [[String: Any]]] else { return false }
         
-        if let languages: [Language] = CoreDataService.fetchData(context: context) {
-            for language in languages {
-                language.count = 0
-            }
-        }
+        createSongBooks(from: data["songbooks"], context)
+        createTags(from: data["tags"], context)
+        createSongLyrics(from: data["song_lyrics"], context)
         
-        createSongBooks(from: data["songbooks"] as? [[String: Any]], context)
-        createTags(from: data["tags"] as? [[String: Any]], context)
-        createSongLyrics(from: data["song_lyrics"] as? [[String: Any]], context)
+        PersistenceService.saveContext()
         
-        try context.save()
+        return true
     }
     
     // MARK: - Objects Parsing
@@ -157,7 +169,7 @@ class DownloadService {
     private static func createTags(from data: [[String: Any]]?, _ context: NSManagedObjectContext) {
         guard let data = data else { return }
         
-        removeOldTags(context)
+        disableOldTags(context)
         
         for tagsData in data {
             _ = Tag.createFromDict(tagsData, context)
@@ -173,10 +185,10 @@ class DownloadService {
         }
     }
     
-    private static func removeOldTags(_ context: NSManagedObjectContext) {
+    private static func disableOldTags(_ context: NSManagedObjectContext) {
         if let tags: [Tag] = CoreDataService.fetchData(context: context) {
             for tag in tags {
-                context.delete(tag)
+                tag.isValid = false
             }
         }
     }
@@ -185,6 +197,14 @@ class DownloadService {
         guard let data = data else { return }
         
         for songLyricsData in data {
+            let existed: Bool
+            
+            if let id = songLyricsData["id"] as? String, let _: SongLyric = CoreDataService.getObject(id: id, context: context) {
+                existed = true
+            } else {
+                existed = false
+            }
+            
             if let songLyric = SongLyric.createFromDict(songLyricsData, context) {
                 createSong(songLyricsData["song"], forSongLyric: songLyric, context: context)
                 
@@ -201,7 +221,7 @@ class DownloadService {
                     }
                 }
                 
-                if let lang = songLyricsData["lang_string"] as? String {
+                if !existed, let lang = songLyricsData["lang_string"] as? String {
                     if let languages: [Language] = CoreDataService.fetchData(predicate: NSPredicate(format: "name == %@", lang), context: context), languages.count > 0 {
                         languages[0].count += 1
                     } else {
@@ -271,22 +291,29 @@ class DownloadService {
     
     // MARK: - Help Functions
     
+    private static func isUpdateNeeded() -> Bool {
+        let defaults = UserDefaults.standard
+        
+        if let lastUpdate = defaults.string(forKey: "lastUpdate") {
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
+            
+            let date = Date()
+            let last = dateFormatter.date(from: lastUpdate)!
+            if date.timeIntervalSince(last) > Constants.songsUpdateInterval {
+                return true
+            }
+        } else {
+            return true
+        }
+        
+        return false
+    }
+    
     private static func setLastUpdate(_ defaults: UserDefaults) {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
         
         defaults.set(formatter.string(from: Date()), forKey: "lastUpdate")
-    }
-    
-    private static func generateQuery(_ baseUrl: String, _ queries: [Query]) -> String {
-        var url = baseUrl + "/graphql?query={"
-        
-        for query in queries {
-            url += query.generate()
-        }
-        
-        url += "}"
-        
-        return url
     }
 }

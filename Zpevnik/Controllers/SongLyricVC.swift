@@ -192,7 +192,7 @@ class SongLyricVC: ViewController {
         }
         lyricsTextView.isScrollEnabled = true
         
-        setTitle(songLyric.name)
+        navigationItem.title = songLyric.name
         
         var text = ""
         if !songLyric.isOriginal {

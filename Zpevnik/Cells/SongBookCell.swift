@@ -11,14 +11,17 @@ import UIKit
 class SongBookCell: UICollectionViewCell {
     
     var songBookName: String? {
-        willSet(name) {
-            songBookNameLabel.text = name
+        willSet {
+            songBookNameLabel.text = newValue
         }
     }
     
     private lazy var songBookImageView: UIImageView = {
         let imageView = UIImageView(image: nil)
         imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        imageView.layer.cornerRadius = 10
+        imageView.clipsToBounds = true
         
         imageView.backgroundColor = .red
         

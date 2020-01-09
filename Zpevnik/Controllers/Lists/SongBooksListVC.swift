@@ -39,8 +39,7 @@ class SongBooksListVC: SearchViewVC {
     }
     
     private func setViews() {
-        setPlaceholder("Zadejte název či zkratku zpěvníku")
-        searchView.searchField.addTarget(self, action: #selector(search(sender:)), for: .editingChanged)
+        setPlaceholder("Zadejte název či zkratku")
         
         view.addSubview(songBooksCollection)
         
@@ -80,7 +79,11 @@ extension SongBooksListVC: UICollectionViewDelegate, UICollectionViewDelegateFlo
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
+        let songBookViewVC = SongBookViewVC()
         
+        songBookViewVC.songBook = dataSource.songBook(at: indexPath.row)
+        
+        navigationController?.pushViewController(songBookViewVC, animated: true)
     }
 }
 
@@ -98,7 +101,9 @@ extension SongBooksListVC {
         }
     }
     
-    @objc func search(sender: UITextField) {
+    @objc override func searchTextChanged(sender: UITextField) {
+        super.searchTextChanged(sender: sender)
+        
         dataSource.search(sender.text) {
             self.songBooksCollection.reloadData()
             

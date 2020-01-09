@@ -17,35 +17,8 @@ extension Tag {
         
         tag.id = id
         tag.name = data["name"] as? String
+        tag.isValid = true
         
         return tag
-    }
-}
-
-extension Tag: FilterTag {
-    
-    var title: String {
-        get {
-            return self.name!.capitalizingFirstLetter()
-        }
-    }
-    
-    var elements: [FilterAble] {
-        get {
-            if let children = children?.allObjects as? [Tag] {
-                return children.sorted{ $0.id!.localizedStandardCompare($1.id!) == .orderedAscending }
-            }
-            
-            return []
-        }
-    }
-}
-
-extension Tag: FilterAble {
-    
-    static var predicateFormat: String {
-        get {
-            return "ANY tags.name IN %@"
-        }
     }
 }

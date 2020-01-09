@@ -9,11 +9,33 @@
 import UIKit
 import CoreData
 
+class SongBooksSongLyricDataSource: SongLyricDataSource {
+    
+    private let songBook: SongBook
+    
+    init(_ songBook: SongBook) {
+        self.songBook = songBook
+        
+        super.init("")
+        
+        loadData()
+    }
+    
+    private func loadData() {
+        guard let records = songBook.records?.allObjects as? [SongBookRecord] else { return }
+        
+        for record in records {
+            if let songLyric = record.songLyric {
+                allSongLyrics.append(songLyric)
+            }
+        }
+    }
+}
+
 class SongLyricDataSource: NSObject {
     
-    private let context: NSManagedObjectContext
-    
-    private var allSongLyrics: [SongLyric]
+    internal var allSongLyrics: [SongLyric]
+    private var songLyricsBeforeFilter: [SongLyric]
     private var showingSongLyrics: [SongLyric]
     
     var showingCount: Int { return showingSongLyrics.count }
@@ -21,11 +43,11 @@ class SongLyricDataSource: NSObject {
     private let lastSearchedKey: String
     var searchText: String
     
+    var filterTagDataSource: FilterTagDataSource?
+    
     init(_ lastSearchedKey: String) {
-        context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
-        context.parent = PersistenceService.context
-        
         allSongLyrics = []
+        songLyricsBeforeFilter = []
         showingSongLyrics = []
         
         self.lastSearchedKey = lastSearchedKey
@@ -57,10 +79,6 @@ class SongLyricDataSource: NSObject {
             }
         }
         
-        do {
-            try context.save()
-        } catch { }
-        
         return !favorite
     }
     
@@ -76,12 +94,14 @@ extension SongLyricDataSource {
     func showAll(_ completionHandler: @escaping () -> Void) {
         self.searchText = ""
         
-        context.perform {
+        PersistenceService.backgroundContext.perform {
             if self.allSongLyrics.count == 0 {
                 self.loadData()
             }
             
-            self.showingSongLyrics = self.allSongLyrics
+            self.songLyricsBeforeFilter = self.allSongLyrics
+            
+            self.filterData()
             
             DispatchQueue.main.async {
                 completionHandler()
@@ -92,12 +112,23 @@ extension SongLyricDataSource {
     func search(_ searchText: String?, _ completionHandler: @escaping () -> Void) {
         self.searchText = searchText ?? ""
         
-        context.perform {
+        PersistenceService.backgroundContext.perform {
             if self.searchText.count > 0 {
                 self.search()
+                self.filterData()
             } else {
                 self.showLastSearched()
             }
+            
+            DispatchQueue.main.async {
+                completionHandler()
+            }
+        }
+    }
+    
+    func filter(_ completionHandler: @escaping () -> Void) {
+        PersistenceService.backgroundContext.perform {
+            self.filterData()
             
             DispatchQueue.main.async {
                 completionHandler()
@@ -109,7 +140,7 @@ extension SongLyricDataSource {
         let predicate = NSPredicate(format: "lyrics != nil")
         let sortDescriptors = [NSSortDescriptor(key: "name", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare(_:)))]
         
-        if let data: [SongLyric] = CoreDataService.fetchData(predicate: predicate, sortDescriptors: sortDescriptors, context: context) {
+        if let data: [SongLyric] = CoreDataService.fetchData(predicate: predicate, sortDescriptors: sortDescriptors, context: PersistenceService.backgroundContext) {
             self.allSongLyrics = data
         } else {
             self.allSongLyrics = []
@@ -117,7 +148,7 @@ extension SongLyricDataSource {
     }
     
     private func search() {
-        showingSongLyrics = []
+        songLyricsBeforeFilter = []
         
         let predicates = [
             NSPredicate(format: "name BEGINSWITH[c] %@", searchText),
@@ -127,8 +158,8 @@ extension SongLyricDataSource {
         ]
         
         for predicate in predicates {
-            showingSongLyrics.append(contentsOf: allSongLyrics.filter {
-                predicate.evaluate(with: $0) && !showingSongLyrics.contains($0)
+            songLyricsBeforeFilter.append(contentsOf: allSongLyrics.filter {
+                predicate.evaluate(with: $0) && !songLyricsBeforeFilter.contains($0)
             })
         }
         
@@ -137,7 +168,7 @@ extension SongLyricDataSource {
             
             numbers = $0.numbers
             
-            return NSPredicate(format: "ANY %@ CONTAINS[cd] %@", numbers, searchText).evaluate(with: nil) && !showingSongLyrics.contains($0)
+            return NSPredicate(format: "ANY %@ CONTAINS[cd] %@", numbers, searchText).evaluate(with: nil) && !songLyricsBeforeFilter.contains($0)
         }
         
         dataContainingId.sort { (first, second) in
@@ -168,12 +199,29 @@ extension SongLyricDataSource {
             return firstShowingNumber.compare(secondShowingNumber, options: .numeric) == .orderedAscending
         }
         
-        showingSongLyrics.append(contentsOf: dataContainingId)
+        songLyricsBeforeFilter.append(contentsOf: dataContainingId)
         
-        showingSongLyrics.append(contentsOf: allSongLyrics.filter {
-            NSPredicate(format: "lyricsNoChords CONTAINS[cd] %@", searchText).evaluate(with: $0) && !showingSongLyrics.contains($0)
+        songLyricsBeforeFilter.append(contentsOf: allSongLyrics.filter {
+            NSPredicate(format: "lyricsNoChords CONTAINS[cd] %@", searchText).evaluate(with: $0) && !songLyricsBeforeFilter.contains($0)
         })
     }
+    
+    private func filterData() {
+        guard let dataSource = filterTagDataSource else {
+            showingSongLyrics = songLyricsBeforeFilter
+            return
+        }
+        
+        let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: dataSource.tags.enumerated().map { i, tags in
+            let filteredTags = tags.enumerated().filter { j, _ in dataSource.active[i][j] }.map { $0.element }
+            
+            // TODO: Support for languages
+            return filteredTags.count > 0 ? NSPredicate(format: "ANY tags.name in %@", filteredTags) : NSPredicate(value: true)
+        })
+
+        showingSongLyrics = songLyricsBeforeFilter.filter { predicate.evaluate(with: $0) }
+    }
+
     
     private func showLastSearched() {
         let defaults = UserDefaults.standard

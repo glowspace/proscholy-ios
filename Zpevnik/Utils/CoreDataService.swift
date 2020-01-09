@@ -52,6 +52,13 @@ class PersistenceService {
         return persistentContainer.viewContext
     }()
     
+    static var backgroundContext: NSManagedObjectContext = {
+        let context = NSManagedObjectContext(concurrencyType: .privateQueueConcurrencyType)
+        context.parent = PersistenceService.context
+        
+        return context
+    }()
+    
     // MARK: - Core Data stack
     
     static var persistentContainer: NSPersistentContainer = {
@@ -67,7 +74,12 @@ class PersistenceService {
     // MARK: - Core Data Saving support
     
     static func saveContext () {
-        let context = persistentContainer.viewContext
+        if backgroundContext.hasChanges {
+            do {
+                try backgroundContext.save()
+            } catch { }
+        }
+        
         if context.hasChanges {
             do {
                 try context.save()

@@ -93,33 +93,7 @@ class LaunchVC: ViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         
-        let defaults = UserDefaults.standard
-        let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String
-        
-        if let version = defaults.string(forKey: "version"), version == currentVersion { } else {
-            defaults.removeObject(forKey: "lastUpdate")
-            defaults.removeObject(forKey: "defaultDataLoaded")
-            defaults.set(currentVersion, forKey: "version")
-        }
-        
-        if let lastUpdate = defaults.string(forKey: "lastUpdate") {
-            let dateFormatter = DateFormatter()
-            dateFormatter.dateFormat = "yyyy-MM-dd HH:mm:ss"
-            
-            let date = Date()
-            let last = dateFormatter.date(from: lastUpdate)!
-            if date.timeIntervalSince(last) > Constants.songsUpdateInterval {
-                updateSongLyrics()
-            } else {
-                let vc = TabBarController()
-                if #available(iOS 13, *) {
-                    vc.modalPresentationStyle = .overFullScreen
-                }
-                navigationController?.present(vc, animated: false)
-            }
-        } else {
-            updateSongLyrics()
-        }
+        updateSongLyrics()
     }
     
     private func updateSongLyrics() {
@@ -130,11 +104,7 @@ class LaunchVC: ViewController {
         }) {
             DispatchQueue.main.async {
                 let vc = TabBarController()
-                if #available(iOS 13, *) {
-                    vc.modalPresentationStyle = .overFullScreen
-                }
-                self.navigationController?.present(vc, animated: false)
-                self.loadingIndicator.stopAnimating()
+                UIApplication.shared.keyWindow?.rootViewController = vc
             }
         }
     }

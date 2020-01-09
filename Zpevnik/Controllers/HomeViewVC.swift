@@ -11,6 +11,14 @@ import UIKit
 class HomeViewVC: SearchViewVC {
     
     private let dataSource = SongLyricDataSource("lastSearchedHome")
+    private lazy var filterTagDataSource: FilterTagDataSource = {
+        let filterTagDataSource = FilterTagDataSource()
+        filterTagDataSource.delegate = self
+        
+        return filterTagDataSource
+    }()
+    
+    private let halfViewPresentationManager = HalfViewPresentationManager()
     
     private var tableViewTopToSearchView: NSLayoutConstraint?
     private var tableViewTopToView: NSLayoutConstraint?
@@ -18,13 +26,7 @@ class HomeViewVC: SearchViewVC {
     private lazy var starButton: UIBarButtonItem = { createBarButtonItem(image: .star, selector: #selector(starSelected)) }()
     private lazy var addToListButton: UIBarButtonItem = { createBarButtonItem(image: .add, selector: #selector(addToList)) }()
     private lazy var selectAllButton: UIBarButtonItem = { createBarButtonItem(image: .selectAll, selector: #selector(selectAllLyrics)) }()
-    
-    private lazy var cancelButton: UIBarButtonItem = {
-        let barButtonItem = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(disableSelection))
-        barButtonItem.tintColor = .blue
-        
-        return barButtonItem
-    }()
+    private lazy var cancelButton: UIBarButtonItem = { createBarButtonItem(image: .clear, selector: #selector(disableSelection)) }()
     
     private lazy var songList: UITableView = {
         let tableView = UITableView(frame: .zero, style: .grouped)
@@ -52,6 +54,8 @@ class HomeViewVC: SearchViewVC {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        dataSource.filterTagDataSource = filterTagDataSource
+        
         dataSource.showAll {
             self.songList.reloadData()
         }
@@ -71,8 +75,8 @@ class HomeViewVC: SearchViewVC {
     }
     
     private func setViews() {
+        searchView.trailingButton?.addTarget(self, action: #selector(showFilters), for: .touchUpInside)
         setPlaceholder("Zadejte slovo nebo číslo")
-        searchView.searchField.addTarget(self, action: #selector(search(sender:)), for: .editingChanged)
         
         view.addSubview(songList)
         
@@ -106,7 +110,7 @@ extension HomeViewVC: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if dataSource.searchText.count > 0 {
+        if dataSource.searchText.count > 0 { //} && dataSource.activeFilters.count == 0 {
             return .leastNormalMagnitude
         }
 
@@ -115,6 +119,10 @@ extension HomeViewVC: UITableViewDelegate {
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         if dataSource.searchText.count > 0 {
+            if filterTagDataSource.activeFilters.count > 0 {
+                return ActiveFilterHeaderView(dataSource: self, delegate: self)
+            }
+            
             return nil
         }
         
@@ -124,6 +132,10 @@ extension HomeViewVC: UITableViewDelegate {
             }
             
             return TableViewHeader("Nedávno vyhledané", .gray)
+        }
+        
+        if filterTagDataSource.activeFilters.count > 0 {
+            return ActiveFilterHeaderView(dataSource: self, delegate: self)
         }
         
         return TableViewHeader("Abecední seznam všech písní", .blue)
@@ -178,19 +190,21 @@ extension HomeViewVC {
         if !isSearching {
             dataSource.showAll {
                 self.songList.reloadData()
+                self.songList.scrollToTop()
             }
         }
+        
+        searchView.trailingButton?.isEnabled = !isSearching
     }
     
-    @objc func search(sender: UITextField) {
+    @objc override func searchTextChanged(sender: UITextField) {
+        super.searchTextChanged(sender: sender)
+        
+        searchView.trailingButton?.isEnabled = (sender.text?.count ?? 0) > 0
+        
         dataSource.search(sender.text) {
             self.songList.reloadData()
-            
-            if self.songList.visibleCells.count > 0 {
-                self.songList.showsVerticalScrollIndicator = false
-                self.songList.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: true)
-                self.songList.showsVerticalScrollIndicator = true
-            }
+            self.songList.scrollToTop()
         }
     }
     
@@ -200,12 +214,7 @@ extension HomeViewVC {
         if dataSource.searchText.count == 0 {
             dataSource.search(nil) {
                 self.songList.reloadData()
-                
-                if self.songList.visibleCells.count > 0 {
-                    self.songList.showsVerticalScrollIndicator = false
-                    self.songList.scrollToRow(at: IndexPath(row: 0, section: 0), at: .top, animated: false)
-                    self.songList.showsVerticalScrollIndicator = true
-                }
+                self.songList.scrollToTop()
             }
         }
     }
@@ -283,6 +292,58 @@ extension HomeViewVC {
         
         navigationController?.setNavigationBarHidden(true, animated: false)
         tabBarController?.tabBar.isHidden = false
+    }
+}
+
+// MARK: Filters
+
+extension HomeViewVC: FilterDelegate {    
+    
+    @objc func showFilters() {
+        halfViewPresentationManager.heightMultiplier = 1.0 / 2.0
+        
+        let filterVC = FilterVC()
+        filterVC.dataSource = filterTagDataSource
+        
+        filterVC.transitioningDelegate = halfViewPresentationManager
+        filterVC.modalPresentationStyle = .custom
+        
+        present(filterVC, animated: true)
+    }
+    
+    func activeFiltersChanged() {
+        dataSource.filter {
+            self.songList.scrollToTop()
+            self.songList.reloadData()
+        }
+    }
+}
+
+// MARK: - MOVE SOMEWHERE ELSE?
+
+extension HomeViewVC: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
+    
+    func removeFilter(_ filterName: String?) {
+        guard let filterName = filterName else { return }
+        
+        filterTagDataSource.deactivateFilter(named: filterName)
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
+        return filterTagDataSource.activeFilters.count
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
+        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "clearableFilterTagCell", for: indexPath) as? ClearAbleFilterTagCell else { return UICollectionViewCell() }
+        
+        cell.title = filterTagDataSource.activeFilters[indexPath.row]
+        cell.delegate = self
+        
+        return cell
+    }
+    
+    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
+        return ClearAbleFilterTagCell.sizeFor(filterTagDataSource.activeFilters[indexPath.row])
     }
 }
 

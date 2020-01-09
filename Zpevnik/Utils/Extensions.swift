@@ -12,6 +12,7 @@ extension UIImage {
     
     static var add: UIImage? { return UIImage(named: "addIcon") }
     static var back: UIImage? { return UIImage(named: "backIcon") }
+    static var clear: UIImage? { return UIImage(named: "clearIcon") }
     static var filter: UIImage? { return UIImage(named: "filterIcon") }
     static var home: UIImage? { return UIImage(named: "homeIcon") }
     static var homeFilled: UIImage? { return UIImage(named: "homeIconFilled") }
@@ -31,25 +32,39 @@ extension UIColor {
     static var red: UIColor { return UIColor(named: "red") ?? .systemRed }
     static var yellow: UIColor { return UIColor(named: "yellow") ?? .systemYellow }
     
+}
+
+extension UITableView {
+    
+    func scrollToTop() {
+        showsVerticalScrollIndicator = false
+        scrollToRow(at: IndexPath(row: NSNotFound, section: 0), at: .top, animated: true)
+        showsVerticalScrollIndicator = true
+    }
+}
+
+// MARK: - OLD
+
+extension UIColor {
     convenience init(red: Int, green: Int, blue: Int) {
         self.init(red: CGFloat(red) / 255.0, green: CGFloat(green) / 255.0, blue: CGFloat(blue) / 255.0, alpha: 1.0)
     }
-    
+
     static func from(hex: String?) -> UIColor {
         let hex = hex ?? "#303F9F"
         var cString: String = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
-        
+
         if(cString.hasPrefix("#")) {
             cString.remove(at: cString.startIndex)
         }
-        
+
         if(cString.count != 6) {
             return .red
         }
-        
+
         var rgbValue:UInt32 = 0
         Scanner(string: cString).scanHexInt32(&rgbValue)
-        
+
         return UIColor(red: Int((rgbValue & 0xFF0000) >> 16), green: Int((rgbValue & 0x00FF00) >> 8), blue: Int(rgbValue & 0x0000FF))
     }
 }
@@ -109,62 +124,6 @@ class NavigationController : UINavigationController {
     }
 }
 
-class ViewController: UIViewController {
-
-    override var preferredStatusBarStyle : UIStatusBarStyle {
-        if #available(iOS 13, *) {
-            return .default
-        } else {
-            return UserSettings.darkMode ? .lightContent : .default
-        }
-    }
-}
-
-extension UIViewController {
-    
-    func hideKeyboardWhenTappedAround() {
-        let tap = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
-        tap.cancelsTouchesInView = false
-        
-        view.addGestureRecognizer(tap)
-    }
-    
-    @objc func dismissKeyboard() {
-        navigationController?.navigationBar.endEditing(true)
-    }
-    
-    func setTitle(_ title: String?, iconImage: UIImage? = nil) {
-        let view = UIView()
-        
-        let label = UILabel()
-        label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = title
-        label.font = .systemFont(ofSize: 17, weight: .semibold)
-        label.backgroundColor = .clear
-        label.adjustsFontSizeToFitWidth = true
-        label.minimumScaleFactor = 0.75
-        label.textAlignment = .center
-        
-        view.addSubview(label)
-        if iconImage != nil {
-            let icon = UIImageView(image: iconImage)
-            icon.translatesAutoresizingMaskIntoConstraints = false
-            
-            view.addSubview(icon)
-            
-            view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[icon(==40)]-[label]-|", metrics: nil, views: ["icon": icon, "label": label]))
-            view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[icon(==40)]|", options: [.alignAllCenterY], metrics: nil, views: ["icon": icon, "label": label]))
-            view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[label]|", options: [.alignAllCenterY], metrics: nil, views: ["icon": icon, "label": label]))
-        } else {
-            view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[label]-|", metrics: nil, views: ["label": label]))
-            view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[label]|", options: [.alignAllCenterY], metrics: nil, views: ["label": label]))
-        }
-        
-        navigationItem.titleView = view
-        navigationItem.title = ""
-    }
-}
-
 extension UITextField {
     
     func updateFontSize() {
@@ -174,7 +133,7 @@ extension UITextField {
             var fontSize: CGFloat = self.font?.pointSize ?? 20
             
             while true {
-                if (placeholder as NSString).size(withAttributes: [.font: UIFont.getFont(ofSize: fontSize)]).width < self.frame.size.width - 60 {
+                if (placeholder as NSString).size(withAttributes: [.font: UIFont.getFont(ofSize: fontSize)]).width < frame.size.width {
                     self.font = UIFont.getFont(ofSize: fontSize)
                     break
                 }
