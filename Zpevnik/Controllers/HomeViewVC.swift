@@ -8,17 +8,7 @@
 
 import UIKit
 
-class HomeViewVC: SearchViewVC {
-    
-    private let dataSource = SongLyricDataSource("lastSearchedHome")
-    private lazy var filterTagDataSource: FilterTagDataSource = {
-        let filterTagDataSource = FilterTagDataSource()
-        filterTagDataSource.delegate = self
-        
-        return filterTagDataSource
-    }()
-    
-    private let halfViewPresentationManager = HalfViewPresentationManager()
+class HomeViewVC: SongListViewVC {
     
     private var tableViewTopToSearchView: NSLayoutConstraint?
     private var tableViewTopToView: NSLayoutConstraint?
@@ -28,37 +18,18 @@ class HomeViewVC: SearchViewVC {
     private lazy var selectAllButton: UIBarButtonItem = { createBarButtonItem(image: .selectAll, selector: #selector(selectAllLyrics)) }()
     private lazy var cancelButton: UIBarButtonItem = { createBarButtonItem(image: .clear, selector: #selector(disableSelection)) }()
     
-    private lazy var songList: UITableView = {
-        let tableView = UITableView(frame: .zero, style: .grouped)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        
-        tableView.dataSource = dataSource
-        tableView.delegate = self
-        
-        tableView.register(SongLyricCell.self, forCellReuseIdentifier: "songLyricCell")
-        
-        tableView.separatorStyle = .none
-        
-        if #available(iOS 13, *) {
-            tableView.backgroundColor = .systemBackground
-        }
-        
-        tableView.allowsMultipleSelectionDuringEditing = true
-        
-        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(activateSongSelection(_: )))
-        tableView.addGestureRecognizer(longPress)
-        
-        return tableView
-    }()
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        dataSource = SongLyricDataSource("lastSearchedHome")
         dataSource.filterTagDataSource = filterTagDataSource
         
         dataSource.showAll {
             self.songList.reloadData()
         }
+        
+        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(activateSongSelection(_: )))
+        songList.addGestureRecognizer(longPress)
         
         navigationItem.setLeftBarButton(cancelButton, animated: false)
         navigationItem.setRightBarButtonItems([selectAllButton, addToListButton, starButton], animated: false)
@@ -66,12 +37,19 @@ class HomeViewVC: SearchViewVC {
         setViews()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        let textAttributes: [NSAttributedString.Key: Any] = [.foregroundColor: UIColor.blue]
+        navigationController?.navigationBar.titleTextAttributes = textAttributes
+        navigationController?.setNavigationBarHidden(true, animated: animated)
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        if let index = songList.indexPathForSelectedRow {
-            songList.deselectRow(at: index, animated: animated)
-        }
+        navigationController?.navigationBar.titleTextAttributes = nil
+        navigationController?.setNavigationBarHidden(false, animated: animated)
     }
     
     private func setViews() {
@@ -99,17 +77,9 @@ class HomeViewVC: SearchViewVC {
 
 // MARK: - UITableViewDelegate
 
-extension HomeViewVC: UITableViewDelegate {
+extension HomeViewVC {
     
-    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        searchView.searchField.resignFirstResponder()
-    }
-    
-    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return .leastNormalMagnitude
-    }
-    
-    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
         if dataSource.searchText.count > 0 { //} && dataSource.activeFilters.count == 0 {
             return .leastNormalMagnitude
         }
@@ -117,7 +87,7 @@ extension HomeViewVC: UITableViewDelegate {
         return tableView.sectionHeaderHeight
     }
     
-    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+    override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         if dataSource.searchText.count > 0 {
             if filterTagDataSource.activeFilters.count > 0 {
                 return ActiveFilterHeaderView(dataSource: self, delegate: self)
@@ -141,82 +111,17 @@ extension HomeViewVC: UITableViewDelegate {
         return TableViewHeader("Abecední seznam všech písní", .blue)
     }
     
-    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if tableView.isEditing {
             updateSelection(tableView.indexPathsForSelectedRows?.count ?? 0)
             return
         }
         
-        guard let songLyric = dataSource.songLyric(at: indexPath.row) else { return }
-        let songLyricVC = SongLyricVC()
-    
-        if isSearching {
-            let defaults = UserDefaults.standard
-            
-            var lastSearched = defaults.array(forKey: "lastSearchedHome") as? [String] ?? []
-            
-            if let index = lastSearched.firstIndex(of: songLyric.id!) {
-                lastSearched.remove(at: index)
-            }
-            
-            lastSearched.append(songLyric.id!)
-            
-            defaults.set(lastSearched, forKey: "lastSearchedHome")
-            
-            if dataSource.searchText.count == 0 {
-                dataSource.search(nil) {
-                    self.songList.reloadData()
-                }
-            }
-        }
-        
-        songLyricVC.songLyric = songLyric
-        
-        navigationController?.pushViewController(songLyricVC, animated: true)
+        super.tableView(tableView, didSelectRowAt: indexPath)
     }
     
-    func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
+    override func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) {
         updateSelection(tableView.indexPathsForSelectedRows?.count ?? 0)
-    }
-}
-
-// MARK: - UITextFieldDelegate
-
-extension HomeViewVC {
-    
-    @objc override func toggleSearch() {
-        super.toggleSearch()
-        
-        if !isSearching {
-            dataSource.showAll {
-                self.songList.reloadData()
-                self.songList.scrollToTop()
-            }
-        }
-        
-        searchView.trailingButton?.isEnabled = !isSearching
-    }
-    
-    @objc override func searchTextChanged(sender: UITextField) {
-        super.searchTextChanged(sender: sender)
-        
-        searchView.trailingButton?.isEnabled = (sender.text?.count ?? 0) > 0
-        
-        dataSource.search(sender.text) {
-            self.songList.reloadData()
-            self.songList.scrollToTop()
-        }
-    }
-    
-    override func textFieldDidBeginEditing(_ textField: UITextField) {
-        super.textFieldDidBeginEditing(textField)
-        
-        if dataSource.searchText.count == 0 {
-            dataSource.search(nil) {
-                self.songList.reloadData()
-                self.songList.scrollToTop()
-            }
-        }
     }
 }
 
@@ -292,58 +197,6 @@ extension HomeViewVC {
         
         navigationController?.setNavigationBarHidden(true, animated: false)
         tabBarController?.tabBar.isHidden = false
-    }
-}
-
-// MARK: Filters
-
-extension HomeViewVC: FilterDelegate {    
-    
-    @objc func showFilters() {
-        halfViewPresentationManager.heightMultiplier = 1.0 / 2.0
-        
-        let filterVC = FilterVC()
-        filterVC.dataSource = filterTagDataSource
-        
-        filterVC.transitioningDelegate = halfViewPresentationManager
-        filterVC.modalPresentationStyle = .custom
-        
-        present(filterVC, animated: true)
-    }
-    
-    func activeFiltersChanged() {
-        dataSource.filter {
-            self.songList.scrollToTop()
-            self.songList.reloadData()
-        }
-    }
-}
-
-// MARK: - MOVE SOMEWHERE ELSE?
-
-extension HomeViewVC: UICollectionViewDataSource, UICollectionViewDelegate, UICollectionViewDelegateFlowLayout {
-    
-    func removeFilter(_ filterName: String?) {
-        guard let filterName = filterName else { return }
-        
-        filterTagDataSource.deactivateFilter(named: filterName)
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return filterTagDataSource.activeFilters.count
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "clearableFilterTagCell", for: indexPath) as? ClearAbleFilterTagCell else { return UICollectionViewCell() }
-        
-        cell.title = filterTagDataSource.activeFilters[indexPath.row]
-        cell.delegate = self
-        
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return ClearAbleFilterTagCell.sizeFor(filterTagDataSource.activeFilters[indexPath.row])
     }
 }
 

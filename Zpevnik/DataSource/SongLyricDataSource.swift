@@ -45,6 +45,14 @@ class SongLyricDataSource: NSObject {
     
     var filterTagDataSource: FilterTagDataSource?
     
+    var currentSongLyricIndex: Int?
+    
+    var currentSongLyric: SongLyric? {
+        guard let currentIndex = currentSongLyricIndex else { return nil }
+        
+        return showingSongLyrics[currentIndex]
+    }
+    
     init(_ lastSearchedKey: String) {
         allSongLyrics = []
         songLyricsBeforeFilter = []
@@ -236,6 +244,31 @@ extension SongLyricDataSource {
     }
 }
 
+// MARK: - Active SongLyrics functions
+
+extension SongLyricDataSource {
+    
+    func nextSongLyric() {
+        guard let currentIndex = currentSongLyricIndex else { return }
+        
+        currentSongLyricIndex = currentIndex + 1
+        
+        if currentSongLyricIndex == showingSongLyrics.count {
+            currentSongLyricIndex = 0
+        }
+    }
+    
+    func previousSongLyric() {
+        guard let currentIndex = currentSongLyricIndex else { return }
+        
+        currentSongLyricIndex = currentIndex - 1
+        
+        if currentSongLyricIndex == -1 {
+            currentSongLyricIndex = showingSongLyrics.count - 1
+        }
+    }
+}
+
 // MARK: - UITableViewDataSource
 
 extension SongLyricDataSource: UITableViewDataSource {
@@ -266,7 +299,7 @@ extension SongLyricDataSource: UITableViewDataSource {
             predicate.evaluate(with: $0)
         }
 
-        if numbers.count > 0 && !songLyric.id!.contains(searchText) {
+        if numbers.count > 0 && searchText.rangeOfCharacter(from: .decimalDigits) != nil && !songLyric.id!.contains(searchText) {
             cell.numberLabel.text = numbers[0]
         } else {
             cell.numberLabel.text = songLyric.id

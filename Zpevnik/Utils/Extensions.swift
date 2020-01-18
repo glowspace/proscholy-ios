@@ -43,6 +43,19 @@ extension UITableView {
     }
 }
 
+extension NSRegularExpression {
+    
+    convenience init(_ pattern: String) {
+        do {
+            try self.init(pattern: pattern)
+        } catch {
+            preconditionFailure("Illegal regular expression: \(pattern).")
+        }
+    }
+}
+
+
+
 // MARK: - OLD
 
 extension UIColor {

@@ -63,7 +63,7 @@ class SettingsVC: ViewController {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.text = "Velikost písma"
         
-        let slider = Slider(currentValue: UserSettings.fontSize, minimumValue: Constants.minFontSize, maximumValue: Constants.maxFontSize)
+        let slider = Slider(currentValue: Float(UserSettings.fontSize), minimumValue: Float(Constants.minFontSize), maximumValue: Float(Constants.maxFontSize))
         slider.translatesAutoresizingMaskIntoConstraints = false
         slider.addTarget(self, action: #selector(fontSizeChanged(slider:)), for: .valueChanged)
         
@@ -133,7 +133,7 @@ class SettingsVC: ViewController {
     }
     
     @objc func fontSizeChanged(slider: Slider) {
-        UserSettings.fontSize = slider.currentValue
+        UserSettings.fontSize = CGFloat(slider.currentValue)
     }
     
     @objc func darkModeToggle() {

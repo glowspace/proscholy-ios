@@ -12,8 +12,8 @@ class Constants {
     
     private init() { }
     
-    static let minFontSize: Float = 10
-    static let maxFontSize: Float = 45
+    static let minFontSize: CGFloat = 10
+    static let maxFontSize: CGFloat = 40
     
     static let serifFont = "Courier"
     static let sansSerifFont = "Chalkduster"

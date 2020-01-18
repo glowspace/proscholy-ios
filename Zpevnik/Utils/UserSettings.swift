@@ -24,7 +24,7 @@ class UserSettings {
     }
     static var showSliders = false
     static var showChords = true
-    static var fontSize: Float = 17.0 {
+    static var fontSize: CGFloat = 17.0 {
         didSet {
             fontSize = min(max(fontSize, Constants.minFontSize), Constants.maxFontSize)
         }
@@ -58,7 +58,7 @@ class UserSettings {
         }
         
         if defaults.object(forKey: "fontSize") != nil {
-            fontSize = defaults.float(forKey: "fontSize")
+            fontSize = CGFloat(defaults.float(forKey: "fontSize"))
         }
         
         if defaults.object(forKey: "darkMode") != nil {

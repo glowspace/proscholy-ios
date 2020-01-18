@@ -8,171 +8,52 @@
 
 import UIKit
 
-class SongBookViewVC: SearchViewVC {
+class SongBookViewVC: SongListViewVC {
     
     var songBook: SongBook!
     
-    private lazy var dataSource: SongBooksSongLyricDataSource = { return SongBooksSongLyricDataSource(songBook) }()
-    
-    private var tableViewTopToSearchView: NSLayoutConstraint?
-    private var tableViewTopToView: NSLayoutConstraint?
-    
-//    private lazy var starButton: UIBarButtonItem = { createBarButtonItem(image: .star, selector: #selector(starSelected)) }()
-//    private lazy var addToListButton: UIBarButtonItem = { createBarButtonItem(image: .add, selector: #selector(addToList)) }()
-//    private lazy var selectAllButton: UIBarButtonItem = { createBarButtonItem(image: .selectAll, selector: #selector(selectAllLyrics)) }()
-//
-//    private lazy var cancelButton: UIBarButtonItem = {
-//        let barButtonItem = UIBarButtonItem(barButtonSystemItem: .stop, target: self, action: #selector(disableSelection))
-//        barButtonItem.tintColor = .blue
-//
-//        return barButtonItem
-//    }()
-    
-    private lazy var songList: UITableView = {
-        let tableView = UITableView(frame: .zero, style: .grouped)
-        tableView.translatesAutoresizingMaskIntoConstraints = false
-        
-        tableView.dataSource = dataSource
-//        tableView.delegate = self
-        
-        tableView.register(SongLyricCell.self, forCellReuseIdentifier: "songLyricCell")
-        
-        tableView.separatorStyle = .none
+    private lazy var searchButton: UIBarButtonItem = {
+        let barButtonItem = UIBarButtonItem(image: .search, style: .plain, target: self, action: #selector(showSearch))
         
         if #available(iOS 13, *) {
-            tableView.backgroundColor = .systemBackground
+            barButtonItem.tintColor = .systemGray2
         }
         
-        tableView.allowsMultipleSelectionDuringEditing = true
-        
-//        let longPress = UILongPressGestureRecognizer(target: self, action: #selector(activateSongSelection(_: )))
-//        tableView.addGestureRecognizer(longPress)
-        
-        return tableView
+        return barButtonItem
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        dataSource = SongBooksSongLyricDataSource(songBook)
+        dataSource.filterTagDataSource = filterTagDataSource
+        
         dataSource.showAll {
             self.songList.reloadData()
         }
         
-//        navigationItem.setLeftBarButton(cancelButton, animated: false)
-//        navigationItem.setRightBarButtonItems([selectAllButton, addToListButton, starButton], animated: false)
+        navigationItem.title = songBook.name
+        navigationItem.setRightBarButton(searchButton, animated: true)
         
         setViews()
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        
-        if let index = songList.indexPathForSelectedRow {
-            songList.deselectRow(at: index, animated: animated)
-        }
-    }
-    
     private func setViews() {
+        searchView.trailingButton?.addTarget(self, action: #selector(showFilters), for: .touchUpInside)
         setPlaceholder("Zadejte slovo nebo číslo")
-//        searchView.searchField.addTarget(self, action: #selector(search(sender:)), for: .editingChanged)
         
         view.addSubview(songList)
         
-        tableViewTopToSearchView = songList.topAnchor.constraint(equalToSystemSpacingBelow: searchView.bottomAnchor, multiplier: 1)
-        tableViewTopToView = songList.topAnchor.constraint(equalTo: view.topAnchor)
-        
-        tableViewTopToSearchView?.isActive = true
+        songList.topAnchor.constraint(equalToSystemSpacingBelow: searchView.bottomAnchor, multiplier: 1).isActive = true
         songList.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         songList.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         songList.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
     }
-    
-    private func createBarButtonItem(image: UIImage?, selector: Selector) -> UIBarButtonItem {
-        let barButtonItem = UIBarButtonItem(image: image, style: .plain, target: self, action: selector)
-        barButtonItem.tintColor = .blue
-        
-        return barButtonItem
-    }
 }
 
-//class SongBookVC: SongLyricsListVC {
+extension SongBookViewVC {
     
-//    lazy var searchBarButton: UIBarButtonItem = {
-//        let barButtonItem = UIBarButtonItem(image: UIImage(named: "searchIcon"), style: .plain, target: self, action: #selector(showSearch))
-//        
-//        return barButtonItem
-//    }()
-//    
-//    lazy var emptyBackButtonView: UIView = {
-//        let view = UIView()
-//        view.translatesAutoresizingMaskIntoConstraints = false
-//        
-//        view.backgroundColor = .clear
-//        
-//        view.addGestureRecognizer(UITapGestureRecognizer(target: self, action: #selector(backButtonTapped)))
-//        
-//        return view
-//    }()
-//    
-//    var songBook: SongBook!
-//    
-//    var searching = false
-//    
-//    override func viewDidLoad() {
-//        dataSource = SongLyricDataSource_(songBook: songBook)
-//        
-//        super.viewDidLoad()
-//    }
-//    
-//    override func viewWillAppear(_ animated: Bool) {
-//        super.viewWillAppear(animated)
-//        
-//        navigationController?.navigationBar.addSubview(emptyBackButtonView)
-//        navigationController?.navigationBar.barTintColor = .from(hex: songBook.color)
-//        navigationController?.navigationBar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[emptyBackButtonView(==44)]", metrics: nil, views: ["emptyBackButtonView": emptyBackButtonView]))
-//        navigationController?.navigationBar.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[emptyBackButtonView(==44)]", metrics: nil, views: ["emptyBackButtonView": emptyBackButtonView]))
-//        
-//        if !searching {
-//            setTitle(songBook.name)
-//            navigationItem.setRightBarButton(searchBarButton, animated: true)
-//        } else {
-//            showSearchView(placeholder: "Zadejte název či číslo písně")
-//        }
-//    }
-//    
-//    override func viewWillDisappear(_ animated: Bool) {
-//        super.viewWillDisappear(animated)
-//        
-//        emptyBackButtonView.removeFromSuperview()
-//        searchView.searchField.resignFirstResponder()
-//    }
-//    
-//    // MARK: - Handlers
-//    
-//    @objc func backButtonTapped() {
-//        if navigationItem.rightBarButtonItem == nil {
-//            searching = false
-//            searchView.searchField.text = ""
-//            searchView.searchField.resignFirstResponder()
-//            dataSource.updateData()
-//            
-//            setTitle(songBook.name)
-//            navigationItem.setRightBarButton(searchBarButton, animated: true)
-//            
-//            filterVC.clearFilters()
-//            if showingFilter {
-//                toggleFilters()
-//            }
-//        } else {
-//            navigationController?.popViewController(animated: true)
-//        }
-//    }
-//    
-//    @objc func showSearch() {
-//        navigationItem.setRightBarButton(nil, animated: true)
-//        
-//        searching = true
-//        showSearchView(placeholder: "Zadejte název či číslo písně")
-//        searchView.searchField.becomeFirstResponder()
-//    }
-//}
+    @objc func showSearch() {
+        
+    }
+}

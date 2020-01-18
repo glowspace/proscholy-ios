@@ -13,7 +13,8 @@ class ClearAbleFilterTagCell: UICollectionViewCell {
     private static let spacing: CGFloat = 8
     private static let clearButtonSize: CGFloat = 16
     
-    var delegate: HomeViewVC?
+    // TODO: replace with protocol
+    var delegate: SongListViewVC?
     
     var color: UIColor?
     
