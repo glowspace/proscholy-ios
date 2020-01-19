@@ -12,11 +12,12 @@ class SongLyricVC: ViewController {
     
     var dataSource: SongLyricDataSource!
     
+    private var songLyric: SongLyric?
+    private var verses: [Verse]?
+    
     private lazy var songLyricView: SongLyricView = {
         let songLyricView = SongLyricView()
         songLyricView.translatesAutoresizingMaskIntoConstraints = false
-        
-        songLyricView.songLyric = dataSource.currentSongLyric
         
         return songLyricView
     }()
@@ -26,9 +27,13 @@ class SongLyricVC: ViewController {
         
         setViews()
         
-        navigationItem.title = dataSource.currentSongLyric?.id
+        setGestureRecognizers()
         
-        view.addGestureRecognizer(UIPinchGestureRecognizer(target: self, action: #selector(changeFontSize(gestureRecognizer:))))
+        songLyric = dataSource.currentSongLyric
+        verses = SongLyricsParser.parseVerses(songLyric?.lyrics)
+        songLyricView.updateSongLyric(songLyric, verses)
+        
+        navigationItem.title = dataSource.currentSongLyric?.id
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -43,16 +48,38 @@ class SongLyricVC: ViewController {
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[songLyricView]|", metrics: nil, views: ["songLyricView": songLyricView]))
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[songLyricView]|", metrics: nil, views: ["songLyricView": songLyricView]))
     }
+    
+    private func setGestureRecognizers() {
+        for direction in [UISwipeGestureRecognizer.Direction.left, .right] {
+            let swipe = UISwipeGestureRecognizer(target: self, action: #selector(changeSongLyric(gestureRecognizer:)))
+            swipe.direction = direction
+            view.addGestureRecognizer(swipe)
+        }
+        
+        view.addGestureRecognizer(UIPinchGestureRecognizer(target: self, action: #selector(changeFontSize(gestureRecognizer:))))
+    }
 }
 
 // MARK: Gesture handlers
 
 extension SongLyricVC {
     
+    @objc func changeSongLyric(gestureRecognizer: UISwipeGestureRecognizer) {
+        if gestureRecognizer.direction == .left {
+            dataSource.nextSongLyric()
+        } else if gestureRecognizer.direction == .right {
+            dataSource.previousSongLyric()
+        }
+        
+        songLyric = dataSource.currentSongLyric
+        verses = SongLyricsParser.parseVerses(songLyric?.lyrics)
+        songLyricView.updateSongLyric(songLyric, verses)
+    }
+    
     @objc func changeFontSize(gestureRecognizer: UIPinchGestureRecognizer) {
         if (gestureRecognizer.state == .began || gestureRecognizer.state == .changed) {
             UserSettings.fontSize *= gestureRecognizer.scale
-            songLyricView.update()
+            songLyricView.fontSizeChanged(verses)
             gestureRecognizer.scale = 1.0
         }
     }
