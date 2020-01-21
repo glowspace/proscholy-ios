@@ -10,10 +10,46 @@ import UIKit
 
 class SongLyricVC: ViewController {
     
+    private let optionsDataSource = OptionsDataSource(.songLyric)
     var dataSource: SongLyricDataSource!
     
-    private var songLyric: SongLyric?
+    private var songLyric: SongLyric? {
+        didSet {
+            verses = SongLyricsParser.parseVerses(songLyric?.lyrics)
+            songLyricView.updateSongLyric(songLyric, verses)
+            starButton.image = songLyric?.isFavorite() ?? false ? .starFilled : .star
+            
+            navigationItem.title = dataSource.currentSongLyric?.id
+        }
+    }
     private var verses: [Verse]?
+    
+    private lazy var translateButton: UIBarButtonItem = { createBarButtonItem(image: .translate, selector: #selector(showTranslations)) }()
+    private lazy var starButton: UIBarButtonItem = { createBarButtonItem(image: songLyric?.isFavorite() ?? false ? .starFilled : .star, selector: #selector(toggleFavorite)) }()
+    private lazy var moreButton: UIBarButtonItem = { createBarButtonItem(image: .more, selector: #selector(toggleMoreOptions)) }()
+    
+    lazy var optionsTable: UITableView = {
+        let tableView = UITableView()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        
+        tableView.dataSource = optionsDataSource
+        tableView.delegate = self
+        
+        tableView.separatorStyle = .none
+        tableView.isScrollEnabled = false
+        
+        tableView.register(MoreOptionsCell.self, forCellReuseIdentifier: "moreOptionsCell")
+        
+        
+        tableView.reloadData()
+        let y = UIApplication.shared.statusBarFrame.height + (navigationController?.navigationBar.frame.height ?? 0)
+        let width: CGFloat = 200
+        let height = tableView.contentSize.height
+    
+        tableView.frame = CGRect(x: view.frame.width - width, y: y - height, width: width, height: height)
+        
+        return tableView
+    }()
     
     private lazy var songLyricView: SongLyricView = {
         let songLyricView = SongLyricView()
@@ -27,13 +63,13 @@ class SongLyricVC: ViewController {
         
         setViews()
         
+        view.addSubview(optionsTable)
+        
         setGestureRecognizers()
         
         songLyric = dataSource.currentSongLyric
-        verses = SongLyricsParser.parseVerses(songLyric?.lyrics)
-        songLyricView.updateSongLyric(songLyric, verses)
         
-        navigationItem.title = dataSource.currentSongLyric?.id
+        navigationItem.setRightBarButtonItems([moreButton, starButton, translateButton], animated: false)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -57,12 +93,109 @@ class SongLyricVC: ViewController {
         }
         
         view.addGestureRecognizer(UIPinchGestureRecognizer(target: self, action: #selector(changeFontSize(gestureRecognizer:))))
+        
+        let tap = UITapGestureRecognizer(target: self, action: #selector(didTap))
+        tap.delegate = self
+        view.addGestureRecognizer(tap)
+        
+        view.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(testAllSongs)))
+    }
+    
+    private func createBarButtonItem(image: UIImage?, selector: Selector) -> UIBarButtonItem {
+        let barButtonItem = UIBarButtonItem(image: image, style: .plain, target: self, action: selector)
+        barButtonItem.tintColor = .blue
+        
+        return barButtonItem
+    }
+}
+
+// MARK: Action handlers
+
+extension SongLyricVC {
+    
+    @objc func showTranslations() {
+        
+    }
+    
+    @objc func toggleFavorite() {
+        starButton.image = dataSource.toggleFavorite() ? .starFilled : .star
+    }
+    
+    @objc func toggleMoreOptions() {
+        UIView.animate(withDuration: 0.3) {
+            self.optionsTable.frame.origin.y += self.optionsTable.frame.height * (self.optionsTable.frame.minY < 0 ? 1 : -1)
+        }
+    }
+}
+
+// MARK: UITableViewDataSource, UITableViewDelegate
+
+extension SongLyricVC: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+
+        switch indexPath.row {
+        case 3:
+            shareSong()
+        case 4:
+            openOnWeb()
+        case 5:
+            reportSongLyric()
+        default:
+            break
+        }
+    }
+    
+    private func shareSong() {
+        guard let songLyric = songLyric else { return }
+        
+        toggleMoreOptions()
+        
+        let textToShare = ["https://zpevnik.proscholy.cz/pisen/\(songLyric.id!)"]
+
+        let activityViewController = UIActivityViewController(activityItems: textToShare, applicationActivities: nil)
+        self.present(activityViewController, animated: true)
+    }
+    
+    private func openOnWeb() {
+        guard let songLyric = songLyric else { return }
+        
+        guard let url = URL(string: "https://zpevnik.proscholy.cz/pisen/\(songLyric.id!)") else { return }
+        
+        UIApplication.shared.open(url) { _ in
+            self.toggleMoreOptions()
+        }
+    }
+    
+    private func reportSongLyric() {
+        guard let songLyric = songLyric else { return }
+        
+        guard let encodedUrl = ("https://docs.google.com/forms/d/e/1FAIpQLSdTaOCzzlfZmyoCB0I_S2kSPiSZVGwDhDovyxkWB7w2LfH0IA/viewform?entry.2038741493=\(songLyric.name!)").addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed), let url = URL(string: encodedUrl) else { return }
+        
+        UIApplication.shared.open(url) { _ in
+            self.toggleMoreOptions()
+        }
     }
 }
 
 // MARK: Gesture handlers
 
 extension SongLyricVC {
+    
+    @objc func testAllSongs() {
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(20), execute: {
+            if UserSettings.fontSize == Constants.maxFontSize {
+                self.dataSource.nextSongLyric()
+                self.songLyric = self.dataSource.currentSongLyric
+                UserSettings.fontSize = Constants.minFontSize
+            } else {
+                UserSettings.fontSize += 1
+                self.songLyricView.fontSizeChanged(self.verses)
+            }
+            self.testAllSongs()
+        })
+    }
     
     @objc func changeSongLyric(gestureRecognizer: UISwipeGestureRecognizer) {
         if gestureRecognizer.direction == .left {
@@ -72,8 +205,6 @@ extension SongLyricVC {
         }
         
         songLyric = dataSource.currentSongLyric
-        verses = SongLyricsParser.parseVerses(songLyric?.lyrics)
-        songLyricView.updateSongLyric(songLyric, verses)
     }
     
     @objc func changeFontSize(gestureRecognizer: UIPinchGestureRecognizer) {
@@ -82,6 +213,25 @@ extension SongLyricVC {
             songLyricView.fontSizeChanged(verses)
             gestureRecognizer.scale = 1.0
         }
+    }
+    
+    @objc func didTap() {
+        if(optionsTable.frame.minY > 0) {
+            toggleMoreOptions()
+        } else {
+//            toggleFullScreen();
+        }
+    }
+}
+
+extension SongLyricVC: UIGestureRecognizerDelegate {
+
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
+        if let view = touch.view, view.isDescendant(of: optionsTable) {
+            return false
+        }
+
+        return true
     }
 }
 

@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 50;
+	objectVersion = 51;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -42,12 +42,12 @@
 		399205B822F78B8400E392A7 /* data.json in Resources */ = {isa = PBXBuildFile; fileRef = 399205B722F78B8400E392A7 /* data.json */; };
 		399205BA22F8122C00E392A7 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 399205B922F8122C00E392A7 /* Reachability.swift */; };
 		399205BC22F8340200E392A7 /* FilterVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 399205BB22F8340200E392A7 /* FilterVC.swift */; };
-		399205BE22F86C3F00E392A7 /* Cocogoose.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 399205BD22F86B7900E392A7 /* Cocogoose.ttf */; };
 		3997798622F75E8700CE6FF6 /* SliderThumbLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3997798522F75E8700CE6FF6 /* SliderThumbLayer.swift */; };
 		3997798922F7605B00CE6FF6 /* SliderTrackLayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3997798822F7605B00CE6FF6 /* SliderTrackLayer.swift */; };
 		3997798E22F76A4A00CE6FF6 /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3997798D22F76A4A00CE6FF6 /* UserSettings.swift */; };
 		3997799022F7714A00CE6FF6 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3997798F22F7714A00CE6FF6 /* Constants.swift */; };
 		399D062F22EF4FE1003C7D56 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 399D062E22EF4FE1003C7D56 /* SearchView.swift */; };
+		399D465F23D762DE00C51B7E /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 399D465E23D762DE00C51B7E /* GoogleService-Info.plist */; };
 		39A06E1123D07D9B004655AF /* SongLyricsParser.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39A06E1023D07D9B004655AF /* SongLyricsParser.swift */; };
 		39A06E1323D0B5C3004655AF /* SongLyricView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39A06E1223D0B5C3004655AF /* SongLyricView.swift */; };
 		39CB0FDD22F70DA8001342E9 /* SettingsVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39CB0FDC22F70DA8001342E9 /* SettingsVC.swift */; };
@@ -55,6 +55,9 @@
 		39CB0FE122F7585C001342E9 /* Slider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39CB0FE022F7585C001342E9 /* Slider.swift */; };
 		39DFB19022E8257A0013906D /* HomeViewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39DFB18F22E8257A0013906D /* HomeViewVC.swift */; };
 		39DFB19822E86FCF0013906D /* MenuVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39DFB19722E86FCF0013906D /* MenuVC.swift */; };
+		39E36D9A23D7688B0085E8F2 /* AuthenticationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E36D9923D7688B0085E8F2 /* AuthenticationService.swift */; };
+		39E36D9E23D790EF0085E8F2 /* MoreOptionsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E36D9D23D790EF0085E8F2 /* MoreOptionsCell.swift */; };
+		39E36DA023D79BE40085E8F2 /* MoreOptionsDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E36D9F23D79BE40085E8F2 /* MoreOptionsDataSource.swift */; };
 		39EB06E723C4FFEB00B6E38E /* ActiveFilterHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39EB06E623C4FFEB00B6E38E /* ActiveFilterHeaderView.swift */; };
 		39F7BA2D22E7090F00FDFF90 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39F7BA2C22E7090F00FDFF90 /* AppDelegate.swift */; };
 		39F7BA4222E70B4100FDFF90 /* CoreDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39F7BA4122E70B4100FDFF90 /* CoreDataService.swift */; };
@@ -66,9 +69,11 @@
 		39F9C2B122F6368D004F0712 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 39F9C2B022F6368D004F0712 /* Assets.xcassets */; };
 		39F9C2B522F6EE2C004F0712 /* UILabelExtension.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39F9C2B322F6EE2C004F0712 /* UILabelExtension.swift */; };
 		39F9C2B622F6EE2C004F0712 /* FittableFontLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39F9C2B422F6EE2C004F0712 /* FittableFontLabel.swift */; };
+		8BCC56496BF3A9D3FDE8D30A /* Pods_Zpevnik.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = FE7AD2A4E8A8453BFC98DB4E /* Pods_Zpevnik.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		35EDD70824929E08EF710404 /* Pods-Zpevnik.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Zpevnik.release.xcconfig"; path = "Target Support Files/Pods-Zpevnik/Pods-Zpevnik.release.xcconfig"; sourceTree = "<group>"; };
 		391AE0E322FAC9CF00E7F5BC /* FilterTagCell.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FilterTagCell.swift; sourceTree = "<group>"; };
 		391AE0E522FACD2F00E7F5BC /* Author.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Author.swift; sourceTree = "<group>"; };
 		391AE0EC22FACD5900E7F5BC /* Tag.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Tag.swift; sourceTree = "<group>"; };
@@ -107,12 +112,12 @@
 		399205B722F78B8400E392A7 /* data.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = data.json; sourceTree = "<group>"; };
 		399205B922F8122C00E392A7 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
 		399205BB22F8340200E392A7 /* FilterVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterVC.swift; sourceTree = "<group>"; };
-		399205BD22F86B7900E392A7 /* Cocogoose.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; path = Cocogoose.ttf; sourceTree = "<group>"; };
 		3997798522F75E8700CE6FF6 /* SliderThumbLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderThumbLayer.swift; sourceTree = "<group>"; };
 		3997798822F7605B00CE6FF6 /* SliderTrackLayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SliderTrackLayer.swift; sourceTree = "<group>"; };
 		3997798D22F76A4A00CE6FF6 /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettings.swift; sourceTree = "<group>"; };
 		3997798F22F7714A00CE6FF6 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		399D062E22EF4FE1003C7D56 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
+		399D465E23D762DE00C51B7E /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		39A06E1023D07D9B004655AF /* SongLyricsParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongLyricsParser.swift; sourceTree = "<group>"; };
 		39A06E1223D0B5C3004655AF /* SongLyricView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongLyricView.swift; sourceTree = "<group>"; };
 		39CB0FDC22F70DA8001342E9 /* SettingsVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SettingsVC.swift; sourceTree = "<group>"; };
@@ -120,6 +125,9 @@
 		39CB0FE022F7585C001342E9 /* Slider.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Slider.swift; sourceTree = "<group>"; };
 		39DFB18F22E8257A0013906D /* HomeViewVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeViewVC.swift; sourceTree = "<group>"; };
 		39DFB19722E86FCF0013906D /* MenuVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MenuVC.swift; sourceTree = "<group>"; };
+		39E36D9923D7688B0085E8F2 /* AuthenticationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationService.swift; sourceTree = "<group>"; };
+		39E36D9D23D790EF0085E8F2 /* MoreOptionsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreOptionsCell.swift; sourceTree = "<group>"; };
+		39E36D9F23D79BE40085E8F2 /* MoreOptionsDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreOptionsDataSource.swift; sourceTree = "<group>"; };
 		39EB06E623C4FFEB00B6E38E /* ActiveFilterHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveFilterHeaderView.swift; sourceTree = "<group>"; };
 		39F7BA2922E7090F00FDFF90 /* Zpevnik.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zpevnik.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39F7BA2C22E7090F00FDFF90 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -133,6 +141,8 @@
 		39F9C2B022F6368D004F0712 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		39F9C2B322F6EE2C004F0712 /* UILabelExtension.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UILabelExtension.swift; sourceTree = "<group>"; };
 		39F9C2B422F6EE2C004F0712 /* FittableFontLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FittableFontLabel.swift; sourceTree = "<group>"; };
+		C4552B338F784CA3E32795A0 /* Pods-Zpevnik.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Zpevnik.debug.xcconfig"; path = "Target Support Files/Pods-Zpevnik/Pods-Zpevnik.debug.xcconfig"; sourceTree = "<group>"; };
+		FE7AD2A4E8A8453BFC98DB4E /* Pods_Zpevnik.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Zpevnik.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -140,6 +150,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8BCC56496BF3A9D3FDE8D30A /* Pods_Zpevnik.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -162,6 +173,7 @@
 		397BAD9F230150F500AB75FD /* DataSource */ = {
 			isa = PBXGroup;
 			children = (
+				39E36D9F23D79BE40085E8F2 /* MoreOptionsDataSource.swift */,
 				397BADA22301510E00AB75FD /* SongBookDataSource.swift */,
 				397BADA02301510400AB75FD /* SongLyricDataSource.swift */,
 				3980061323C6572E0049ADC2 /* FilterTagDataSource.swift */,
@@ -211,7 +223,6 @@
 			isa = PBXGroup;
 			children = (
 				39F9C2B022F6368D004F0712 /* Assets.xcassets */,
-				399205BD22F86B7900E392A7 /* Cocogoose.ttf */,
 				399205B722F78B8400E392A7 /* data.json */,
 			);
 			path = Resources;
@@ -220,6 +231,7 @@
 		399D062C22EC331C003C7D56 /* Cells */ = {
 			isa = PBXGroup;
 			children = (
+				39E36D9D23D790EF0085E8F2 /* MoreOptionsCell.swift */,
 				39F7BA5322E74D3C00FDFF90 /* SongBookCell.swift */,
 				391B94D623BD040B00509728 /* TableViewHeader.swift */,
 				397B625C22EA22A800B9CCEC /* SongLyricCell.swift */,
@@ -251,6 +263,8 @@
 				392FFCA1234A8C1A00296903 /* LaunchScreen.storyboard */,
 				39F7BA2B22E7090F00FDFF90 /* Zpevnik */,
 				39F7BA2A22E7090F00FDFF90 /* Products */,
+				F089836D92BD40C009C32829 /* Pods */,
+				F6B38D87C8A729F5520C9CBD /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -271,6 +285,7 @@
 				399D062C22EC331C003C7D56 /* Cells */,
 				39F7BA5222E74D1E00FDFF90 /* Controllers */,
 				39F7BA3B22E7091100FDFF90 /* Info.plist */,
+				399D465E23D762DE00C51B7E /* GoogleService-Info.plist */,
 				399D062D22EC332A003C7D56 /* Models */,
 				3997798A22F768DC00CE6FF6 /* Third-party */,
 				39F7BA4522E70D0200FDFF90 /* Utils */,
@@ -290,6 +305,7 @@
 				397B625A22E9BE4300B9CCEC /* Protocols.swift */,
 				399205B922F8122C00E392A7 /* Reachability.swift */,
 				3997798D22F76A4A00CE6FF6 /* UserSettings.swift */,
+				39E36D9923D7688B0085E8F2 /* AuthenticationService.swift */,
 			);
 			path = Utils;
 			sourceTree = "<group>";
@@ -325,6 +341,23 @@
 			path = Views;
 			sourceTree = "<group>";
 		};
+		F089836D92BD40C009C32829 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				C4552B338F784CA3E32795A0 /* Pods-Zpevnik.debug.xcconfig */,
+				35EDD70824929E08EF710404 /* Pods-Zpevnik.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		F6B38D87C8A729F5520C9CBD /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				FE7AD2A4E8A8453BFC98DB4E /* Pods_Zpevnik.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -332,9 +365,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 39F7BA3E22E7091100FDFF90 /* Build configuration list for PBXNativeTarget "Zpevnik" */;
 			buildPhases = (
+				6AE4752554884170CAB7228F /* [CP] Check Pods Manifest.lock */,
 				39F7BA2522E7090F00FDFF90 /* Sources */,
 				39F7BA2622E7090F00FDFF90 /* Frameworks */,
 				39F7BA2722E7090F00FDFF90 /* Resources */,
+				D7C9807DF895EF8C1033C7B4 /* [CP] Embed Pods Frameworks */,
+				C3AD4EC166403DBB9B95F86F /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -383,14 +419,73 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				399205BE22F86C3F00E392A7 /* Cocogoose.ttf in Resources */,
 				392FFCA2234A8C1A00296903 /* LaunchScreen.storyboard in Resources */,
+				399D465F23D762DE00C51B7E /* GoogleService-Info.plist in Resources */,
 				39F9C2B122F6368D004F0712 /* Assets.xcassets in Resources */,
 				399205B822F78B8400E392A7 /* data.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		6AE4752554884170CAB7228F /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-Zpevnik-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		C3AD4EC166403DBB9B95F86F /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Zpevnik/Pods-Zpevnik-resources-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Zpevnik/Pods-Zpevnik-resources-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Zpevnik/Pods-Zpevnik-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		D7C9807DF895EF8C1033C7B4 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Zpevnik/Pods-Zpevnik-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-Zpevnik/Pods-Zpevnik-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-Zpevnik/Pods-Zpevnik-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		39F7BA2522E7090F00FDFF90 /* Sources */ = {
@@ -399,6 +494,7 @@
 			files = (
 				3982AD54233A317700EB0F8F /* AllSongLyricsListVC.swift in Sources */,
 				39F7BA4422E70C0D00FDFF90 /* DownloadService.swift in Sources */,
+				39E36DA023D79BE40085E8F2 /* MoreOptionsDataSource.swift in Sources */,
 				3939FA7422FC541C00F9AED1 /* Song.swift in Sources */,
 				3939FA7622FC657800F9AED1 /* MoreOptionsVC.swift in Sources */,
 				39CB0FE122F7585C001342E9 /* Slider.swift in Sources */,
@@ -415,6 +511,7 @@
 				39357F5B23C1F862001B0387 /* HalfViewPresentationController.swift in Sources */,
 				3997798922F7605B00CE6FF6 /* SliderTrackLayer.swift in Sources */,
 				391AE0EE22FACD5900E7F5BC /* Tag.swift in Sources */,
+				39E36D9A23D7688B0085E8F2 /* AuthenticationService.swift in Sources */,
 				39CB0FDD22F70DA8001342E9 /* SettingsVC.swift in Sources */,
 				391AE0EF22FACD5900E7F5BC /* SongBookRecord.swift in Sources */,
 				399205BC22F8340200E392A7 /* FilterVC.swift in Sources */,
@@ -429,6 +526,7 @@
 				39F7BA4722E70E9800FDFF90 /* TabBarController.swift in Sources */,
 				399D062F22EF4FE1003C7D56 /* SearchView.swift in Sources */,
 				397B625F22EA25B400B9CCEC /* SongLyricVC.swift in Sources */,
+				39E36D9E23D790EF0085E8F2 /* MoreOptionsCell.swift in Sources */,
 				39F7BA5822E7535200FDFF90 /* Extensions.swift in Sources */,
 				3997798E22F76A4A00CE6FF6 /* UserSettings.swift in Sources */,
 				391F764A23BF5A4C008BDD0F /* SearchViewVC.swift in Sources */,
@@ -576,6 +674,7 @@
 		};
 		39F7BA3F22E7091100FDFF90 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = C4552B338F784CA3E32795A0 /* Pods-Zpevnik.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = appIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -589,6 +688,7 @@
 				);
 				MARKETING_VERSION = 2.0;
 				OTHER_LDFLAGS = (
+					"$(inherited)",
 					"-weak_framework",
 					SwiftUI,
 				);
@@ -601,6 +701,7 @@
 		};
 		39F7BA4022E7091100FDFF90 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 35EDD70824929E08EF710404 /* Pods-Zpevnik.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = appIcon;
 				CODE_SIGN_STYLE = Automatic;
@@ -614,6 +715,7 @@
 				);
 				MARKETING_VERSION = 2.0;
 				OTHER_LDFLAGS = (
+					"$(inherited)",
 					"-weak_framework",
 					SwiftUI,
 				);

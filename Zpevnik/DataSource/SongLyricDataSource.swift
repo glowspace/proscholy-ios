@@ -74,6 +74,18 @@ class SongLyricDataSource: NSObject {
         return indexes.count > 0
     }
     
+    func toggleFavorite() -> Bool {
+        guard let currentSongLyric = currentSongLyric else { return false }
+        
+        if currentSongLyric.isFavorite() {
+            currentSongLyric.favoriteOrder = -1
+            return false
+        } else {
+            currentSongLyric.favoriteOrder = Int16(UserSettings.favoriteOrderLast)
+            return true
+        }
+    }
+    
     func toggleFavorites(_ indexes: [Int]) -> Bool {
         if indexes.count == 0 { return false }
         

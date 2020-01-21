@@ -12,17 +12,6 @@ class SongLyricView: UIView {
     
     let spacing: CGFloat = 16
     
-//    private var lyricsTextViewHeightConstraint: NSLayoutConstraint?
-    
-    private var verses: [Verse]?
-    
-    var songLyric: SongLyric? {
-        didSet {
-            verses = SongLyricsParser.parseVerses(songLyric?.lyrics)
-            update()
-        }
-    }
-    
     private lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -100,35 +89,29 @@ class SongLyricView: UIView {
         songLyricNameLabel.widthAnchor.constraint(equalTo: scrollView.widthAnchor, constant: -2 * spacing).isActive = true
         lyricsTextView.widthAnchor.constraint(equalTo: songLyricNameLabel.widthAnchor).isActive = true
         authorsLabel.widthAnchor.constraint(equalTo: songLyricNameLabel.widthAnchor).isActive = true
-        
-        
-//        lyricsTextViewHeightConstraint = lyricsTextView.heightAnchor.constraint(equalToConstant: 0)
-//        lyricsTextViewHeightConstraint?.isActive = true
     }
     
-    func update() {
+    func updateSongLyric(_ songLyric: SongLyric?, _ verses: [Verse]?) {
         guard let songLyric = songLyric else { return }
-        
+
+        scrollView.showsVerticalScrollIndicator = false
+        scrollView.setContentOffset(CGPoint(x: 0, y: -scrollView.adjustedContentInset.top), animated: false)
+        scrollView.showsVerticalScrollIndicator = true
+                
         songLyricNameLabel.text = songLyric.name
         authorsLabel.text = "Autor: TESST"
+        
+        fontSizeChanged(verses)
+    }
+    
+    func fontSizeChanged(_ verses: [Verse]?) {
+        guard let verses = verses else { return }
         
         songLyricNameLabel.font = .boldSystemFont(ofSize: UserSettings.fontSize * 4 / 3)
         authorsLabel.font = .systemFont(ofSize: UserSettings.fontSize)
         
-        updateLyricsText()
-    }
-    
-    func updateLyricsText() {
-        guard let verses = verses else { return }
+        removeOldTextLayers()
         
-        if let sublayers = lyricsTextView.layer.sublayers {
-            for layer in sublayers {
-                if layer is CATextLayer {
-                    layer.removeFromSuperlayer()
-                }
-            }
-        }
-                
         var attributes = [NSAttributedString.Key : Any]()
         attributes[.font] = UIFont.systemFont(ofSize: UserSettings.fontSize)
         if #available(iOS 13, *) {
@@ -139,22 +122,32 @@ class SongLyricView: UIView {
         
         var layers = [CATextLayer]()
         var leftOffset: CGFloat = 0
+        var showChords = false
         
         for verse in verses {
-            let numberLabel = createLayer(NSAttributedString(string: verse.number, attributes: attributes))
+            let numberLabel = createTextLayer(NSAttributedString(string: verse.number, attributes: attributes))
             layers.append(numberLabel)
+            
+            attributedString.append(NSAttributedString(string: verse.text, attributes: attributes))
+            
             leftOffset = max(leftOffset, numberLabel.frame.width)
-            attributedString.append(NSAttributedString(string: verse.lyrics, attributes: attributes))
+            
+            showChords = showChords || (verse.chords.count > 0)
         }
+        showChords = showChords && UserSettings.showChords
         
         if leftOffset > 0 {
-            leftOffset += UserSettings.fontSize
+            leftOffset += UserSettings.fontSize / 2
         }
         
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.firstLineHeadIndent = leftOffset
         paragraphStyle.headIndent = leftOffset
         paragraphStyle.lineBreakMode = .byWordWrapping
+        if showChords {
+            paragraphStyle.lineSpacing = UserSettings.fontSize * 1.2
+            lyricsTextView.textContainerInset.top = UserSettings.fontSize
+        }
         
         attributedString.addAttribute(.paragraphStyle, value: paragraphStyle, range: NSRange(location: 0, length: attributedString.string.count))
         
@@ -163,29 +156,102 @@ class SongLyricView: UIView {
 
         textStorage.addLayoutManager(layoutManager)
 
-        let textContainer = NSTextContainer(size: lyricsTextView.textContainer.size)
+        let textContainer = NSTextContainer(size: CGSize(width: lyricsTextView.textContainer.size.width, height: .infinity))
         textContainer.lineFragmentPadding = 0
         textContainer.lineBreakMode = .byWordWrapping
 
         layoutManager.addTextContainer(textContainer)
         
-        var index = 0
+        var chordAttributes = attributes
+        chordAttributes[.foregroundColor] = UIColor.blue
         
-        for i in 0..<verses.count {
-            if let rect = rect(for: index, textContainer: textContainer, layoutManager: layoutManager, offset: 1) {
+        var index = 0
+        let minSpacing: CGFloat = 8
+        
+        for verse in verses {
+            var previous: CGRect?
+            
+            for chord in verse.chords {
+                let layer = createTextLayer(NSAttributedString(string: chord.text, attributes: chordAttributes))
+                if let chordRect = rect(for: chord.index + index, textContainer: textContainer, layoutManager: layoutManager, offset: 0) {
+                    if let previous = previous, Int(chordRect.minY) == Int(previous.minY) {
+                        let diff = previous.minX + previous.width + minSpacing - chordRect.minX
+                        if diff > 0 {
+                            textStorage.addAttribute(.kern, value: diff, range: NSRange(location: chord.index + index - 1, length: 1))
+                        }
+                    }
+                    
+//                    if chord.index + index > 0, rect.origin.x + rect.width > lyricsTextView.textContainer.size.width {
+//                        textStorage.insert(NSAttributedString(string: "\n", attributes: chordAttributes), at: chord.index + index - 1)
+//
+//                        rect.origin.x = 0
+//                        rect.origin.y += 1
+//
+//                        index += 1
+//                    }
+                    
+                    if let chordRect = rect(for: chord.index + index, textContainer: textContainer, layoutManager: layoutManager, offset: 0) {
+                        previous = CGRect(origin: chordRect.origin, size: layer.frame.size)
+                    }
+                }
+            }
+            
+            index += verse.text.count
+        }
+        
+        index = 0
+        
+        for (i, verse) in verses.enumerated() {
+            if let rect = rect(for: index, textContainer: textContainer, layoutManager: layoutManager, offset: 0) {
                 layers[i].frame.origin.x = 0
                 layers[i].frame.origin.y = rect.origin.y
             }
             lyricsTextView.layer.addSublayer(layers[i])
+            
+            var previous: CGRect?
+            
+            for chord in verse.chords {
+                let layer = createTextLayer(NSAttributedString(string: chord.text, attributes: chordAttributes))
+                if var rect = rect(for: chord.index + index, textContainer: textContainer, layoutManager: layoutManager, offset: 0) {
+                    rect.size = layer.frame.size
+                    
+                    if let previous = previous, rect.minY == previous.minY {
+                        let diff = previous.minX + previous.width + minSpacing - rect.minX
+                        if diff > 0 {
+                            rect.origin.x += diff
+                        }
+                    }
+                    
+//                    if rect.origin.x + rect.width > lyricsTextView.textContainer.size.width {
+//                        index += 1
+//                    }
+                    
+                    previous = rect
+                    
+                    layer.frame.origin.x = rect.origin.x
+                    layer.frame.origin.y = rect.origin.y - UserSettings.fontSize
+                }
+                
+                lyricsTextView.layer.addSublayer(layer)
+            }
 
-            index += verses[i].lyrics.count
+            index += verses[i].text.count
         }
         
-//        lyricsTextViewHeightConstraint?.constant = y
         lyricsTextView.attributedText = textStorage
     }
     
-    private func createLayer(_ attributedString: NSAttributedString) -> CATextLayer {
+    private func removeOldTextLayers() {
+        guard let sublayers = lyricsTextView.layer.sublayers else { return }
+        
+        for layer in sublayers {
+            if layer is CATextLayer {
+                layer.removeFromSuperlayer()
+            }
+        }
+    }
+    
+    private func createTextLayer(_ attributedString: NSAttributedString) -> CATextLayer {
         let layer = CATextLayer()
         layer.contentsScale = UIScreen.main.scale
         layer.string = attributedString

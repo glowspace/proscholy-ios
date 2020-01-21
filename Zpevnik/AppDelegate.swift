@@ -9,6 +9,9 @@
 import UIKit
 import CoreData
 
+import Firebase
+import GoogleSignIn
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
@@ -33,8 +36,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         window?.rootViewController = LaunchVC()
         
-        UINavigationBar.appearance().backIndicatorImage = .back
-        UINavigationBar.appearance().backIndicatorTransitionMaskImage = .back
+//        UINavigationBar.appearance().backIndicatorImage = .back
+//        UINavigationBar.appearance().backIndicatorTransitionMaskImage = .back
+        
+//        AuthenticationService().prepare()
         
         return true
     }
@@ -56,5 +61,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, supportedInterfaceOrientationsFor window: UIWindow?) -> UIInterfaceOrientationMask {
         return self.restrictRotation
     }
+    
+    func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any]) -> Bool {
+        return GIDSignIn.sharedInstance().handle(url)
+    }
 }
-

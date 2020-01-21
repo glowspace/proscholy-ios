@@ -8,91 +8,84 @@
 
 import Foundation
 
+struct Chord {
+    let text: String
+    let index: Int
+}
+
 struct Verse {
     let number: String
-    let lyrics: String
+    let text: String
+    let chords: [Chord]
 }
 
 class SongLyricsParser {
     
     static func parseVerses(_ lyrics: String?) -> [Verse]? {
-        guard let lyrics = prepareSongLyrics(lyrics) else { return nil }
+        guard var lyrics = lyrics else { return nil }
         
-        let regex = NSRegularExpression(#"(\d\.|[BCR]:)(?:.|\n)+?(?=\n+\d\.|\n+\(?[BCR]:\)?)"#)
+        lyrics = substituteChordsPlaceholders(lyrics.replacingOccurrences(of: "\r", with: "").replacingOccurrences(of: "@", with: ""))
+        
+        let regex = NSRegularExpression(#"(\d\.|\(?[BCR]\d?[:.]\)?)\s*((?:=\s*(\d\.)|.|\n)*?)\n*(?=$|[^=]?\d\.|\(?[BCR]\d?[:.]\)?)"#)
         let range = NSRange(location: 0, length: lyrics.count)
         
         var verses = [Verse]()
+        var substitutes = [String: Substring]()
         
         regex.enumerateMatches(in: lyrics, options: [], range: range) { (match, _, _) in
             guard let match = match else { return }
             
-            if let range = Range(match.range, in: lyrics) {
-                let subLyrics = String(lyrics[range])
+            if let verseNumberRange = Range(match.range(at: 1), in: lyrics), let verseRange = Range(match.range(at: 2), in: lyrics) {
+                let verseNumber = lyrics[verseNumberRange].replacingOccurrences(of: #"\(|\)"#, with: "", options: .regularExpression).replacingOccurrences(of: #"([BCR]\d?)."#, with: "$1:", options: .regularExpression)
+                var verseText = lyrics[verseRange]
                 
-                verses.append(Verse(number: String(subLyrics.prefix(2)), lyrics: String(subLyrics.suffix(subLyrics.count - 3)) + "\n\n"))
+                if match.range(at: 2).length != 0 {
+                    if match.range(at: 3).length != 0, let replaceRange = Range(match.range(at: 3), in: lyrics) {
+                        let replaceWithVerse = String(lyrics[replaceRange])
+                        verseText = substitutes[replaceWithVerse] ?? ""
+                    } else {
+                        substitutes[verseNumber] = verseText
+                    }
+                } else {
+                    verseText = substitutes[verseNumber] ?? ""
+                }
+                
+                if match.range.upperBound != lyrics.count {
+                    verseText += "\n\n"
+                }
+                
+                verses.append(createVerse(verseNumber, String(verseText)))
             }
         }
         
         if verses.count == 0 {
-            verses.append(Verse(number: "", lyrics: lyrics))
+            verses.append(createVerse("", lyrics))
         }
         
         return verses
     }
     
-    private static func prepareSongLyrics(_ lyrics: String?) -> String? {
-        guard let lyrics = lyrics else { return nil }
+    private static func createVerse(_ number: String, _ text: String) -> Verse {
+        let regex = NSRegularExpression(#"\[[^\]]+\]"#)
+        let text = text.replacingOccurrences(of: #" (\[[^\]]+\]) "#, with: " $1", options: .regularExpression).replacingOccurrences(of: "][", with: "] [")
+        let range = NSRange(location: 0, length: text.count)
         
-        return substituteChordsPlaceholders(substituteVersesShortcuts(lyrics.replacingOccurrences(of: "\r", with: "")))
-    }
-    
-    private static func substituteVersesShortcuts(_ lyrics: String, _ bridge: String?, _ code: String?, _ chorus: String?) -> String {
-        let regex = NSRegularExpression(#"\(?[BCR]:\)?(?=$|\n)"#)
-        var range = NSRange(location: 0, length: lyrics.count)
-        var lyrics = lyrics
+        var offset = 0
+        var chords = [Chord]()
         
-        while let match = regex.firstMatch(in: lyrics, options: [], range: range) {
-            if let range = Range(match.range, in: lyrics) {
-                let subString = lyrics[range]
-                if subString.contains("B") {
-                    lyrics.replaceSubrange(range, with: bridge ?? "")
-                } else if subString.contains("C") {
-                    lyrics.replaceSubrange(range, with: code ?? "")
-                } else if subString.contains("R") {
-                    lyrics.replaceSubrange(range, with: chorus ?? "")
-                }
-            }
-            
-            range = NSRange(location: 0, length: lyrics.count)
-        }
-        
-        return lyrics
-    }
-    
-    private static func substituteVersesShortcuts(_ lyrics: String) -> String {
-        let regex = NSRegularExpression(#"[BCR]: (?:.|\n)+?(?=\n+\d|\n+\([BCR]:\))"#)
-        let range = NSRange(location: 0, length: lyrics.count)
-        
-        var bridge: String? = nil
-        var code: String? = nil
-        var chorus: String? = nil
-        
-        regex.enumerateMatches(in: lyrics, options: [], range: range) { (match, _, _) in
+        regex.enumerateMatches(in: text, options: [], range: range) { (match, _, _) in
             guard let match = match else { return }
             
-            if let range = Range(match.range, in: lyrics) {
-                let subString = lyrics[range]
-                if subString.starts(with: "B") {
-                    bridge = String(subString)
-                } else if subString.starts(with: "C") {
-                    code = String(subString)
-                } else if subString.starts(with: "R") {
-                    chorus = String(subString)
-                }
+            if let range = Range(match.range, in: text) {
+                let chord = text[range].replacingOccurrences(of: #"[\[\]]"#, with: "", options: .regularExpression)
+                
+                chords.append(Chord(text: chord, index: match.range.location - offset))
+                
+                offset += match.range.length
             }
         }
         
-        return substituteVersesShortcuts(lyrics, bridge, code, chorus)
+        return Verse(number: number, text: text.replacingOccurrences(of: #"\[[^\]]+\]"#, with: "", options: .regularExpression), chords: chords)
     }
     
     private static func getChords(_ verse: String) -> [String] {
@@ -112,7 +105,7 @@ class SongLyricsParser {
     }
     
     private static func parseChords(_ lyrics: String) -> [String]? {
-        let regex = NSRegularExpression(#"1\.(?:.|\n)+?(?=\n+\d\.|\n+\(?[BCR]:\)?)"#)
+        let regex = NSRegularExpression(#"1\.(?:.|\n)+?(?=\n+\d\.|\n+\(?[BCR][:.]\)?)"#)
         let nsrange = NSRange(location: 0, length: lyrics.count)
         
         guard let firstVerseMatch = regex.firstMatch(in: lyrics, options: [], range: nsrange), let range = Range(firstVerseMatch.range, in: lyrics) else { return nil }

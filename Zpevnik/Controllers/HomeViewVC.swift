@@ -13,7 +13,7 @@ class HomeViewVC: SongListViewVC {
     private var tableViewTopToSearchView: NSLayoutConstraint?
     private var tableViewTopToView: NSLayoutConstraint?
     
-    private lazy var starButton: UIBarButtonItem = { createBarButtonItem(image: .star, selector: #selector(starSelected)) }()
+    private lazy var starButton: UIBarButtonItem = { createBarButtonItem(image: .star, selector: #selector(toggleFavorite)) }()
     private lazy var addToListButton: UIBarButtonItem = { createBarButtonItem(image: .add, selector: #selector(addToList)) }()
     private lazy var selectAllButton: UIBarButtonItem = { createBarButtonItem(image: .selectAll, selector: #selector(selectAllLyrics)) }()
     private lazy var cancelButton: UIBarButtonItem = { createBarButtonItem(image: .clear, selector: #selector(disableSelection)) }()
@@ -164,7 +164,7 @@ extension HomeViewVC {
         }
     }
     
-    @objc func starSelected() {
+    @objc func toggleFavorite() {
         guard let indexPaths = songList.indexPathsForSelectedRows else { return }
         
         starButton.image = dataSource.toggleFavorites(indexPaths.map { $0.row} ) ? .starFilled : .star

@@ -16,13 +16,19 @@ extension UIImage {
     static var filter: UIImage? { return UIImage(named: "filterIcon") }
     static var home: UIImage? { return UIImage(named: "homeIcon") }
     static var homeFilled: UIImage? { return UIImage(named: "homeIconFilled") }
+    static var more: UIImage? { return UIImage(named: "moreIcon") }
+    static var musicNotes: UIImage? { return UIImage(named: "musicNotesIcon") }
     static var person: UIImage? { return UIImage(named: "personIcon") }
     static var personFilled: UIImage? { return UIImage(named: "personIconFilled") }
     static var search: UIImage? { return UIImage(named: "searchIcon") }
     static var selectAll: UIImage? { return UIImage(named: "selectAllIcon") }
+    static var share: UIImage? { return UIImage(named: "shareIcon") }
     static var songBook: UIImage? { return UIImage(named: "songBookIcon") }
     static var star: UIImage? { return UIImage(named: "starIcon") }
     static var starFilled: UIImage? { return UIImage(named: "starIconFilled") }
+    static var translate: UIImage? { return UIImage(named: "translateIcon") }
+    static var warning: UIImage? { return UIImage(named: "warningIcon" )}
+    static var web: UIImage? { return UIImage(named: "webIcon") }
 }
 
 extension UIColor {
