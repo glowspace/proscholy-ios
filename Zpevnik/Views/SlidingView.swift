@@ -18,9 +18,15 @@ class SlidingView: UIView {
     private lazy var tuneButton: UIButton = { createButton(.tune) }()
     private lazy var headsetButton: UIButton = { createButton(.headset) }()
     private lazy var rollButton: UIButton = { createButton(.downArrow) }()
-    private lazy var toggleButton: UIButton = { createButton(.leftArrow) }()
+    private lazy var toggleButton: UIButton = {
+        let button = createButton(.leftArrow)
+        
+        button.transform = collapsed ? .identity : self.toggleButton.transform.rotated(by: .pi)
+        
+        return button
+    }()
     
-    private var collapsed = false
+    private var collapsed = true
     
     private var toggleButtonLeadingConstraint: NSLayoutConstraint?
     
@@ -43,8 +49,8 @@ class SlidingView: UIView {
 
         let rectShape = CAShapeLayer()
         rectShape.bounds = bounds
-        rectShape.position = CGPoint(x: bounds.width / 2, y: bounds.height / 2)
-        rectShape.path = UIBezierPath(roundedRect: bounds, byRoundingCorners: [.topLeft , .bottomLeft], cornerRadii: CGSize(width: cornerRadius, height: cornerRadius)).cgPath
+        rectShape.position = CGPoint(x: collapsedWidth / 2, y: height / 2)
+        rectShape.path = UIBezierPath(roundedRect: CGRect(origin: .zero, size: CGSize(width: width, height: height)), byRoundingCorners: [.topLeft , .bottomLeft], cornerRadii: CGSize(width: cornerRadius, height: cornerRadius)).cgPath
 
         layer.mask = rectShape
 
@@ -60,11 +66,15 @@ class SlidingView: UIView {
     }
     
     private func setViews() {
+        tuneButton.alpha = collapsed ? 0 : 1
+        headsetButton.alpha = collapsed ? 0 : 1
+        rollButton.alpha = collapsed ? 0 : 1
+        
         tuneButton.leadingAnchor.constraint(equalToSystemSpacingAfter: leadingAnchor, multiplier: 2).isActive = true
         headsetButton.leadingAnchor.constraint(equalToSystemSpacingAfter: tuneButton.trailingAnchor, multiplier: 1).isActive = true
         rollButton.leadingAnchor.constraint(equalToSystemSpacingAfter: headsetButton.trailingAnchor, multiplier: 1).isActive = true
         toggleButtonLeadingConstraint = toggleButton.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: rollButton.trailingAnchor, multiplier: 1)
-        toggleButtonLeadingConstraint?.isActive = true
+        toggleButtonLeadingConstraint?.isActive = !collapsed
         
         toggleButton.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -4).isActive = true
 
@@ -99,6 +109,16 @@ class SlidingView: UIView {
 extension SlidingView {
     
     @objc func buttonTapped(_ sender: UIButton) {
+        if sender == rollButton {
+            delegate?.toggleAutoScroll() { isAutoScrolling in
+                self.rollButton.setImage(isAutoScrolling ? UIImage.stop?.withRenderingMode(.alwaysTemplate) : UIImage.downArrow?.withRenderingMode(.alwaysTemplate), for: .normal)
+            }
+        } else if sender == toggleButton {
+            toggle()
+        }
+    }
+    
+    private func toggle() {
         if self.collapsed {
             delegate?.slideViewWidthConstraint?.constant = width
         } else {

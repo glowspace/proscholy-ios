@@ -34,10 +34,7 @@
 		397BADA32301510E00AB75FD /* SongBookDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 397BADA22301510E00AB75FD /* SongBookDataSource.swift */; };
 		3980061423C6572F0049ADC2 /* FilterTagDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3980061323C6572E0049ADC2 /* FilterTagDataSource.swift */; };
 		3982AD50233A317700EB0F8F /* SongBookViewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3982AD4A233A317700EB0F8F /* SongBookViewVC.swift */; };
-		3982AD51233A317700EB0F8F /* SongLyricsListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3982AD4B233A317700EB0F8F /* SongLyricsListVC.swift */; };
-		3982AD52233A317700EB0F8F /* ListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3982AD4C233A317700EB0F8F /* ListVC.swift */; };
 		3982AD53233A317700EB0F8F /* FavoriteListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3982AD4D233A317700EB0F8F /* FavoriteListVC.swift */; };
-		3982AD54233A317700EB0F8F /* AllSongLyricsListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3982AD4E233A317700EB0F8F /* AllSongLyricsListVC.swift */; };
 		3982AD55233A317700EB0F8F /* SongBooksListVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3982AD4F233A317700EB0F8F /* SongBooksListVC.swift */; };
 		399205B822F78B8400E392A7 /* data.json in Resources */ = {isa = PBXBuildFile; fileRef = 399205B722F78B8400E392A7 /* data.json */; };
 		399205BA22F8122C00E392A7 /* Reachability.swift in Sources */ = {isa = PBXBuildFile; fileRef = 399205B922F8122C00E392A7 /* Reachability.swift */; };
@@ -106,10 +103,7 @@
 		397BADA22301510E00AB75FD /* SongBookDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SongBookDataSource.swift; sourceTree = "<group>"; };
 		3980061323C6572E0049ADC2 /* FilterTagDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FilterTagDataSource.swift; sourceTree = "<group>"; };
 		3982AD4A233A317700EB0F8F /* SongBookViewVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongBookViewVC.swift; sourceTree = "<group>"; };
-		3982AD4B233A317700EB0F8F /* SongLyricsListVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongLyricsListVC.swift; sourceTree = "<group>"; };
-		3982AD4C233A317700EB0F8F /* ListVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ListVC.swift; sourceTree = "<group>"; };
 		3982AD4D233A317700EB0F8F /* FavoriteListVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FavoriteListVC.swift; sourceTree = "<group>"; };
-		3982AD4E233A317700EB0F8F /* AllSongLyricsListVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AllSongLyricsListVC.swift; sourceTree = "<group>"; };
 		3982AD4F233A317700EB0F8F /* SongBooksListVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SongBooksListVC.swift; sourceTree = "<group>"; };
 		399205B722F78B8400E392A7 /* data.json */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.json; path = data.json; sourceTree = "<group>"; };
 		399205B922F8122C00E392A7 /* Reachability.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Reachability.swift; sourceTree = "<group>"; };
@@ -161,19 +155,6 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		393148D723014B1100F138BC /* Lists */ = {
-			isa = PBXGroup;
-			children = (
-				3982AD4E233A317700EB0F8F /* AllSongLyricsListVC.swift */,
-				3982AD4D233A317700EB0F8F /* FavoriteListVC.swift */,
-				3982AD4C233A317700EB0F8F /* ListVC.swift */,
-				3982AD4F233A317700EB0F8F /* SongBooksListVC.swift */,
-				3982AD4A233A317700EB0F8F /* SongBookViewVC.swift */,
-				3982AD4B233A317700EB0F8F /* SongLyricsListVC.swift */,
-			);
-			path = Lists;
-			sourceTree = "<group>";
-		};
 		397BAD9F230150F500AB75FD /* DataSource */ = {
 			isa = PBXGroup;
 			children = (
@@ -317,7 +298,9 @@
 		39F7BA5222E74D1E00FDFF90 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
-				393148D723014B1100F138BC /* Lists */,
+				3982AD4D233A317700EB0F8F /* FavoriteListVC.swift */,
+				3982AD4F233A317700EB0F8F /* SongBooksListVC.swift */,
+				3982AD4A233A317700EB0F8F /* SongBookViewVC.swift */,
 				399205BB22F8340200E392A7 /* FilterVC.swift */,
 				39357F5823C1F765001B0387 /* HalfViewPresentationManager.swift */,
 				39357F5A23C1F862001B0387 /* HalfViewPresentationController.swift */,
@@ -498,7 +481,6 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				3982AD54233A317700EB0F8F /* AllSongLyricsListVC.swift in Sources */,
 				39F7BA4422E70C0D00FDFF90 /* DownloadService.swift in Sources */,
 				39E36DA023D79BE40085E8F2 /* MoreOptionsDataSource.swift in Sources */,
 				3939FA7422FC541C00F9AED1 /* Song.swift in Sources */,
@@ -543,7 +525,6 @@
 				393C335F23C7C1CD00E496AB /* SongListViewVC.swift in Sources */,
 				3997799022F7714A00CE6FF6 /* Constants.swift in Sources */,
 				3939FA6E22FC129600F9AED1 /* AboutVC.swift in Sources */,
-				3982AD51233A317700EB0F8F /* SongLyricsListVC.swift in Sources */,
 				391F764623BE2AEE008BDD0F /* Zpevnik.xcdatamodeld in Sources */,
 				3982AD53233A317700EB0F8F /* FavoriteListVC.swift in Sources */,
 				39F7BA2D22E7090F00FDFF90 /* AppDelegate.swift in Sources */,
@@ -555,7 +536,6 @@
 				39EB06E723C4FFEB00B6E38E /* ActiveFilterHeaderView.swift in Sources */,
 				39A06E1123D07D9B004655AF /* SongLyricsParser.swift in Sources */,
 				39F7BA5122E721FB00FDFF90 /* LaunchVC.swift in Sources */,
-				3982AD52233A317700EB0F8F /* ListVC.swift in Sources */,
 				397BADA32301510E00AB75FD /* SongBookDataSource.swift in Sources */,
 				397B625B22E9BE4300B9CCEC /* Protocols.swift in Sources */,
 			);

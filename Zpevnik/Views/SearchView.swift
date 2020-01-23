@@ -35,6 +35,10 @@ class SearchView: UIView {
         
         translatesAutoresizingMaskIntoConstraints = false
         
+        if #available(iOS 13, *) {
+            backgroundColor = .systemBackground
+        }
+        
         updateBorder()
         setViews()
     }

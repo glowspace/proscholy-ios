@@ -30,6 +30,7 @@ extension UIImage {
     static var songBook: UIImage? { return UIImage(named: "songBookIcon") }
     static var star: UIImage? { return UIImage(named: "starIcon") }
     static var starFilled: UIImage? { return UIImage(named: "starIconFilled") }
+    static var stop: UIImage? { return UIImage(named: "stopIcon") }
     static var translate: UIImage? { return UIImage(named: "translateIcon") }
     static var tune: UIImage? { return UIImage(named: "tuneIcon") }
     static var warning: UIImage? { return UIImage(named: "warningIcon" )}
@@ -40,9 +41,10 @@ extension UIColor {
     
     static var blue: UIColor { return UIColor(named: "blue") ?? .systemBlue }
     static var green: UIColor { return UIColor(named: "green") ?? .systemGreen }
+    static var icon: UIColor { return UIColor(named: "icon") ?? .gray }
+    static var inverted: UIColor { return UIColor(named: "inverted") ?? .black }
     static var red: UIColor { return UIColor(named: "red") ?? .systemRed }
     static var yellow: UIColor { return UIColor(named: "yellow") ?? .systemYellow }
-    static var icon: UIColor { return UIColor(named: "icon") ?? .gray }
     
 }
 

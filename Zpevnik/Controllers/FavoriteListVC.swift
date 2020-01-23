@@ -8,7 +8,7 @@
 
 import UIKit
 
-class FavoriteListVC: SongLyricsListVC {
+//class FavoriteListVC: SongLyricsListVC {
     
 //    var realIndexPath: IndexPath?
 //    
@@ -105,4 +105,4 @@ class FavoriteListVC: SongLyricsListVC {
 //        
 //        return proposedDestinationIndexPath
 //    }
-}
+//}

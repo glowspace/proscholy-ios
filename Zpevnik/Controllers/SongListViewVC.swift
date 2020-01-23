@@ -44,6 +44,7 @@ class SongListViewVC: SearchViewVC {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
+        songList.reloadData()
         dataSource.currentSongLyricIndex = nil
     }
     

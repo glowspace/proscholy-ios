@@ -10,6 +10,8 @@ import UIKit
 
 class TableViewHeader: UIView {
     
+    private let spacing: CGFloat = 16
+    
     private lazy var label: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -25,7 +27,7 @@ class TableViewHeader: UIView {
         
         addSubview(label)
         
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[label]-|", metrics: nil, views: ["label": label]))
+        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-(spacing)-[label]-(spacing)-|", metrics: ["spacing": spacing], views: ["label": label]))
         addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[label]-|", metrics: nil, views: ["label": label]))
     }
     

@@ -51,6 +51,11 @@ class SongBooksListVC: SearchViewVC {
     }
     
     private func setViews() {
+        view.addSubview(searchView)
+        
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[searchView]-8-|", metrics: nil, views: ["searchView": searchView]))
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[searchView(==44)]", metrics: nil, views: ["searchView": searchView]))
+        
         setPlaceholder("Zadejte název či zkratku")
         
         view.addSubview(songBooksCollection)

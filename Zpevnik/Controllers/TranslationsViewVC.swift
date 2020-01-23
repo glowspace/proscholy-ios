@@ -96,9 +96,8 @@ extension TranslationsViewVC: UITableViewDataSource, UITableViewDelegate {
             songLyric = translations[indexPath.row]
         }
         
-        cell.favorite = false
-        cell.nameLabel.text = songLyric.name
-        cell.numberLabel.text = songLyric.id
+        cell.name = songLyric.name
+        cell.number = songLyric.id
         
         return cell
     }

@@ -10,6 +10,8 @@ import UIKit
 
 class SongLyricVC: ViewController {
     
+    private var isAutoScrolling = false
+    
     private let optionsDataSource = OptionsDataSource(.songLyric)
     var dataSource: SongLyricDataSource!
     
@@ -24,7 +26,11 @@ class SongLyricVC: ViewController {
     }
     private var verses: [Verse]?
     
+    var optionsTableTopConstraint: NSLayoutConstraint?
     var slideViewWidthConstraint: NSLayoutConstraint?
+    
+    private let optionsTableWidth: CGFloat = 200
+    private let optionsTableHeight: CGFloat = 255
     
     private lazy var translateButton: UIBarButtonItem = { createBarButtonItem(image: .translate, selector: #selector(showTranslations)) }()
     private lazy var starButton: UIBarButtonItem = { createBarButtonItem(image: songLyric.isFavorite() ? .starFilled : .star, selector: #selector(toggleFavorite)) }()
@@ -42,12 +48,10 @@ class SongLyricVC: ViewController {
         
         tableView.register(MoreOptionsCell.self, forCellReuseIdentifier: "moreOptionsCell")
         
-        tableView.reloadData()
-        let y = UIApplication.shared.statusBarFrame.height + (navigationController?.navigationBar.frame.height ?? 0)
-        let width: CGFloat = 200
-        let height = tableView.contentSize.height
-    
-        tableView.frame = CGRect(x: view.frame.width - width, y: y - height, width: width, height: height)
+        if #available(iOS 13, *) {
+            tableView.layer.borderColor = UIColor.systemGray4.cgColor
+            tableView.layer.borderWidth = 1
+        }
         
         return tableView
     }()
@@ -62,8 +66,6 @@ class SongLyricVC: ViewController {
     }()
     
     private lazy var bottomSlidingView: SlidingView = {
-        let width: CGFloat = 200
-        
         let slidingView = SlidingView()
         slidingView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -88,6 +90,13 @@ class SongLyricVC: ViewController {
         navigationItem.setRightBarButtonItems([moreButton, starButton, translateButton, spacer], animated: false)
     }
     
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        
+        isAutoScrolling = false
+        optionsTableTopConstraint?.constant = -optionsTableHeight
+    }
+    
     private func setViews() {
         view.addSubview(songLyricView)
         view.addSubview(optionsTable)
@@ -100,10 +109,17 @@ class SongLyricVC: ViewController {
         bottomSlidingView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 1).isActive = true
         bottomSlidingView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(bottomSlidingView.height + 28)).isActive = true
         bottomSlidingView.heightAnchor.constraint(equalToConstant: bottomSlidingView.height).isActive = true
-        slideViewWidthConstraint = bottomSlidingView.widthAnchor.constraint(equalToConstant: bottomSlidingView.width)
+        slideViewWidthConstraint = bottomSlidingView.widthAnchor.constraint(equalToConstant: bottomSlidingView.collapsedWidth)
         slideViewWidthConstraint?.isActive = true
         
         bottomSlidingView.setBorder()
+        
+        // constant 1 to hide right border
+        optionsTable.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 1).isActive = true
+        optionsTable.widthAnchor.constraint(equalToConstant: optionsTableWidth).isActive = true
+        optionsTable.heightAnchor.constraint(equalToConstant: optionsTableHeight).isActive = true
+        optionsTableTopConstraint = optionsTable.topAnchor.constraint(equalTo: view.topAnchor, constant: -optionsTableHeight)
+        optionsTableTopConstraint?.isActive = true
     }
     
     private func setGestureRecognizers() {
@@ -129,6 +145,23 @@ class SongLyricVC: ViewController {
         
         return barButtonItem
     }
+    
+    private func autoScroll(completionHandler: @escaping (Bool) -> Void) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(20)) {
+            let scrollView = self.songLyricView.scrollView
+            if scrollView.contentSize.height - scrollView.contentOffset.y + scrollView.adjustedContentInset.top < self.view.frame.height {
+                self.isAutoScrolling = false
+                
+                completionHandler(self.isAutoScrolling)
+            } else {
+                self.songLyricView.scrollView.contentOffset.y += 0.5
+            }
+            
+            if self.isAutoScrolling {
+                self.autoScroll(completionHandler: completionHandler)
+            }
+        }
+    }
 }
 
 // MARK: Action handlers
@@ -147,8 +180,15 @@ extension SongLyricVC {
     }
     
     @objc func toggleMoreOptions() {
+        if optionsTableTopConstraint?.constant == -optionsTableHeight{
+            // - 1 to hide top border
+            optionsTableTopConstraint?.constant = (navigationController?.navigationBar.frame.height ?? 0) + UIApplication.shared.statusBarFrame.height - 1
+        } else {
+            optionsTableTopConstraint?.constant = -optionsTableHeight
+        }
+        
         UIView.animate(withDuration: 0.3) {
-            self.optionsTable.frame.origin.y += self.optionsTable.frame.height * (self.optionsTable.frame.minY < 0 ? 1 : -1)
+            self.view.layoutIfNeeded()
         }
     }
 }
@@ -158,11 +198,21 @@ extension SongLyricVC {
 extension SongLyricVC {
     
     func toggleSlideView(animations: @escaping () -> Void, completionHandler: @escaping () -> Void) {
-        UIView.animate(withDuration: 0.5, animations: {
+        UIView.animate(withDuration: 0.3, animations: {
             animations()
             self.view.layoutIfNeeded()
         }) { _ in
             completionHandler()
+        }
+    }
+    
+    func toggleAutoScroll(completionHandler: @escaping (Bool) -> Void) {
+        isAutoScrolling = !isAutoScrolling
+        
+        completionHandler(isAutoScrolling)
+        
+        if isAutoScrolling {
+            autoScroll(completionHandler: completionHandler)
         }
     }
 }
@@ -217,7 +267,7 @@ extension SongLyricVC: UITableViewDelegate {
 extension SongLyricVC: UIScrollViewDelegate {
     
     func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
-        if(optionsTable.frame.minY > 0) {
+        if((optionsTableTopConstraint?.constant ?? 0) > 0) {
             toggleMoreOptions()
         }
     }
@@ -242,7 +292,7 @@ extension SongLyricVC {
     }
     
     @objc func changeSongLyric(gestureRecognizer: UISwipeGestureRecognizer) {
-        if(optionsTable.frame.minY > 0) {
+        if((optionsTableTopConstraint?.constant ?? 0) > 0) {
             toggleMoreOptions()
         }
         
@@ -264,7 +314,7 @@ extension SongLyricVC {
     }
     
     @objc func didTap() {
-        if(optionsTable.frame.minY > 0) {
+        if((optionsTableTopConstraint?.constant ?? 0) > 0) {
             toggleMoreOptions()
         } else {
 //            toggleFullScreen();
@@ -275,7 +325,7 @@ extension SongLyricVC {
 extension SongLyricVC: UIGestureRecognizerDelegate {
 
     func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer, shouldReceive touch: UITouch) -> Bool {
-        if let view = touch.view, view.isDescendant(of: optionsTable) {
+        if let view = touch.view, view.isDescendant(of: optionsTable) || view.isDescendant(of: bottomSlidingView) {
             return false
         }
 

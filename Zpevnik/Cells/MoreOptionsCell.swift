@@ -22,7 +22,7 @@ class MoreOptionsCell: UITableViewCell {
         }
     }
     
-    private lazy var iconView: UIImageView = {
+    private let iconView: UIImageView = {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -31,7 +31,7 @@ class MoreOptionsCell: UITableViewCell {
         return imageView
     }()
     
-    private lazy var titleView: UILabel = {
+    private let titleView: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         

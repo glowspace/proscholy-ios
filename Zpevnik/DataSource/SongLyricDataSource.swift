@@ -302,19 +302,19 @@ extension SongLyricDataSource: UITableViewDataSource {
     private func setCell(_ cell: UITableViewCell, _ songLyric: SongLyric) {
         guard let cell = cell as? SongLyricCell else { return }
         
-        cell.favorite = false
-        cell.nameLabel.text = songLyric.name
-        cell.numberLabel.text = songLyric.id
+        cell.favorite = songLyric.isFavorite()
+        cell.name = songLyric.name
+        cell.number = songLyric.id
         
         let predicate = NSPredicate(format: "self CONTAINS[cd] %@", searchText)
         let numbers = songLyric.numbers.filter {
             predicate.evaluate(with: $0)
         }
-
+        
         if numbers.count > 0 && searchText.rangeOfCharacter(from: .decimalDigits) != nil && !songLyric.id!.contains(searchText) {
-            cell.numberLabel.text = numbers[0]
+            cell.number = numbers[0]
         } else {
-            cell.numberLabel.text = songLyric.id
+            cell.number = songLyric.id
         }
     }
 }

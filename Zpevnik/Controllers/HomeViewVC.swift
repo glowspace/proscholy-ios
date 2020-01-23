@@ -54,18 +54,27 @@ class HomeViewVC: SongListViewVC {
     }
     
     private func setViews() {
+        addSearchView()
+        
         searchView.trailingButton?.addTarget(self, action: #selector(showFilters), for: .touchUpInside)
         setPlaceholder("Zadejte slovo nebo číslo")
         
         view.addSubview(songList)
         
-        tableViewTopToSearchView = songList.topAnchor.constraint(equalToSystemSpacingBelow: searchView.bottomAnchor, multiplier: 1)
+        tableViewTopToSearchView = songList.topAnchor.constraint(equalTo: searchView.bottomAnchor)
         tableViewTopToView = songList.topAnchor.constraint(equalTo: view.topAnchor)
         
         tableViewTopToSearchView?.isActive = true
         songList.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         songList.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         songList.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+    }
+    
+    private func addSearchView() {
+        view.addSubview(searchView)
+        
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[searchView]-8-|", metrics: nil, views: ["searchView": searchView]))
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[searchView(==44)]", metrics: nil, views: ["searchView": searchView]))
     }
     
     private func createBarButtonItem(image: UIImage?, selector: Selector) -> UIBarButtonItem {
@@ -169,6 +178,8 @@ extension HomeViewVC {
         guard let indexPaths = songList.indexPathsForSelectedRows else { return }
         
         starButton.image = dataSource.toggleFavorites(indexPaths.map { $0.row} ) ? .starFilled : .star
+        
+        songList.reloadRows(at: indexPaths, with: .automatic)
     }
     
     @objc func addToList() {
@@ -206,9 +217,7 @@ extension HomeViewVC {
     override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
         super.traitCollectionDidChange(previousTraitCollection)
 
-        guard UIApplication.shared.applicationState == .inactive else {
-            return
-        }
+        guard UIApplication.shared.applicationState == .inactive else { return }
         
         searchView.updateBorder()
     }

@@ -8,9 +8,30 @@
 
 import UIKit
 
-class SongLyricCell: TableViewCell {
+class SongLyricCell: UITableViewCell {
     
-    let nameLabel: UILabel = {
+    private let horizontalSpacing: CGFloat = 16
+    private let verticalSpacing: CGFloat = 12
+    
+    var name: String? {
+        didSet {
+            nameLabel.text = name
+        }
+    }
+    
+    var number: String? {
+        didSet {
+            numberLabel.text = number
+        }
+    }
+    
+    var favorite = false {
+        didSet {
+            starIconWidthConstraint?.constant = favorite ? 16 : 0
+        }
+    }
+    
+    private let nameLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -21,7 +42,16 @@ class SongLyricCell: TableViewCell {
         return label
     }()
     
-    let numberLabel: UILabel = {
+    private let starIcon: UIImageView = {
+        let imageView = UIImageView(image: .starFilled)
+        imageView.translatesAutoresizingMaskIntoConstraints = false
+        
+        imageView.tintColor = UIColor.inverted.withAlphaComponent(0.5)
+        
+        return imageView
+    }()
+    
+    private let numberLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
@@ -37,17 +67,15 @@ class SongLyricCell: TableViewCell {
         return label
     }()
     
-    let containerView: UIView = {
+    private let containerView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false
         
         return view
     }()
     
-    var leadingConstraint: NSLayoutConstraint!
-    var trailingConstraint: NSLayoutConstraint!
-    
-    var favorite: Bool!
+    private var leadingConstraint: NSLayoutConstraint?
+    private var starIconWidthConstraint: NSLayoutConstraint?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -61,55 +89,54 @@ class SongLyricCell: TableViewCell {
         setViews()
     }
     
-    required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
     override func setEditing(_ editing: Bool, animated: Bool) {
         super.setEditing(editing, animated: animated)
         
-        if editing {
-            if favorite {
-                trailingConstraint.constant = -48
-            } else {
-                leadingConstraint.constant = 48
-            }
-        } else {
-            if favorite {
-                trailingConstraint.constant = -8
-            } else {
-                leadingConstraint.constant = 8
-            }
-        }
+        leadingConstraint?.constant = editing ? 48 : horizontalSpacing
         
-        UIView.animate(withDuration: animated ? 0.3 : 0, animations: {
+        UIView.animate(withDuration: animated ? 0.3 : 0) {
             self.layoutIfNeeded()
-        })
+        }
     }
     
     private func setViews() {
         addSubview(containerView)
-        
+
         containerView.addSubview(nameLabel)
+        containerView.addSubview(starIcon)
         containerView.addSubview(numberLabel)
-        
+
         let views = [
             "nameLabel": nameLabel,
+            "starIcon": starIcon,
             "numberLabel": numberLabel
         ]
+
+        nameLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
+        starIcon.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: nameLabel.trailingAnchor, multiplier: 1).isActive = true
+        numberLabel.leadingAnchor.constraint(equalToSystemSpacingAfter: starIcon.trailingAnchor, multiplier: 1).isActive = true
+        numberLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
         
-        containerView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[nameLabel]-[numberLabel(==60)]-|", metrics: nil, views: views))
+        numberLabel.widthAnchor.constraint(equalToConstant: 48).isActive = true
+        
+        nameLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+        starIcon.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+        numberLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
+        
         containerView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[nameLabel]|", metrics: nil, views: views))
-        containerView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[numberLabel]|", metrics: nil, views: views))
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[containerView]-|", metrics: nil, views: ["containerView": containerView]))
+        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-(spacing)-[containerView]-(spacing)-|", metrics: ["spacing": verticalSpacing], views: ["containerView": containerView]))
         
-        if #available(iOS 11.0, *) {
-            leadingConstraint = containerView.leadingAnchor.constraint(equalToSystemSpacingAfter: leadingAnchor, multiplier: 1)
-        } else {
-            leadingConstraint = NSLayoutConstraint(item: containerView, attribute: .leading, relatedBy: .equal, toItem: self, attribute: .leading, multiplier: 1, constant: 8)
-        }
-        leadingConstraint.isActive = true
-        trailingConstraint = containerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8)
-        trailingConstraint.isActive = true
+        starIcon.heightAnchor.constraint(equalTo: starIcon.widthAnchor).isActive = true
+        starIconWidthConstraint = starIcon.widthAnchor.constraint(equalToConstant: 0)
+        starIconWidthConstraint?.isActive = true
+        
+        leadingConstraint = containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: horizontalSpacing)
+        leadingConstraint?.isActive = true
+        
+        containerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -horizontalSpacing).isActive = true
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
 }

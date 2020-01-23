@@ -30,21 +30,12 @@ class SearchViewVC: VC {
         super.viewDidLoad()
         
         hideKeyboardWhenTappedAround()
-        
-        addSearchView()
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
         searchView.searchField.resignFirstResponder()
-    }
-    
-    internal func addSearchView() {
-        view.addSubview(searchView)
-        
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[searchView]-8-|", metrics: nil, views: ["searchView": searchView]))
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[searchView(==44)]", metrics: nil, views: ["searchView": searchView]))
     }
     
     internal func setPlaceholder(_ placeholder: String) {
@@ -64,7 +55,6 @@ extension SearchViewVC: UITextFieldDelegate {
             searchView.searchField.resignFirstResponder()
             searchView.searchField.text = ""
             searchView.searchField.clearButtonMode = .never
-            searchView.leadingButton?.setImage(.search, for: .normal)
         } else {
             searchView.searchField.becomeFirstResponder()
         }
