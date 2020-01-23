@@ -26,9 +26,7 @@ class MoreOptionsCell: UITableViewCell {
         let imageView = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
-        if #available(iOS 13, *) {
-            imageView.tintColor = .systemGray3
-        }
+        imageView.tintColor = .icon
         
         return imageView
     }()
@@ -37,9 +35,7 @@ class MoreOptionsCell: UITableViewCell {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         
-        if #available(iOS 13, *) {
-            label.textColor = .systemGray3
-        }
+        label.textColor = .icon
         
         return label
     }()

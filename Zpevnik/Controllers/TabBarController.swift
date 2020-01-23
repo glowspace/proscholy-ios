@@ -42,9 +42,12 @@ class TabBarController: UITabBarController {
         setTintColor(forMenuItem: tabBarMenuItem)
     }
     
-    private func createNavigationController(controller: UIViewController, title: String, image: UIImage?, selectedImage: UIImage?, tag: Int) -> NavigationController {
-        let navigationController = NavigationController(rootViewController: controller)
+    private func createNavigationController(controller: UIViewController, title: String, image: UIImage?, selectedImage: UIImage?, tag: Int) -> UINavigationController {
+        let navigationController = UINavigationController(rootViewController: controller)
         navigationController.tabBarItem = UITabBarItem(title: title, image: image, tag: tag)
+        
+        let textAttributes: [NSAttributedString.Key: Any] = [.foregroundColor: UIColor.icon]
+        navigationController.navigationBar.titleTextAttributes = textAttributes
         
         navigationController.tabBarItem.selectedImage = selectedImage
         navigationController.view.backgroundColor = .white

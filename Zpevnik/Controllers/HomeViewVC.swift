@@ -31,8 +31,12 @@ class HomeViewVC: SongListViewVC {
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(activateSongSelection(_: )))
         songList.addGestureRecognizer(longPress)
         
+        // add spacer to force left aligned title
+        let spacer = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
+        spacer.width = view.frame.width
+        
         navigationItem.setLeftBarButton(cancelButton, animated: false)
-        navigationItem.setRightBarButtonItems([selectAllButton, addToListButton, starButton], animated: false)
+        navigationItem.setRightBarButtonItems([selectAllButton, addToListButton, starButton, spacer], animated: false)
         
         setViews()
     }
@@ -40,15 +44,12 @@ class HomeViewVC: SongListViewVC {
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        let textAttributes: [NSAttributedString.Key: Any] = [.foregroundColor: UIColor.blue]
-        navigationController?.navigationBar.titleTextAttributes = textAttributes
         navigationController?.setNavigationBarHidden(true, animated: animated)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         
-        navigationController?.navigationBar.titleTextAttributes = nil
         navigationController?.setNavigationBarHidden(false, animated: animated)
     }
     
@@ -69,7 +70,7 @@ class HomeViewVC: SongListViewVC {
     
     private func createBarButtonItem(image: UIImage?, selector: Selector) -> UIBarButtonItem {
         let barButtonItem = UIBarButtonItem(image: image, style: .plain, target: self, action: selector)
-        barButtonItem.tintColor = .blue
+        barButtonItem.tintColor = .icon
         
         return barButtonItem
     }

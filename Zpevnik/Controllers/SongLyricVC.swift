@@ -13,22 +13,24 @@ class SongLyricVC: ViewController {
     private let optionsDataSource = OptionsDataSource(.songLyric)
     var dataSource: SongLyricDataSource!
     
-    private var songLyric: SongLyric? {
+    private var songLyric: SongLyric! {
         didSet {
-            verses = SongLyricsParser.parseVerses(songLyric?.lyrics)
+            verses = SongLyricsParser.parseVerses(songLyric.lyrics)
             songLyricView.updateSongLyric(songLyric, verses)
-            starButton.image = songLyric?.isFavorite() ?? false ? .starFilled : .star
+            starButton.image = songLyric.isFavorite() ? .starFilled : .star
             
             navigationItem.title = dataSource.currentSongLyric?.id
         }
     }
     private var verses: [Verse]?
     
+    var slideViewWidthConstraint: NSLayoutConstraint?
+    
     private lazy var translateButton: UIBarButtonItem = { createBarButtonItem(image: .translate, selector: #selector(showTranslations)) }()
-    private lazy var starButton: UIBarButtonItem = { createBarButtonItem(image: songLyric?.isFavorite() ?? false ? .starFilled : .star, selector: #selector(toggleFavorite)) }()
+    private lazy var starButton: UIBarButtonItem = { createBarButtonItem(image: songLyric.isFavorite() ? .starFilled : .star, selector: #selector(toggleFavorite)) }()
     private lazy var moreButton: UIBarButtonItem = { createBarButtonItem(image: .more, selector: #selector(toggleMoreOptions)) }()
     
-    lazy var optionsTable: UITableView = {
+    private lazy var optionsTable: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
@@ -39,7 +41,6 @@ class SongLyricVC: ViewController {
         tableView.isScrollEnabled = false
         
         tableView.register(MoreOptionsCell.self, forCellReuseIdentifier: "moreOptionsCell")
-        
         
         tableView.reloadData()
         let y = UIApplication.shared.statusBarFrame.height + (navigationController?.navigationBar.frame.height ?? 0)
@@ -55,7 +56,20 @@ class SongLyricVC: ViewController {
         let songLyricView = SongLyricView()
         songLyricView.translatesAutoresizingMaskIntoConstraints = false
         
+        songLyricView.scrollView.delegate = self
+        
         return songLyricView
+    }()
+    
+    private lazy var bottomSlidingView: SlidingView = {
+        let width: CGFloat = 200
+        
+        let slidingView = SlidingView()
+        slidingView.translatesAutoresizingMaskIntoConstraints = false
+        
+        slidingView.delegate = self
+        
+        return slidingView
     }()
     
     override func viewDidLoad() {
@@ -63,31 +77,39 @@ class SongLyricVC: ViewController {
         
         setViews()
         
-        view.addSubview(optionsTable)
-        
         setGestureRecognizers()
         
         songLyric = dataSource.currentSongLyric
         
-        navigationItem.setRightBarButtonItems([moreButton, starButton, translateButton], animated: false)
-    }
-    
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
+        // add spacer to force left aligned title
+        let spacer = UIBarButtonItem(barButtonSystemItem: .fixedSpace, target: nil, action: nil)
+        spacer.width = view.frame.width
         
-        dataSource.currentSongLyricIndex = nil
+        navigationItem.setRightBarButtonItems([moreButton, starButton, translateButton, spacer], animated: false)
     }
     
     private func setViews() {
         view.addSubview(songLyricView)
+        view.addSubview(optionsTable)
+        view.addSubview(bottomSlidingView)
         
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[songLyricView]|", metrics: nil, views: ["songLyricView": songLyricView]))
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[songLyricView]|", metrics: nil, views: ["songLyricView": songLyricView]))
+        
+        // constant 1 to hide right border
+        bottomSlidingView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 1).isActive = true
+        bottomSlidingView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -(bottomSlidingView.height + 28)).isActive = true
+        bottomSlidingView.heightAnchor.constraint(equalToConstant: bottomSlidingView.height).isActive = true
+        slideViewWidthConstraint = bottomSlidingView.widthAnchor.constraint(equalToConstant: bottomSlidingView.width)
+        slideViewWidthConstraint?.isActive = true
+        
+        bottomSlidingView.setBorder()
     }
     
     private func setGestureRecognizers() {
         for direction in [UISwipeGestureRecognizer.Direction.left, .right] {
             let swipe = UISwipeGestureRecognizer(target: self, action: #selector(changeSongLyric(gestureRecognizer:)))
+            swipe.delegate = self
             swipe.direction = direction
             view.addGestureRecognizer(swipe)
         }
@@ -98,12 +120,12 @@ class SongLyricVC: ViewController {
         tap.delegate = self
         view.addGestureRecognizer(tap)
         
-        view.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(testAllSongs)))
+//        view.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(testAllSongs)))
     }
     
     private func createBarButtonItem(image: UIImage?, selector: Selector) -> UIBarButtonItem {
         let barButtonItem = UIBarButtonItem(image: image, style: .plain, target: self, action: selector)
-        barButtonItem.tintColor = .blue
+        barButtonItem.tintColor = .icon
         
         return barButtonItem
     }
@@ -114,7 +136,10 @@ class SongLyricVC: ViewController {
 extension SongLyricVC {
     
     @objc func showTranslations() {
+        let translationsViewVC = TranslationsViewVC()
+        translationsViewVC.songLyric = songLyric
         
+        navigationController?.pushViewController(translationsViewVC, animated: true)
     }
     
     @objc func toggleFavorite() {
@@ -124,6 +149,20 @@ extension SongLyricVC {
     @objc func toggleMoreOptions() {
         UIView.animate(withDuration: 0.3) {
             self.optionsTable.frame.origin.y += self.optionsTable.frame.height * (self.optionsTable.frame.minY < 0 ? 1 : -1)
+        }
+    }
+}
+
+// MARK: SlideViewDelegate
+
+extension SongLyricVC {
+    
+    func toggleSlideView(animations: @escaping () -> Void, completionHandler: @escaping () -> Void) {
+        UIView.animate(withDuration: 0.5, animations: {
+            animations()
+            self.view.layoutIfNeeded()
+        }) { _ in
+            completionHandler()
         }
     }
 }
@@ -148,8 +187,6 @@ extension SongLyricVC: UITableViewDelegate {
     }
     
     private func shareSong() {
-        guard let songLyric = songLyric else { return }
-        
         toggleMoreOptions()
         
         let textToShare = ["https://zpevnik.proscholy.cz/pisen/\(songLyric.id!)"]
@@ -159,8 +196,6 @@ extension SongLyricVC: UITableViewDelegate {
     }
     
     private func openOnWeb() {
-        guard let songLyric = songLyric else { return }
-        
         guard let url = URL(string: "https://zpevnik.proscholy.cz/pisen/\(songLyric.id!)") else { return }
         
         UIApplication.shared.open(url) { _ in
@@ -169,12 +204,21 @@ extension SongLyricVC: UITableViewDelegate {
     }
     
     private func reportSongLyric() {
-        guard let songLyric = songLyric else { return }
-        
         guard let encodedUrl = ("https://docs.google.com/forms/d/e/1FAIpQLSdTaOCzzlfZmyoCB0I_S2kSPiSZVGwDhDovyxkWB7w2LfH0IA/viewform?entry.2038741493=\(songLyric.name!)").addingPercentEncoding(withAllowedCharacters: .urlFragmentAllowed), let url = URL(string: encodedUrl) else { return }
         
         UIApplication.shared.open(url) { _ in
             self.toggleMoreOptions()
+        }
+    }
+}
+
+// MARK: UIScrollViewDelegate
+
+extension SongLyricVC: UIScrollViewDelegate {
+    
+    func scrollViewWillBeginDragging(_ scrollView: UIScrollView) {
+        if(optionsTable.frame.minY > 0) {
+            toggleMoreOptions()
         }
     }
 }
@@ -198,6 +242,10 @@ extension SongLyricVC {
     }
     
     @objc func changeSongLyric(gestureRecognizer: UISwipeGestureRecognizer) {
+        if(optionsTable.frame.minY > 0) {
+            toggleMoreOptions()
+        }
+        
         if gestureRecognizer.direction == .left {
             dataSource.nextSongLyric()
         } else if gestureRecognizer.direction == .right {

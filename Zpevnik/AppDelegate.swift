@@ -36,8 +36,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         window?.rootViewController = LaunchVC()
         
-//        UINavigationBar.appearance().backIndicatorImage = .back
-//        UINavigationBar.appearance().backIndicatorTransitionMaskImage = .back
+        UINavigationBar.appearance().tintColor = .icon
         
 //        AuthenticationService().prepare()
         

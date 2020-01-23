@@ -41,6 +41,12 @@ class SongListViewVC: SearchViewVC {
         return tableView
     }()
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        dataSource.currentSongLyricIndex = nil
+    }
+    
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         

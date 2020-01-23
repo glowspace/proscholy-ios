@@ -15,15 +15,15 @@ class SongBookViewVC: SongListViewVC {
     private lazy var searchButton: UIBarButtonItem = {
         let barButtonItem = UIBarButtonItem(image: .search, style: .plain, target: self, action: #selector(showSearch))
         
-        if #available(iOS 13, *) {
-            barButtonItem.tintColor = .systemGray2
-        }
+        barButtonItem.tintColor = .icon
         
         return barButtonItem
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        setViews()
         
         dataSource = SongBooksSongLyricDataSource(songBook)
         dataSource.filterTagDataSource = filterTagDataSource
@@ -33,9 +33,8 @@ class SongBookViewVC: SongListViewVC {
         }
         
         navigationItem.title = songBook.name
-        navigationItem.setRightBarButton(searchButton, animated: true)
         
-        setViews()
+        navigationItem.setRightBarButtonItems([searchButton], animated: true)
     }
     
     private func setViews() {

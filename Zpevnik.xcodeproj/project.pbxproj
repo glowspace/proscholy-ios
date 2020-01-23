@@ -58,6 +58,8 @@
 		39E36D9A23D7688B0085E8F2 /* AuthenticationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E36D9923D7688B0085E8F2 /* AuthenticationService.swift */; };
 		39E36D9E23D790EF0085E8F2 /* MoreOptionsCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E36D9D23D790EF0085E8F2 /* MoreOptionsCell.swift */; };
 		39E36DA023D79BE40085E8F2 /* MoreOptionsDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E36D9F23D79BE40085E8F2 /* MoreOptionsDataSource.swift */; };
+		39E36DA223D8A65B0085E8F2 /* TranslationsViewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E36DA123D8A65A0085E8F2 /* TranslationsViewVC.swift */; };
+		39E36DA423D8E3030085E8F2 /* SlidingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E36DA323D8E3020085E8F2 /* SlidingView.swift */; };
 		39EB06E723C4FFEB00B6E38E /* ActiveFilterHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39EB06E623C4FFEB00B6E38E /* ActiveFilterHeaderView.swift */; };
 		39F7BA2D22E7090F00FDFF90 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39F7BA2C22E7090F00FDFF90 /* AppDelegate.swift */; };
 		39F7BA4222E70B4100FDFF90 /* CoreDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39F7BA4122E70B4100FDFF90 /* CoreDataService.swift */; };
@@ -128,6 +130,8 @@
 		39E36D9923D7688B0085E8F2 /* AuthenticationService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticationService.swift; sourceTree = "<group>"; };
 		39E36D9D23D790EF0085E8F2 /* MoreOptionsCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreOptionsCell.swift; sourceTree = "<group>"; };
 		39E36D9F23D79BE40085E8F2 /* MoreOptionsDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MoreOptionsDataSource.swift; sourceTree = "<group>"; };
+		39E36DA123D8A65A0085E8F2 /* TranslationsViewVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationsViewVC.swift; sourceTree = "<group>"; };
+		39E36DA323D8E3020085E8F2 /* SlidingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlidingView.swift; sourceTree = "<group>"; };
 		39EB06E623C4FFEB00B6E38E /* ActiveFilterHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveFilterHeaderView.swift; sourceTree = "<group>"; };
 		39F7BA2922E7090F00FDFF90 /* Zpevnik.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zpevnik.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39F7BA2C22E7090F00FDFF90 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -321,6 +325,7 @@
 				393C335E23C7C1CD00E496AB /* SongListViewVC.swift */,
 				391F764923BF5A4C008BDD0F /* SearchViewVC.swift */,
 				391F764723BF4121008BDD0F /* UserViewVC.swift */,
+				39E36DA123D8A65A0085E8F2 /* TranslationsViewVC.swift */,
 				391F764B23BF60DB008BDD0F /* ViewController.swift */,
 				39F7BA5022E721FB00FDFF90 /* LaunchVC.swift */,
 				397BADA423015CC600AB75FD /* OtherSection */,
@@ -334,6 +339,7 @@
 		39F9C2AD22F625DA004F0712 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				39E36DA323D8E3020085E8F2 /* SlidingView.swift */,
 				39A06E1223D0B5C3004655AF /* SongLyricView.swift */,
 				399D062E22EF4FE1003C7D56 /* SearchView.swift */,
 				3997798722F75E8C00CE6FF6 /* Slider */,
@@ -501,6 +507,7 @@
 				397B625D22EA22A800B9CCEC /* SongLyricCell.swift in Sources */,
 				3997798622F75E8700CE6FF6 /* SliderThumbLayer.swift in Sources */,
 				391F764C23BF60DB008BDD0F /* ViewController.swift in Sources */,
+				39E36DA423D8E3030085E8F2 /* SlidingView.swift in Sources */,
 				399205BA22F8122C00E392A7 /* Reachability.swift in Sources */,
 				39357F5723C0C155001B0387 /* FilterTagHeader.swift in Sources */,
 				391F764823BF4121008BDD0F /* UserViewVC.swift in Sources */,
@@ -542,6 +549,7 @@
 				39F7BA2D22E7090F00FDFF90 /* AppDelegate.swift in Sources */,
 				391AE0E422FAC9CF00E7F5BC /* FilterTagCell.swift in Sources */,
 				391AE0F122FACD7C00E7F5BC /* AlignedCollectionViewFlowLayout.swift in Sources */,
+				39E36DA223D8A65B0085E8F2 /* TranslationsViewVC.swift in Sources */,
 				397B626122EC2B6200B9CCEC /* SongLyric.swift in Sources */,
 				39DFB19022E8257A0013906D /* HomeViewVC.swift in Sources */,
 				39EB06E723C4FFEB00B6E38E /* ActiveFilterHeaderView.swift in Sources */,

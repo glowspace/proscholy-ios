@@ -28,7 +28,7 @@ extension Song {
         get {
             if let songLyrics = songLyrics?.allObjects as? [SongLyric] {
                 for songLyric in songLyrics {
-                    if songLyric.isOriginal {
+                    if songLyric.type == 0 {
                         return songLyric
                     }
                 }

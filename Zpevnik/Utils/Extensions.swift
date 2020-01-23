@@ -13,13 +13,17 @@ extension UIImage {
     static var add: UIImage? { return UIImage(named: "addIcon") }
     static var back: UIImage? { return UIImage(named: "backIcon") }
     static var clear: UIImage? { return UIImage(named: "clearIcon") }
+    static var downArrow: UIImage? { return UIImage(named: "downArrowIcon") }
     static var filter: UIImage? { return UIImage(named: "filterIcon") }
+    static var headset: UIImage? { return UIImage(named: "headsetIcon") }
     static var home: UIImage? { return UIImage(named: "homeIcon") }
     static var homeFilled: UIImage? { return UIImage(named: "homeIconFilled") }
+    static var leftArrow: UIImage? { return UIImage(named: "leftArrowIcon") }
     static var more: UIImage? { return UIImage(named: "moreIcon") }
     static var musicNotes: UIImage? { return UIImage(named: "musicNotesIcon") }
     static var person: UIImage? { return UIImage(named: "personIcon") }
     static var personFilled: UIImage? { return UIImage(named: "personIconFilled") }
+    static var rightArrow: UIImage? { return UIImage(named: "rightArrowIcon") }
     static var search: UIImage? { return UIImage(named: "searchIcon") }
     static var selectAll: UIImage? { return UIImage(named: "selectAllIcon") }
     static var share: UIImage? { return UIImage(named: "shareIcon") }
@@ -27,6 +31,7 @@ extension UIImage {
     static var star: UIImage? { return UIImage(named: "starIcon") }
     static var starFilled: UIImage? { return UIImage(named: "starIconFilled") }
     static var translate: UIImage? { return UIImage(named: "translateIcon") }
+    static var tune: UIImage? { return UIImage(named: "tuneIcon") }
     static var warning: UIImage? { return UIImage(named: "warningIcon" )}
     static var web: UIImage? { return UIImage(named: "webIcon") }
 }
@@ -37,6 +42,7 @@ extension UIColor {
     static var green: UIColor { return UIColor(named: "green") ?? .systemGreen }
     static var red: UIColor { return UIColor(named: "red") ?? .systemRed }
     static var yellow: UIColor { return UIColor(named: "yellow") ?? .systemYellow }
+    static var icon: UIColor { return UIColor(named: "icon") ?? .gray }
     
 }
 
@@ -128,17 +134,6 @@ extension UILabel {
                 return
             }
             font = UIFont.getFont(ofSize: font.pointSize)
-        }
-    }
-}
-
-class NavigationController : UINavigationController {
-    
-    override var preferredStatusBarStyle : UIStatusBarStyle {
-        if #available(iOS 13, *) {
-            return .default
-        } else {
-            return UserSettings.darkMode ? .lightContent : .default
         }
     }
 }

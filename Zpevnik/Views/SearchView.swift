@@ -41,9 +41,7 @@ class SearchView: UIView {
     
     func updateBorder() {
         if #available(iOS 13, *) {
-            layer.borderColor = UIColor.systemGray5.cgColor
-        } else {
-            layer.borderColor = UIColor.lightGray.cgColor
+            layer.borderColor = UIColor.separator.cgColor
         }
         
         layer.borderWidth = 1
@@ -57,10 +55,8 @@ class SearchView: UIView {
         leadingButton?.imageEdgeInsets = UIEdgeInsets(top: 6, left: 6, bottom: 6, right: 6)
         trailingButton?.imageEdgeInsets = UIEdgeInsets(top: 6, left: 6, bottom: 6, right: 6)
         
-        if #available(iOS 13, *) {
-            leadingButton?.tintColor = .systemGray2
-            trailingButton?.tintColor = .systemGray2
-        }
+        leadingButton?.tintColor = .icon
+        trailingButton?.tintColor = .icon
         
         if let leadingButton = leadingButton {
             leadingButton.translatesAutoresizingMaskIntoConstraints = false

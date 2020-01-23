@@ -12,7 +12,7 @@ class SongLyricView: UIView {
     
     let spacing: CGFloat = 16
     
-    private lazy var scrollView: UIScrollView = {
+    lazy var scrollView: UIScrollView = {
         let scrollView = UIScrollView()
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         
