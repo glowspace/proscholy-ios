@@ -32,7 +32,7 @@ class MenuVC: ViewController {
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[tableView]|", metrics: nil, views: ["tableView": tableView]))
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[tableView]|", metrics: nil, views: ["tableView": tableView]))
         
-        setTitle("Zpěvník pro scholy", iconImage: UIImage(named: "logo"))
+//        setTitle("Zpěvník pro scholy", iconImage: UIImage(named: "logo"))
 
         tableView.reloadData()
     }

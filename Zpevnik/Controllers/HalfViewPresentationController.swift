@@ -32,6 +32,12 @@ class HalfViewPresentationController: UIPresentationController {
         setViews()
     }
     
+    override func containerViewDidLayoutSubviews() {
+        super.containerViewDidLayoutSubviews()
+        
+        presentedView?.frame = frameOfPresentedViewInContainerView
+    }
+    
     override func presentationTransitionWillBegin() {
         super.presentationTransitionWillBegin()
         

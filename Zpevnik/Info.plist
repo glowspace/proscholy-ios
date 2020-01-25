@@ -2,6 +2,10 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>LSApplicationQueriesSchemes</key>
+	<array>
+	<string>spotify</string>
+	</array>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>cs</string>
 	<key>CFBundleDisplayName</key>
@@ -25,7 +29,7 @@
 			<string>Editor</string>
 			<key>CFBundleURLSchemes</key>
 			<array>
-				<string>com.googleusercontent.apps.810860144322-kl1siu1e1s4acvmr9jr97ar8q1uo1ok9</string>
+				<string>com.googleusercontent.apps.1053312555544-rubd9dm06da6qqv3dppg5ht7cqfrqqbp</string>
 			</array>
 		</dict>
 	</array>
@@ -45,6 +49,8 @@
 	<array>
 		<string>armv7</string>
 	</array>
+	<key>UIRequiresFullScreen</key>
+	<false/>
 	<key>UISupportedInterfaceOrientations</key>
 	<array>
 		<string>UIInterfaceOrientationPortrait</string>

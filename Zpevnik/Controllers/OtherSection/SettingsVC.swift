@@ -35,7 +35,7 @@ class SettingsVC: ViewController {
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[tableView]|", metrics: nil, views: ["tableView": tableView]))
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[tableView]|", metrics: nil, views: ["tableView": tableView]))
         
-        setTitle("Nastavení")
+//        setTitle("Nastavení")
         
         createCells()
     }

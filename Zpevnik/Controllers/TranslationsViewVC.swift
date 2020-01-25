@@ -12,7 +12,9 @@ enum SongLyricType: Int {
     case original, translation, authorizedTranslation
 }
 
-class TranslationsViewVC: VC {
+class TranslationsViewVC: ViewController {
+    
+    var delegate: SongLyricVC?
     
     var songLyric: SongLyric! {
         didSet {
@@ -103,7 +105,7 @@ extension TranslationsViewVC: UITableViewDataSource, UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return .leastNormalMagnitude
+        return 16
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
@@ -126,5 +128,19 @@ extension TranslationsViewVC: UITableViewDataSource, UITableViewDelegate {
         }
         
         return translations.count == 0 ? nil : TableViewHeader("Překlady", .green)
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let songLyric: SongLyric
+        
+        if indexPath.section == 0 {
+            songLyric = original
+        } else if indexPath.section == 1 {
+            songLyric = authorizedTranslations[indexPath.row]
+        } else {
+            songLyric = translations[indexPath.row]
+        }
+        
+        delegate?.songLyricTranslationChanged(songLyric)
     }
 }

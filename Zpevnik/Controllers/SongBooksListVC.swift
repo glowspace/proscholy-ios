@@ -90,7 +90,7 @@ extension SongBooksListVC: UICollectionViewDelegate, UICollectionViewDelegateFlo
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = collectionView.frame.width / 2 - 3 * spacing / 2
+        let width = collectionView.frame.width / (collectionView.frame.width > 600 ? 3 : 2) - 3 * spacing / 2
         
         return CGSize(width: width, height: 3 * width / 4 + 30)
     }

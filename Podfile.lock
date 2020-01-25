@@ -97,11 +97,13 @@ PODS:
   - nanopb/decode (0.3.9011)
   - nanopb/encode (0.3.9011)
   - PromisesObjC (1.2.8)
+  - YoutubePlayer-in-WKWebView (0.3.4)
 
 DEPENDENCIES:
   - Firebase/Analytics
   - Firebase/Auth
   - GoogleSignIn
+  - YoutubePlayer-in-WKWebView
 
 SPEC REPOS:
   trunk:
@@ -124,6 +126,7 @@ SPEC REPOS:
     - GTMSessionFetcher
     - nanopb
     - PromisesObjC
+    - YoutubePlayer-in-WKWebView
 
 SPEC CHECKSUMS:
   AppAuth: 73574f3013a1e65b9601a3ddc8b3158cce68c09d
@@ -145,7 +148,8 @@ SPEC CHECKSUMS:
   GTMSessionFetcher: cea130bbfe5a7edc8d06d3f0d17288c32ffe9925
   nanopb: 18003b5e52dab79db540fe93fe9579f399bd1ccd
   PromisesObjC: c119f3cd559f50b7ae681fa59dc1acd19173b7e6
+  YoutubePlayer-in-WKWebView: af2f5929fc78882d94bfdfeea999b661b78d9717
 
-PODFILE CHECKSUM: d3cf3e149fd695e14181b92a4f8f0e0d05bcdd22
+PODFILE CHECKSUM: de5ccb19f7f14f66e26e640c71278b23ea874cc4
 
 COCOAPODS: 1.8.4

@@ -3,11 +3,33 @@
     <entity name="Author" representedClassName="Author" syncable="YES" codeGenerationType="class">
         <attribute name="id" optional="YES" attributeType="String"/>
         <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="externals" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="External" inverseName="authors" inverseEntity="External"/>
         <relationship name="songLyrics" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SongLyric" inverseName="authors" inverseEntity="SongLyric"/>
+    </entity>
+    <entity name="External" representedClassName="External" syncable="YES" codeGenerationType="class">
+        <attribute name="id" optional="YES" attributeType="String"/>
+        <attribute name="mediaId" optional="YES" attributeType="String"/>
+        <attribute name="type" optional="YES" attributeType="Integer 32" usesScalarValueType="YES"/>
+        <attribute name="typeString" optional="YES" attributeType="String"/>
+        <relationship name="authors" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Author" inverseName="externals" inverseEntity="Author"/>
+        <relationship name="songLyric" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SongLyric" inverseName="externals" inverseEntity="SongLyric"/>
+    </entity>
+    <entity name="File" representedClassName="File" syncable="YES" codeGenerationType="class">
+        <attribute name="id" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <attribute name="typeString" optional="YES" attributeType="String"/>
+        <attribute name="url" optional="YES" attributeType="String"/>
+        <relationship name="songLyric" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="SongLyric" inverseName="files" inverseEntity="SongLyric"/>
     </entity>
     <entity name="Language" representedClassName="Language" syncable="YES" codeGenerationType="class">
         <attribute name="count" optional="YES" attributeType="Integer 16" defaultValueString="0" usesScalarValueType="YES"/>
         <attribute name="name" optional="YES" attributeType="String"/>
+    </entity>
+    <entity name="Playlist" representedClassName="Playlist" syncable="YES" codeGenerationType="class">
+        <attribute name="id" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="songLyrics" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SongLyric" inverseName="playlists" inverseEntity="SongLyric"/>
+        <relationship name="user" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="User" inverseName="playlists" inverseEntity="User"/>
     </entity>
     <entity name="Song" representedClassName="Song" syncable="YES" codeGenerationType="class">
         <attribute name="id" optional="YES" attributeType="String"/>
@@ -36,6 +58,9 @@
         <attribute name="name" attributeType="String"/>
         <attribute name="type" optional="YES" attributeType="Integer 16" usesScalarValueType="YES"/>
         <relationship name="authors" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Author" inverseName="songLyrics" inverseEntity="Author"/>
+        <relationship name="externals" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="External" inverseName="songLyric" inverseEntity="External"/>
+        <relationship name="files" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="File" inverseName="songLyric" inverseEntity="File"/>
+        <relationship name="playlists" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Playlist" inverseName="songLyrics" inverseEntity="Playlist"/>
         <relationship name="song" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Song" inverseName="songLyrics" inverseEntity="Song"/>
         <relationship name="songBookRecords" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SongBookRecord" inverseName="songLyric" inverseEntity="SongBookRecord"/>
         <relationship name="tags" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Tag" inverseName="songLyrics" inverseEntity="Tag"/>
@@ -48,13 +73,23 @@
         <relationship name="parent" optional="YES" maxCount="1" deletionRule="Nullify" destinationEntity="Tag" inverseName="children" inverseEntity="Tag"/>
         <relationship name="songLyrics" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="SongLyric" inverseName="tags" inverseEntity="SongLyric"/>
     </entity>
+    <entity name="User" representedClassName="User" syncable="YES" codeGenerationType="class">
+        <attribute name="email" optional="YES" attributeType="String"/>
+        <attribute name="id" optional="YES" attributeType="String"/>
+        <attribute name="name" optional="YES" attributeType="String"/>
+        <relationship name="playlists" optional="YES" toMany="YES" deletionRule="Nullify" destinationEntity="Playlist" inverseName="user" inverseEntity="Playlist"/>
+    </entity>
     <elements>
-        <element name="Author" positionX="-288" positionY="45" width="128" height="90"/>
+        <element name="Author" positionX="-288" positionY="45" width="128" height="103"/>
         <element name="Language" positionX="-288" positionY="72" width="128" height="75"/>
         <element name="Song" positionX="-279" positionY="81" width="128" height="90"/>
         <element name="SongBook" positionX="-505.38671875" positionY="-18.53125" width="128" height="133"/>
         <element name="SongBookRecord" positionX="-297" positionY="18" width="128" height="105"/>
-        <element name="SongLyric" positionX="-63" positionY="-18" width="128" height="193"/>
+        <element name="SongLyric" positionX="-63" positionY="-18" width="128" height="238"/>
         <element name="Tag" positionX="-297" positionY="45" width="128" height="133"/>
+        <element name="User" positionX="-297" positionY="72" width="128" height="103"/>
+        <element name="Playlist" positionX="-288" positionY="81" width="128" height="103"/>
+        <element name="External" positionX="-279" positionY="90" width="128" height="133"/>
+        <element name="File" positionX="-261" positionY="126" width="128" height="118"/>
     </elements>
 </model>

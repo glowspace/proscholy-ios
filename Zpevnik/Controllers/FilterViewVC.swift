@@ -8,11 +8,10 @@
 
 import UIKit
 
-class FilterVC: ViewController {
+class FilterViewVC: HalfViewController {
     
     private let spacing: CGFloat = 8
-    private let cornerRadius: CGFloat = 20
-    
+
     private let tags: [Tag] = {
         return CoreDataService.fetchData(predicate: NSPredicate(format: "isValid = true"), context: PersistenceService.backgroundContext) ?? []
     }()
@@ -60,18 +59,7 @@ class FilterVC: ViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        if #available(iOS 13, *) {
-            view.backgroundColor = .systemBackground
-        }
-        
         setViews()
-        
-        let rectShape = CAShapeLayer()
-        rectShape.bounds = view.bounds
-        rectShape.position = view.center
-        rectShape.path = UIBezierPath(roundedRect: view.bounds, byRoundingCorners: [.topLeft , .topRight], cornerRadii: CGSize(width: cornerRadius, height: cornerRadius)).cgPath
-
-        view.layer.mask = rectShape
     }
 
     private func setViews() {
@@ -90,7 +78,7 @@ class FilterVC: ViewController {
 
 // MARK: - UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
 
-extension FilterVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
+extension FilterViewVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     func numberOfSections(in collectionView: UICollectionView) -> Int {
         return dataSource?.headers.count ?? 0

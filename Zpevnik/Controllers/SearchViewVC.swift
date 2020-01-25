@@ -8,7 +8,7 @@
 
 import UIKit
 
-class SearchViewVC: VC {
+class SearchViewVC: ViewController {
     
     internal var isSearching = false
     

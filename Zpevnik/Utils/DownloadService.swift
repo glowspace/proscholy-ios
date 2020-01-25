@@ -47,11 +47,6 @@ class DownloadService {
     }
     
     static func updateSongs(_ updater: @escaping (String) -> Void, _ completionHandler: @escaping () -> Void) {
-        if !isUpdateNeeded() {
-            completionHandler()
-            return
-        }
-        
         if Reachability.networkIsReachableOverWifi() {
             do {
                 try download(updater, completionHandler)
@@ -78,7 +73,9 @@ class DownloadService {
                 Query(type: "songbook_records", fields: ["id", "number",
                      Query(type: "songbook", fields: ["id"])]),
                 Query(type: "authors", fields: ["id", "name"]),
-                Query(type: "tags", fields: ["id"])], arguments: songLyricsArguments),
+                Query(type: "tags", fields: ["id"]),
+                Query(type: "externals", fields: ["id", "public_name", "type", "type_string", "media_id"]),
+                Query(type: "files", fields: ["id", "name", "type_string", "download_url"])], arguments: songLyricsArguments),
             Query(type: "songbooks", fields: ["id", "name", "shortcut", "is_private", "color"]),
             Query(type: "tags", fields: ["id", "name",
                  Query(type: "parent_tag", fields: ["id"])])
@@ -95,8 +92,8 @@ class DownloadService {
         request.setValue("application/json; charset=utf-8", forHTTPHeaderField: "Content-Type")
         
         let sessionConfig = URLSessionConfiguration.default
-        sessionConfig.timeoutIntervalForRequest = 10.0
-        sessionConfig.timeoutIntervalForResource = 10.0
+        sessionConfig.timeoutIntervalForRequest = 30.0
+        sessionConfig.timeoutIntervalForResource = 30.0
         
         URLSession(configuration: sessionConfig).dataTask(with: request) { (data, response, error) in
             guard error == nil else {
@@ -212,6 +209,10 @@ class DownloadService {
                 
                 createAuthors(songLyricsData["authors"], forSongLyric: songLyric, context: context)
                 
+                createExternals(songLyricsData["externals"], forSongLyric: songLyric, context: context)
+                
+                createFiles(songLyricsData["files"], forSongLyric: songLyric, context: context)
+                
                 if let tagsData = songLyricsData["tags"] as? [[String: String]] {
                     for tagData in tagsData {
                         if let id = tagData["id"], let tag: Tag = CoreDataService.getObject(id: id, context: context) {
@@ -279,8 +280,8 @@ class DownloadService {
             }
         }
         
-        if let songLyricAuthor = songLyric.authors?.allObjects as? [Author] {
-            for author in songLyricAuthor {
+        if let songLyricAuthors = songLyric.authors?.allObjects as? [Author] {
+            for author in songLyricAuthors {
                 if !authors.contains(author) {
                     songLyric.removeFromAuthors(author)
                     context.delete(author)
@@ -289,9 +290,55 @@ class DownloadService {
         }
     }
     
+    private static func createExternals(_ data: Any?, forSongLyric songLyric: SongLyric, context: NSManagedObjectContext) {
+        guard let data = data as? [[String: Any]] else { return }
+        
+        var externals = [External]()
+        for externalData in data {
+            if let external = External.createFromDict(externalData, context) {
+                externals.append(external)
+                
+                external.songLyric = songLyric
+                songLyric.addToExternals(external)
+            }
+        }
+        
+        if let songLyricExternals = songLyric.externals?.allObjects as? [External] {
+            for external in songLyricExternals {
+                if !externals.contains(external) {
+                    songLyric.removeFromExternals(external)
+                    context.delete(external)
+                }
+            }
+        }
+    }
+    
+    private static func createFiles(_ data: Any?, forSongLyric songLyric: SongLyric, context: NSManagedObjectContext) {
+        guard let data = data as? [[String: Any]] else { return }
+        
+        var files = [File]()
+        for fileData in data {
+            if let file = File.createFromDict(fileData, context) {
+                files.append(file)
+                
+                file.songLyric = songLyric
+                songLyric.addToFiles(file)
+            }
+        }
+        
+        if let songLyricFiles = songLyric.files?.allObjects as? [File] {
+            for file in songLyricFiles {
+                if !files.contains(file) {
+                    songLyric.removeFromFiles(file)
+                    context.delete(file)
+                }
+            }
+        }
+    }
+    
     // MARK: - Help Functions
     
-    private static func isUpdateNeeded() -> Bool {
+    static func isUpdateNeeded() -> Bool {
         let defaults = UserDefaults.standard
         
         if let lastUpdate = defaults.string(forKey: "lastUpdate") {

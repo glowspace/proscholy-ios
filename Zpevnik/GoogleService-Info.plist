@@ -3,34 +3,34 @@
 <plist version="1.0">
 <dict>
 	<key>CLIENT_ID</key>
-	<string>810860144322-kl1siu1e1s4acvmr9jr97ar8q1uo1ok9.apps.googleusercontent.com</string>
+	<string>1053312555544-rubd9dm06da6qqv3dppg5ht7cqfrqqbp.apps.googleusercontent.com</string>
 	<key>REVERSED_CLIENT_ID</key>
-	<string>com.googleusercontent.apps.810860144322-kl1siu1e1s4acvmr9jr97ar8q1uo1ok9</string>
+	<string>com.googleusercontent.apps.1053312555544-rubd9dm06da6qqv3dppg5ht7cqfrqqbp</string>
 	<key>API_KEY</key>
-	<string>AIzaSyCgOJ_sHsxdvQuyQzPK1wQQSIVPJwJ4ULM</string>
+	<string>AIzaSyB6nG_9TVDdKTgv5NmkK4Mc4mk58ZBjihI</string>
 	<key>GCM_SENDER_ID</key>
-	<string>810860144322</string>
+	<string>1053312555544</string>
 	<key>PLIST_VERSION</key>
 	<string>1</string>
 	<key>BUNDLE_ID</key>
 	<string>cz.proscholy.id.Zpevnik</string>
 	<key>PROJECT_ID</key>
-	<string>zpevnik-proscholy</string>
+	<string>proscholycz</string>
 	<key>STORAGE_BUCKET</key>
-	<string>zpevnik-proscholy.appspot.com</string>
+	<string>proscholycz.appspot.com</string>
 	<key>IS_ADS_ENABLED</key>
-	<false></false>
+	<false/>
 	<key>IS_ANALYTICS_ENABLED</key>
-	<false></false>
+	<false/>
 	<key>IS_APPINVITE_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>IS_GCM_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>IS_SIGNIN_ENABLED</key>
-	<true></true>
+	<true/>
 	<key>GOOGLE_APP_ID</key>
-	<string>1:810860144322:ios:62a40c55b6ed3e2bb93d5b</string>
+	<string>1:1053312555544:ios:e5370d3eba3dc0a3f1c16d</string>
 	<key>DATABASE_URL</key>
-	<string>https://zpevnik-proscholy.firebaseio.com</string>
+	<string>https://proscholycz.firebaseio.com</string>
 </dict>
 </plist>

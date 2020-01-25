@@ -38,7 +38,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         UINavigationBar.appearance().tintColor = .icon
         
-//        AuthenticationService().prepare()
+        FirebaseApp.configure()
+        
+        GIDSignIn.sharedInstance().clientID = FirebaseApp.app()?.options.clientID
+        GIDSignIn.sharedInstance().delegate = self
         
         return true
     }
@@ -61,7 +64,63 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return self.restrictRotation
     }
     
+    func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
+        print(userActivity.userInfo)
+        
+        return false
+    }
+    
     func application(_ application: UIApplication, open url: URL, options: [UIApplication.OpenURLOptionsKey : Any]) -> Bool {
         return GIDSignIn.sharedInstance().handle(url)
+    }
+}
+
+// MARK: - Handling universal links
+
+//extension AppDelegate {
+//
+//    private func openView() {
+//        let navigationController = UINavigationController()
+//        let tabBarController = TabBarController()
+//        let songLyricVC = SongLyricVC()
+//
+//        songLyricVC.dataSource = SongLyricDataSource("")
+//        songLyricVC.dataSource.showAll() { }
+//        songLyricVC.dataSource.currentSongLyricIndex = 0
+//
+//        navigationController.pushViewController(tabBarController, animated: true)
+//        navigationController.pushViewController(songLyricVC, animated: true)
+//
+//        window?.rootViewController = navigationController
+//    }
+//}
+
+// MARK: - GIDSignInDelegate
+
+extension AppDelegate: GIDSignInDelegate {
+    
+    func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
+        guard error == nil else { return }
+        
+        guard let authentication = user.authentication else { return }
+        
+        let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken, accessToken: authentication.accessToken)
+        
+        Auth.auth().signIn(with: credential) { (authResult, error) in
+            if let error = error {
+                print(error)
+                return
+            }
+            
+            let currentUser = Auth.auth().currentUser
+            currentUser?.getIDTokenForcingRefresh(true) { idToken, error in
+                if let error = error {
+                    print(error)
+                    return;
+                }
+                
+                print(idToken)
+            }
+        }
     }
 }

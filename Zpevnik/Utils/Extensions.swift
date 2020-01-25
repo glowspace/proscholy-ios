@@ -44,6 +44,7 @@ extension UIColor {
     static var icon: UIColor { return UIColor(named: "icon") ?? .gray }
     static var inverted: UIColor { return UIColor(named: "inverted") ?? .black }
     static var red: UIColor { return UIColor(named: "red") ?? .systemRed }
+    static var spotifyGreen: UIColor { return UIColor(named: "spotifyGreen") ?? .systemGreen }
     static var yellow: UIColor { return UIColor(named: "yellow") ?? .systemYellow }
     
 }
@@ -54,6 +55,16 @@ extension UITableView {
         showsVerticalScrollIndicator = false
         scrollToRow(at: IndexPath(row: NSNotFound, section: 0), at: .top, animated: true)
         showsVerticalScrollIndicator = true
+    }
+}
+
+extension UITabBarController {
+    
+    func setTabBarHidden(_ hidden: Bool, animated: Bool) {
+        UIView.animate(withDuration: animated ? 0.3 : 0, animations: {
+            // + 1 to hide border
+            self.tabBar.frame.origin.y += (self.tabBar.frame.height + 1) * (hidden ? 1 : -1)
+        })
     }
 }
 

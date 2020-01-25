@@ -109,7 +109,11 @@ class SlidingView: UIView {
 extension SlidingView {
     
     @objc func buttonTapped(_ sender: UIButton) {
-        if sender == rollButton {
+        if sender == tuneButton {
+            delegate?.showTuneOptions()
+        } else if sender == headsetButton {
+            delegate?.showExternals()
+        } else if sender == rollButton {
             delegate?.toggleAutoScroll() { isAutoScrolling in
                 self.rollButton.setImage(isAutoScrolling ? UIImage.stop?.withRenderingMode(.alwaysTemplate) : UIImage.downArrow?.withRenderingMode(.alwaysTemplate), for: .normal)
             }

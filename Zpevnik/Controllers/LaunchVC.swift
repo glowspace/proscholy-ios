@@ -70,22 +70,20 @@ class LaunchVC: ViewController {
         view.addSubview(loadingIndicator)
         view.addSubview(progressInfoLabel)
         
-        let views = [
-            "titleImageView": titleImageView,
-            "loadingIndicator": loadingIndicator,
-            "progressInfoLabel": progressInfoLabel
-        ]
-        
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[backgroundImageView]|", metrics: nil, views: ["backgroundImageView": backgroundImageView]))
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[backgroundImageView]|", metrics: nil, views: ["backgroundImageView": backgroundImageView]))
         
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[titleImageView]-|", metrics: nil, views: ["titleImageView": titleImageView,]))
-        view.addConstraint(NSLayoutConstraint(item: loadingIndicator, attribute: .centerX, relatedBy: .equal, toItem: view, attribute: .centerX, multiplier: 1, constant: 0))
-        view.addConstraint(NSLayoutConstraint(item: progressInfoLabel, attribute: .centerX, relatedBy: .equal, toItem: view, attribute: .centerX, multiplier: 1, constant: 0))
-        view.addConstraint(NSLayoutConstraint(item: loadingIndicator, attribute: .centerY, relatedBy: .equal, toItem: view, attribute: .centerY, multiplier: 1, constant: 0))
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[titleImageView]", metrics: nil, views: views))
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[loadingIndicator]-[progressInfoLabel]", metrics: nil, views: views))
-        view.addConstraint(NSLayoutConstraint(item: titleImageView, attribute: .width, relatedBy: .equal, toItem: titleImageView, attribute: .height, multiplier: 505.0 / 153.0, constant: 0))
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[titleImageView]|", metrics: nil, views: ["titleImageView": titleImageView,]))
+        
+        loadingIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        progressInfoLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor).isActive = true
+        titleImageView.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
+        titleImageView.bottomAnchor.constraint(equalTo: view.centerYAnchor).isActive = true
+        
+        loadingIndicator.bottomAnchor.constraint(equalTo: progressInfoLabel.topAnchor, constant: -8).isActive = true
+        progressInfoLabel.bottomAnchor.constraint(equalTo: view.layoutMarginsGuide.bottomAnchor, constant: -16).isActive = true
+        
+        titleImageView.contentMode = .scaleAspectFit
         
         loadingIndicator.startAnimating()
     }
@@ -103,8 +101,7 @@ class LaunchVC: ViewController {
             }
         }) {
             DispatchQueue.main.async {
-                let vc = TabBarController()
-                UIApplication.shared.keyWindow?.rootViewController = vc
+                UIApplication.shared.keyWindow?.rootViewController = TabBarController()
             }
         }
     }

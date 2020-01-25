@@ -60,7 +60,7 @@ class AboutVC: ViewController {
         
         switch state {
         case .aboutSongBook:
-            setTitle("O Zpěvníku")
+//            setTitle("O Zpěvníku")
             
             let description = """
                 Zpěvník ProScholy.cz, který přichází na pomoc všem scholám, křesťanským kapelám, společenstvím a všem, kdo se chtějí modlit hudbou!
@@ -84,7 +84,7 @@ class AboutVC: ViewController {
             descriptionTextView.attributedText = attributedDescription
             break
         case .aboutApp:
-            setTitle("O Aplikaci")
+//            setTitle("O Aplikaci")
             
             var description = ""
             if let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {

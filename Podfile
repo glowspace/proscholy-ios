@@ -11,4 +11,6 @@ target 'Zpevnik' do
   pod 'Firebase/Auth'
   pod 'GoogleSignIn'
 
+  pod 'YoutubePlayer-in-WKWebView'
+
 end

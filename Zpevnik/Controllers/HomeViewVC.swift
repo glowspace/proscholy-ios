@@ -180,6 +180,9 @@ extension HomeViewVC {
         starButton.image = dataSource.toggleFavorites(indexPaths.map { $0.row} ) ? .starFilled : .star
         
         songList.reloadRows(at: indexPaths, with: .automatic)
+        for indexPath in indexPaths {
+            songList.selectRow(at: indexPath, animated: false, scrollPosition: .none)
+        }
     }
     
     @objc func addToList() {

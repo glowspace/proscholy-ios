@@ -18,6 +18,8 @@ class SongLyricView: UIView {
         
         scrollView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: 1.5 * spacing, right: 0)
         
+        scrollView.contentInsetAdjustmentBehavior = .never
+        
         return scrollView
     }()
     

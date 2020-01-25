@@ -156,13 +156,13 @@ extension SongListViewVC: FilterDelegate {
     @objc func showFilters() {
         halfViewPresentationManager.heightMultiplier = 1.0 / 2.0
         
-        let filterVC = FilterVC()
-        filterVC.dataSource = filterTagDataSource
+        let filterViewVC = FilterViewVC()
+        filterViewVC.dataSource = filterTagDataSource
         
-        filterVC.transitioningDelegate = halfViewPresentationManager
-        filterVC.modalPresentationStyle = .custom
+        filterViewVC.transitioningDelegate = halfViewPresentationManager
+        filterViewVC.modalPresentationStyle = .custom
         
-        present(filterVC, animated: true)
+        present(filterViewVC, animated: true)
     }
     
     func activeFiltersChanged() {

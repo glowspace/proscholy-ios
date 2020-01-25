@@ -38,6 +38,22 @@ extension SongLyric {
         return favoriteOrder > -1
     }
     
+    func hasTranslations() -> Bool {
+        return (song?.songLyrics?.count ?? 0) > 1
+    }
+    
+    func musicalNotesURL() -> URL? {
+        if let files = files?.allObjects as? [File] {
+            for file in files {
+                if file.typeString == "noty", let url = file.url {
+                    return URL(string: url)
+                }
+            }
+        }
+        
+        return nil
+    }
+    
     func getNumber(in songBook: SongBook) -> String? {
         if let songBookRecords = songBookRecords?.allObjects as? [SongBookRecord] {
             for songBookRecord in songBookRecords {
