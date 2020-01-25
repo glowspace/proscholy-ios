@@ -9,7 +9,7 @@
 import UIKit
 
 enum OptionsType {
-    case songLyric, songList, songListArchived
+    case songLyric, songList, songListArchived, settings
 }
 
 class OptionsDataSource: NSObject, UITableViewDataSource {
@@ -21,13 +21,16 @@ class OptionsDataSource: NSObject, UITableViewDataSource {
         switch(optionsType) {
         case .songLyric:
             titles = ["Přidat do seznamu", "Zpěvníky", "Noty", "Sdílet", "Otevřit na webu", "Nahlásit"]
-            icons = [.add, .songBook, .musicNotes, .share, .web, .warning]
+            icons = [.addPlaylist, .songBook, .musicNotes, .share, .web, .warning]
         case .songList:
             titles = [""]
             icons = []
         case .songListArchived:
             titles = [""]
             icons = []
+        case .settings:
+            titles = ["Nastavení", "Webová verze", "Zpětná vazba", "Přidat píseň", "O projektu", "O aplikaci"]
+            icons = [.settings, .web, .feedback, .add, .aboutProject, .aboutApp]
         }
     }
        

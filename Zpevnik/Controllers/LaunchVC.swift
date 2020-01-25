@@ -11,12 +11,7 @@ import UIKit
 class LaunchVC: ViewController {
     
     let backgroundImageView: UIImageView = {
-        let imageView: UIImageView
-        if #available(iOS 13, *) {
-            imageView = UIImageView(image: UIImage(named: "background"))
-        } else {
-            imageView = UIImageView(image: UIImage(named: UserSettings.darkMode ? "backgroundDark" : "background"))
-        }
+        let imageView = UIImageView(image: UIImage(named: "background"))
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         imageView.contentMode = .scaleAspectFill
@@ -26,12 +21,7 @@ class LaunchVC: ViewController {
     }()
     
     let titleImageView: UIImageView = {
-        let imageView: UIImageView
-        if #available(iOS 13, *) {
-            imageView = UIImageView(image: UIImage(named: "homeScreenTitle"))
-        } else {
-            imageView = UIImageView(image: UIImage(named: UserSettings.darkMode ? "homeScreenTitleDark" : "homeScreenTitle"))
-        }
+        let imageView = UIImageView(image: UIImage(named: "homeScreenTitle"))
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
         return imageView
@@ -48,12 +38,7 @@ class LaunchVC: ViewController {
     }()
     
     let loadingIndicator: UIActivityIndicatorView = {
-        let indicator: UIActivityIndicatorView
-        if #available(iOS 13, *) {
-            indicator = UIActivityIndicatorView()
-        } else {
-            indicator = UIActivityIndicatorView(style: UserSettings.darkMode ? .white : .gray)
-        }
+        let indicator = UIActivityIndicatorView()
         indicator.translatesAutoresizingMaskIntoConstraints = false
         
         return indicator

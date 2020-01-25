@@ -13,13 +13,13 @@ class SearchView: UIView {
     let leadingButton: UIButton?
     let trailingButton: UIButton?
     
-    lazy var searchField: TextField = {
-        let textField = TextField()
+    lazy var searchField: UITextField = {
+        let textField = UITextField()
         textField.translatesAutoresizingMaskIntoConstraints = false
         
         textField.contentVerticalAlignment = .center
         
-        textField.font = UIFont.getFont(ofSize: 20)
+        textField.font = UIFont.systemFont(ofSize: 20)
         textField.returnKeyType = .search
         
         textField.enablesReturnKeyAutomatically = true

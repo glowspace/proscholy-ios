@@ -29,12 +29,7 @@ class UserSettings {
             fontSize = min(max(fontSize, Constants.minFontSize), Constants.maxFontSize)
         }
     }
-    static var darkMode = false {
-        didSet {
-            prepareDarkMode(darkMode)
-        }
-    }
-    static var showBottomOptions = false
+    static var showBottomOptions = true
     
     static var favoriteOrderLast = 0
     
@@ -61,10 +56,6 @@ class UserSettings {
             fontSize = CGFloat(defaults.float(forKey: "fontSize"))
         }
         
-        if defaults.object(forKey: "darkMode") != nil {
-            darkMode = defaults.bool(forKey: "darkMode")
-        }
-        
         if defaults.object(forKey: "showBottomOptions") != nil {
             showBottomOptions = defaults.bool(forKey: "showBottomOptions")
         }
@@ -82,30 +73,7 @@ class UserSettings {
         defaults.set(showSliders, forKey: "showSliders")
         defaults.set(showChords, forKey: "showChords")
         defaults.set(fontSize, forKey: "fontSize")
-        defaults.set(darkMode, forKey: "darkMode")
         defaults.set(showBottomOptions, forKey: "showBottomOptions")
         defaults.set(favoriteOrderLast, forKey: "favoriteOrder")
-    }
-    
-    private static func prepareDarkMode(_ darkMode: Bool) {
-        if #available(iOS 13, *) { } else {
-            UINavigationBar.appearance().barTintColor = Constants.getMiddleColor()
-            UITabBar.appearance().barTintColor = Constants.getMiddleColor()
-            
-            UITableView.appearance().backgroundColor = Constants.getDarkColor() ?? .groupTableViewBackground
-            UITableView.appearance().separatorColor = Constants.getLightColor()
-            UITableViewCell.appearance().backgroundColor = Constants.getTableViewCellColor() ?? .white
-
-            UICollectionViewCell.appearance().backgroundColor = Constants.getMiddleColor() ?? .white
-
-            UITextView.appearance().backgroundColor = Constants.getDarkColor()
-            UITextView.appearance().textColor = darkMode ? .white : .black
-
-            UILabel.appearance().darkMode = darkMode
-
-            SearchView.appearance().backgroundColor = Constants.getMiddleColor() ?? .white
-
-            UITextField.appearance().textColor = darkMode ? .white : .black
-        }
     }
 }

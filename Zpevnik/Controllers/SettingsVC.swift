@@ -35,7 +35,7 @@ class SettingsVC: ViewController {
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[tableView]|", metrics: nil, views: ["tableView": tableView]))
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[tableView]|", metrics: nil, views: ["tableView": tableView]))
         
-//        setTitle("Nastavení")
+        navigationItem.title = "Nastavení"
         
         createCells()
     }
@@ -50,10 +50,7 @@ class SettingsVC: ViewController {
 //        cells.append(createSettingCell(title: "Posuvky", isOn: UserSettings.showSliders, action: #selector(slidersToggle)))
         cells.append(createSettingCell(title: "Akordy", isOn: UserSettings.showChords, action: #selector(showChordsToggle)))
         cells.append(createFontSizeCell())
-        if #available(iOS 13, *) { } else {
-            cells.append(createSettingCell(title: "Tmavý mód", isOn: UserSettings.darkMode, action: #selector(darkModeToggle)))
-        }
-//        cells.append(createSettingCell(title: "Zobrazit spodní nabídku", isOn: UserSettings.showBottomOptions, action: #selector(bottomOptionsToggle)))
+        cells.append(createSettingCell(title: "Zobrazit spodní nabídku", isOn: UserSettings.showBottomOptions, action: #selector(bottomOptionsToggle)))
     }
     
     private func createFontSizeCell() -> UITableViewCell {
@@ -70,12 +67,12 @@ class SettingsVC: ViewController {
         let minFontLabel = UILabel()
         minFontLabel.translatesAutoresizingMaskIntoConstraints = false
         minFontLabel.text = "A"
-        minFontLabel.font = UIFont.getFont(ofSize: CGFloat(Constants.minFontSize))
+        minFontLabel.font = UIFont.systemFont(ofSize: CGFloat(Constants.minFontSize))
         
         let maxFontLabel = UILabel()
         maxFontLabel.translatesAutoresizingMaskIntoConstraints = false
         maxFontLabel.text = "A"
-        maxFontLabel.font = UIFont.getFont(ofSize: CGFloat(Constants.maxFontSize))
+        maxFontLabel.font = UIFont.systemFont(ofSize: CGFloat(Constants.maxFontSize))
         
         cell.addSubview(label)
         cell.addSubview(slider)
@@ -136,19 +133,6 @@ class SettingsVC: ViewController {
         UserSettings.fontSize = CGFloat(slider.currentValue)
     }
     
-    @objc func darkModeToggle() {
-        UserSettings.darkMode = !UserSettings.darkMode
-        
-        setNeedsStatusBarAppearanceUpdate()
-        for controller in [navigationController, tabBarController] {
-            if let view = controller?.view {
-                let superview = view.superview
-                view.removeFromSuperview()
-                superview?.addSubview(view)
-            }
-        }
-    }
-    
     @objc func bottomOptionsToggle() {
         UserSettings.showBottomOptions = !UserSettings.showBottomOptions
     }
@@ -164,7 +148,7 @@ extension SettingsVC: UITableViewDelegate, UITableViewDataSource {
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         if #available(iOS 13, *) {
-            return section == 0 ? 1 : 2
+            return section == 0 ? 1 : 3
         } else {
             return section == 0 ? 1 : 3
         }

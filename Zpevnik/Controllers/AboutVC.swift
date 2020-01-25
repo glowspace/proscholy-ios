@@ -45,22 +45,12 @@ class AboutVC: ViewController {
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[descriptionTextView]-|", metrics: nil, views: ["descriptionTextView": descriptionTextView]))
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        if #available(iOS 13, *) {
-            view.backgroundColor = Constants.getDarkColor(traitCollection.userInterfaceStyle) ?? .groupTableViewBackground
-        } else {
-            view.backgroundColor = Constants.getDarkColor() ?? .groupTableViewBackground
-        }
-    }
-    
     private func setDescription() {
         guard let state = state else { return }
         
         switch state {
         case .aboutSongBook:
-//            setTitle("O Zpěvníku")
+            navigationItem.title = "O Zpěvníku"
             
             let description = """
                 Zpěvník ProScholy.cz, který přichází na pomoc všem scholám, křesťanským kapelám, společenstvím a všem, kdo se chtějí modlit hudbou!
@@ -72,9 +62,9 @@ class AboutVC: ViewController {
             
             let attributedDescription: NSMutableAttributedString
             if #available(iOS 12.0, *) {
-                attributedDescription = NSMutableAttributedString(string: description, attributes: [.font: UIFont.getFont(ofSize: 15), .foregroundColor: traitCollection.userInterfaceStyle == .dark ? UIColor.white : UIColor.black])
+                attributedDescription = NSMutableAttributedString(string: description, attributes: [.font: UIFont.systemFont(ofSize: 15), .foregroundColor: traitCollection.userInterfaceStyle == .dark ? UIColor.white : UIColor.black])
             } else {
-                attributedDescription = NSMutableAttributedString(string: description, attributes: [.font: UIFont.getFont(ofSize: 15), .foregroundColor: UIColor.black])
+                attributedDescription = NSMutableAttributedString(string: description, attributes: [.font: UIFont.systemFont(ofSize: 15), .foregroundColor: UIColor.black])
             }
             
             if let range = description.range(of: "České biskupské konference") {
@@ -84,7 +74,7 @@ class AboutVC: ViewController {
             descriptionTextView.attributedText = attributedDescription
             break
         case .aboutApp:
-//            setTitle("O Aplikaci")
+            navigationItem.title = "O Aplikaci"
             
             var description = ""
             if let currentVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String {
@@ -98,21 +88,17 @@ class AboutVC: ViewController {
             
             Na vývoji se stále pracuje.
             
-            Případné chyby, připomínky, nápady či postřehy k této aplikaci, prosím, uveďte na adresu patrikdobidobias@icloud.com
+            Případné chyby, připomínky, nápady či postřehy k této aplikaci, prosím, uveďte zde.
             """
             
             let attributedDescription: NSMutableAttributedString
             if #available(iOS 12.0, *) {
-                attributedDescription = NSMutableAttributedString(string: description, attributes: [.font: UIFont.getFont(ofSize: 15), .foregroundColor: traitCollection.userInterfaceStyle == .dark ? UIColor.white : UIColor.black])
+                attributedDescription = NSMutableAttributedString(string: description, attributes: [.font: UIFont.systemFont(ofSize: 15), .foregroundColor: traitCollection.userInterfaceStyle == .dark ? UIColor.white : UIColor.black])
             } else {
-                attributedDescription = NSMutableAttributedString(string: description, attributes: [.font: UIFont.getFont(ofSize: 15), .foregroundColor: UIColor.black])
+                attributedDescription = NSMutableAttributedString(string: description, attributes: [.font: UIFont.systemFont(ofSize: 15), .foregroundColor: UIColor.black])
             }
             
-            for version in ["1.0", "1.1", "1.2"] {
-                if let range = description.range(of: "Verze " + version) {
-                    attributedDescription.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: 18), range: NSRange(range, in: description))
-                }
-            }
+            attributedDescription.addAttribute(.link, value: "https://docs.google.com/forms/d/e/1FAIpQLSfI0143gkLBtMbWQnSa9nzpOoBNMokZrOIS5mUreSR41E_B7A/viewform?usp=pp_url&entry.1865829262=ano,+verzi+pro+iOS", range: NSRange(location: description.count - 4, length: 3))
             
             descriptionTextView.attributedText = attributedDescription
             break
@@ -125,7 +111,7 @@ class AboutVC: ViewController {
         if #available(iOS 13, *) {
             view.backgroundColor = Constants.getDarkColor(traitCollection.userInterfaceStyle) ?? .groupTableViewBackground
             
-            let attributedDescription = NSMutableAttributedString(string: descriptionTextView.attributedText.string, attributes: [.font: UIFont.getFont(ofSize: 15), .foregroundColor: traitCollection.userInterfaceStyle == .dark ? UIColor.white : UIColor.black])
+            let attributedDescription = NSMutableAttributedString(string: descriptionTextView.attributedText.string, attributes: [.font: UIFont.systemFont(ofSize: 15), .foregroundColor: traitCollection.userInterfaceStyle == .dark ? UIColor.white : UIColor.black])
             
             descriptionTextView.attributedText = attributedDescription
         }

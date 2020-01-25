@@ -14,7 +14,7 @@ class HomeViewVC: SongListViewVC {
     private var tableViewTopToView: NSLayoutConstraint?
     
     private lazy var starButton: UIBarButtonItem = { createBarButtonItem(image: .star, selector: #selector(toggleFavorite)) }()
-    private lazy var addToListButton: UIBarButtonItem = { createBarButtonItem(image: .add, selector: #selector(addToList)) }()
+    private lazy var addToListButton: UIBarButtonItem = { createBarButtonItem(image: .addPlaylist, selector: #selector(addToList)) }()
     private lazy var selectAllButton: UIBarButtonItem = { createBarButtonItem(image: .selectAll, selector: #selector(selectAllLyrics)) }()
     private lazy var cancelButton: UIBarButtonItem = { createBarButtonItem(image: .clear, selector: #selector(disableSelection)) }()
     
@@ -27,6 +27,8 @@ class HomeViewVC: SongListViewVC {
         dataSource.showAll {
             self.songList.reloadData()
         }
+        
+        songList.allowsMultipleSelectionDuringEditing = true
         
         let longPress = UILongPressGestureRecognizer(target: self, action: #selector(activateSongSelection(_: )))
         songList.addGestureRecognizer(longPress)

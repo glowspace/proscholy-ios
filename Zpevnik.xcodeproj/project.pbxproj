@@ -42,6 +42,7 @@
 		3997798E22F76A4A00CE6FF6 /* UserSettings.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3997798D22F76A4A00CE6FF6 /* UserSettings.swift */; };
 		3997799022F7714A00CE6FF6 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3997798F22F7714A00CE6FF6 /* Constants.swift */; };
 		399D062F22EF4FE1003C7D56 /* SearchView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 399D062E22EF4FE1003C7D56 /* SearchView.swift */; };
+		399D1FEB23DCBA3A00E5FB36 /* UserMenuVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 399D1FEA23DCBA3A00E5FB36 /* UserMenuVC.swift */; };
 		39A03CDB23DB49AD004E7B7C /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 39A03CDA23DB49AD004E7B7C /* GoogleService-Info.plist */; };
 		39A03CE023DBA4FE004E7B7C /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 39A03CDF23DBA4FE004E7B7C /* LaunchScreen.storyboard */; };
 		39A03CE623DC33B2004E7B7C /* External.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39A03CE523DC33B2004E7B7C /* External.swift */; };
@@ -117,6 +118,7 @@
 		3997798D22F76A4A00CE6FF6 /* UserSettings.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserSettings.swift; sourceTree = "<group>"; };
 		3997798F22F7714A00CE6FF6 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		399D062E22EF4FE1003C7D56 /* SearchView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SearchView.swift; sourceTree = "<group>"; };
+		399D1FEA23DCBA3A00E5FB36 /* UserMenuVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UserMenuVC.swift; sourceTree = "<group>"; };
 		39A03CDA23DB49AD004E7B7C /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		39A03CDF23DBA4FE004E7B7C /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = LaunchScreen.storyboard; sourceTree = "<group>"; };
 		39A03CE523DC33B2004E7B7C /* External.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = External.swift; sourceTree = "<group>"; };
@@ -177,16 +179,6 @@
 				3980061323C6572E0049ADC2 /* FilterTagDataSource.swift */,
 			);
 			path = DataSource;
-			sourceTree = "<group>";
-		};
-		397BADA423015CC600AB75FD /* OtherSection */ = {
-			isa = PBXGroup;
-			children = (
-				3939FA6D22FC129600F9AED1 /* AboutVC.swift */,
-				39DFB19722E86FCF0013906D /* MenuVC.swift */,
-				39CB0FDC22F70DA8001342E9 /* SettingsVC.swift */,
-			);
-			path = OtherSection;
 			sourceTree = "<group>";
 		};
 		397F1A6623BA369B0086CB9A /* View Components */ = {
@@ -315,6 +307,7 @@
 		39F7BA5222E74D1E00FDFF90 /* Controllers */ = {
 			isa = PBXGroup;
 			children = (
+				399D1FEA23DCBA3A00E5FB36 /* UserMenuVC.swift */,
 				39A03CEF23DC96AE004E7B7C /* MusicNotesVC.swift */,
 				3982AD4D233A317700EB0F8F /* FavoriteListVC.swift */,
 				3982AD4F233A317700EB0F8F /* SongBooksListVC.swift */,
@@ -330,8 +323,10 @@
 				391F764723BF4121008BDD0F /* UserViewVC.swift */,
 				39E36DA123D8A65A0085E8F2 /* TranslationsViewVC.swift */,
 				391F764B23BF60DB008BDD0F /* ViewController.swift */,
+				3939FA6D22FC129600F9AED1 /* AboutVC.swift */,
 				39F7BA5022E721FB00FDFF90 /* LaunchVC.swift */,
-				397BADA423015CC600AB75FD /* OtherSection */,
+				39DFB19722E86FCF0013906D /* MenuVC.swift */,
+				39CB0FDC22F70DA8001342E9 /* SettingsVC.swift */,
 				397B625E22EA25B400B9CCEC /* SongLyricVC.swift */,
 				39F7BA4622E70E9800FDFF90 /* TabBarController.swift */,
 			);
@@ -557,6 +552,7 @@
 				391AE0E422FAC9CF00E7F5BC /* FilterTagCell.swift in Sources */,
 				391AE0F122FACD7C00E7F5BC /* AlignedCollectionViewFlowLayout.swift in Sources */,
 				39E36DA223D8A65B0085E8F2 /* TranslationsViewVC.swift in Sources */,
+				399D1FEB23DCBA3A00E5FB36 /* UserMenuVC.swift in Sources */,
 				397B626122EC2B6200B9CCEC /* SongLyric.swift in Sources */,
 				39DFB19022E8257A0013906D /* HomeViewVC.swift in Sources */,
 				39EB06E723C4FFEB00B6E38E /* ActiveFilterHeaderView.swift in Sources */,

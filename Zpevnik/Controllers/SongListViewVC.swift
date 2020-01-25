@@ -36,8 +36,6 @@ class SongListViewVC: SearchViewVC {
             tableView.backgroundColor = .systemBackground
         }
         
-        tableView.allowsMultipleSelectionDuringEditing = true
-        
         return tableView
     }()
     

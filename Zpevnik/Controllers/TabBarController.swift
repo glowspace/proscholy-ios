@@ -16,14 +16,6 @@ class TabBarController: UITabBarController {
         case user
     }
     
-    override var preferredStatusBarStyle : UIStatusBarStyle {
-        if #available(iOS 13, *) {
-            return .default
-        } else {
-            return UserSettings.darkMode ? .lightContent : .default
-        }
-    }
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         

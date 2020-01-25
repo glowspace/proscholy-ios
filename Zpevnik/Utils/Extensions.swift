@@ -10,15 +10,20 @@ import UIKit
 
 extension UIImage {
     
+    static var aboutApp: UIImage? { return UIImage(named: "aboutAppIcon") }
+    static var aboutProject: UIImage? { return UIImage(named: "aboutProjectIcon") }
     static var add: UIImage? { return UIImage(named: "addIcon") }
+    static var addPlaylist: UIImage? { return UIImage(named: "addPlaylistIcon") }
     static var back: UIImage? { return UIImage(named: "backIcon") }
     static var clear: UIImage? { return UIImage(named: "clearIcon") }
     static var downArrow: UIImage? { return UIImage(named: "downArrowIcon") }
+    static var feedback: UIImage? { return UIImage(named: "feedbackIcon") }
     static var filter: UIImage? { return UIImage(named: "filterIcon") }
     static var headset: UIImage? { return UIImage(named: "headsetIcon") }
     static var home: UIImage? { return UIImage(named: "homeIcon") }
     static var homeFilled: UIImage? { return UIImage(named: "homeIconFilled") }
     static var leftArrow: UIImage? { return UIImage(named: "leftArrowIcon") }
+    static var menu: UIImage? { return UIImage(named: "menuIcon") }
     static var more: UIImage? { return UIImage(named: "moreIcon") }
     static var musicNotes: UIImage? { return UIImage(named: "musicNotesIcon") }
     static var person: UIImage? { return UIImage(named: "personIcon") }
@@ -26,6 +31,7 @@ extension UIImage {
     static var rightArrow: UIImage? { return UIImage(named: "rightArrowIcon") }
     static var search: UIImage? { return UIImage(named: "searchIcon") }
     static var selectAll: UIImage? { return UIImage(named: "selectAllIcon") }
+    static var settings: UIImage? { return UIImage(named: "settingsIcon") }
     static var share: UIImage? { return UIImage(named: "shareIcon") }
     static var songBook: UIImage? { return UIImage(named: "songBookIcon") }
     static var star: UIImage? { return UIImage(named: "starIcon") }
@@ -68,6 +74,16 @@ extension UITabBarController {
     }
 }
 
+extension String {
+    func capitalizingFirstLetter() -> String {
+        return prefix(1).uppercased() + self.lowercased().dropFirst()
+    }
+    
+    mutating func capitalizeFirstLetter() {
+        self = self.capitalizingFirstLetter()
+    }
+}
+
 extension NSRegularExpression {
     
     convenience init(_ pattern: String) {
@@ -107,50 +123,6 @@ extension UIColor {
     }
 }
 
-extension UIFont {
-    
-    static func getFont(ofSize size: CGFloat) -> UIFont {
-//        if UserSettings.serif, let font = UIFont(name: Constants.serifFont, size: size) {
-//            return font
-//        } else if let font = UIFont(name: Constants.sansSerifFont, size: size) {
-//            return font
-//        }
-
-        return .systemFont(ofSize: size)
-    }
-}
-
-extension UILabel {
-    
-    @objc var darkMode: Bool {
-        get {
-            return false
-        }
-        set(darkMode) {
-            if let text = text, ["Domů", "Zpěvníky", "Oblíbené", "Ostatní"].contains(text) {
-                return
-            }
-//            if darkMode {
-//                textColor = .white
-//            } else {
-//                textColor = .black
-//            }
-        }
-    }
-    
-    @objc var substituteFontName: String {
-        get {
-            return ""
-        }
-        set {
-            if superview is UIStackView {
-                return
-            }
-            font = UIFont.getFont(ofSize: font.pointSize)
-        }
-    }
-}
-
 extension UITextField {
     
     func updateFontSize() {
@@ -160,8 +132,9 @@ extension UITextField {
             var fontSize: CGFloat = self.font?.pointSize ?? 20
             
             while true {
-                if (placeholder as NSString).size(withAttributes: [.font: UIFont.getFont(ofSize: fontSize)]).width < frame.size.width {
-                    self.font = UIFont.getFont(ofSize: fontSize)
+                let font = UIFont.systemFont(ofSize: fontSize)
+                if (placeholder as NSString).size(withAttributes: [.font: font]).width < frame.size.width {
+                    self.font = font
                     break
                 }
                 
@@ -171,72 +144,6 @@ extension UITextField {
                 }
             }
         }
-    }
-}
-
-class TextField: UITextField {
-    
-    override func layoutSublayers(of layer: CALayer) {
-        super.layoutSublayers(of: layer)
-        
-        if #available(iOS 13, *) { } else {
-            if let clearButton = value(forKey: "_clearButton") as? UIButton {
-                let templateImage = clearButton.imageView?.image?.withRenderingMode(.alwaysTemplate)
-                clearButton.setImage(templateImage, for: .normal)
-                clearButton.tintColor = UserSettings.darkMode ? .white : .black
-            }
-        }
-    }
-    
-    override func draw(_ rect: CGRect) {
-        super.draw(rect)
-        
-        if #available(iOS 13, *) { } else {
-            if let placeholderLabel = value(forKey: "placeholderLabel") as? UILabel {
-                placeholderLabel.textColor = .lightGray
-            }
-        }
-    }
-    
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        
-        if #available(iOS 13, *) { } else {
-            keyboardAppearance = UserSettings.darkMode ? .dark : .default
-        }
-    }
-}
-
-class PaddingLabel: UILabel {
-    
-    var topInset: CGFloat = 0
-    var rightInset: CGFloat = 0
-    var bottomInset: CGFloat = 0
-    var leftInset: CGFloat = 0
-    
-    func setInsets(top: CGFloat? = nil, right: CGFloat? = nil, bottom: CGFloat? = nil, left: CGFloat? = nil) {
-        topInset = top ?? 0
-        rightInset = right ?? 0
-        bottomInset = bottom ?? 0
-        leftInset = left ?? 0
-    }
-    
-    override func drawText(in rect: CGRect) {
-        let insets = UIEdgeInsets(top: topInset, left: leftInset, bottom: bottomInset, right: rightInset)
-        
-        super.drawText(in: rect.inset(by: insets))
-    }
-    
-    override func sizeThatFits(_ size: CGSize) -> CGSize {
-        let size = super.sizeThatFits(size)
-        
-        return CGSize(width: size.width + rightInset + leftInset, height: size.height + topInset + bottomInset)
-    }
-    
-    override var intrinsicContentSize: CGSize {
-        let size = super.intrinsicContentSize
-        
-        return CGSize(width: size.width + leftInset + rightInset, height: size.height + topInset + bottomInset)
     }
 }
 
@@ -259,14 +166,4 @@ class TableViewCell: UITableViewCell {
 //    required init?(coder aDecoder: NSCoder) {
 //        fatalError("init(coder:) has not been implemented")
 //    }
-}
-
-extension String {
-    func capitalizingFirstLetter() -> String {
-        return prefix(1).uppercased() + self.lowercased().dropFirst()
-    }
-    
-    mutating func capitalizeFirstLetter() {
-        self = self.capitalizingFirstLetter()
-    }
 }

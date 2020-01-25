@@ -10,6 +10,8 @@ import UIKit
 
 class UserCell: UIView {
     
+    var delegate: UserViewVC?
+    
     var userName: String? {
         didSet {
             userNameLabel.text = userName
@@ -23,11 +25,16 @@ class UserCell: UIView {
         return label
     }()
     
-    private let settingsIcon: UIImageView = {
-        let imageView = UIImageView(image: )
-        imageView.translatesAutoresizingMaskIntoConstraints = false
+    private let menuIcon: UIButton = {
+        let button = UIButton()
+        button.translatesAutoresizingMaskIntoConstraints = false
         
-        return imageView
+        button.setImage(UIImage.menu?.withRenderingMode(.alwaysTemplate), for: .normal)
+        button.tintColor = .icon
+        
+        button.addTarget(self, action: #selector(showUserMenu), for: .touchUpInside)
+        
+        return button
     }()
     
     override init(frame: CGRect) {
@@ -38,14 +45,25 @@ class UserCell: UIView {
     
     private func setViews() {
         addSubview(userNameLabel)
+        addSubview(menuIcon)
         
         userNameLabel.leadingAnchor.constraint(equalToSystemSpacingAfter: leadingAnchor, multiplier: 1).isActive = true
         userNameLabel.topAnchor.constraint(equalToSystemSpacingBelow: topAnchor, multiplier: 1).isActive = true
         
-        
+        menuIcon.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8).isActive = true
+        menuIcon.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
     }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+}
+
+// MARK: Handlers
+
+extension UserCell {
+    
+    @objc func showUserMenu() {
+        delegate?.showUserMenu()
     }
 }

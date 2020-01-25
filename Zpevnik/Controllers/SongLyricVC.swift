@@ -102,19 +102,11 @@ class SongLyricVC: ViewController {
         setNavigationBar()
     }
     
-//    override func viewWillAppear(_ animated: Bool) {
-//        super.viewWillAppear(animated)
-//
-//        (UIApplication.shared.delegate as? AppDelegate)?.restrictRotation = .all
-//    }
-//
-//    override func viewWillDisappear(_ animated: Bool) {
-//        (UIApplication.shared.delegate as? AppDelegate)?.restrictRotation = .portrait
-//
-//        UIDevice.current.setValue(UIInterfaceOrientation.portrait.rawValue, forKey: "orientation")
-//
-//        super.viewWillDisappear(animated)
-//    }
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        bottomSlidingView.isHidden = !UserSettings.showBottomOptions
+    }
     
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
@@ -686,7 +678,7 @@ extension SongLyricVC: UIGestureRecognizerDelegate {
 //                }
 //            }
 //        }
-//        authorsLabel.font = .getFont(ofSize: CGFloat(UserSettings.fontSize))
+//        authorsLabel.font = .systemFont(ofSize: CGFloat(UserSettings.fontSize))
 //        authorsLabel.text = text
 //
 //        showLyrics()
@@ -819,13 +811,13 @@ extension SongLyricVC: UIGestureRecognizerDelegate {
 //        lyricsTextView.textContainerInset = UIEdgeInsets(top: (showChords && chords.count > 0) ? fontSize : 0, left: 0, bottom: 10, right: 0)
 //        lyricsTextView.layoutIfNeeded()
 //
-//        let fontHeight = ("Ú" as NSString).size(withAttributes: [.font: UIFont.getFont(ofSize: fontSize)]).height * 1.2
+//        let fontHeight = ("Ú" as NSString).size(withAttributes: [.font: UIFont.systemFont(ofSize: fontSize)]).height * 1.2
 //
 //        let style = NSMutableParagraphStyle()
 //        style.lineSpacing = (showChords && chords.count > 0) ? fontHeight : 0
 //
 //        let attributes: [NSAttributedString.Key: Any]
-//        attributes = [.paragraphStyle: style, .font : UIFont.getFont(ofSize: fontSize), .foregroundColor: textColor]
+//        attributes = [.paragraphStyle: style, .font : UIFont.systemFont(ofSize: fontSize), .foregroundColor: textColor]
 //
 //        var chordAttributes = attributes
 //        chordAttributes[.foregroundColor] = UIColor(red: 0, green: 122, blue: 255)

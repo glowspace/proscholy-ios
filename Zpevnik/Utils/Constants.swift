@@ -27,10 +27,10 @@ class Constants {
     @available(iOS 12.0, *)
     static func getTableViewCellColor(_ darkMode: UIUserInterfaceStyle) -> UIColor? { return darkMode == .dark ? UIColor(white: 0.1, alpha: 1) : nil }
     
-    static func getLightColor() -> UIColor? { return UserSettings.darkMode ? .darkGray : nil }
-    static func getMiddleColor() -> UIColor? { return UserSettings.darkMode ? UIColor(white: 0.15, alpha: 1) : nil }
-    static func getDarkColor() -> UIColor? { return UserSettings.darkMode ? UIColor(white: 0.05, alpha: 1) : nil }
-    static func getTableViewCellColor() -> UIColor? { return UserSettings.darkMode ? UIColor(white: 0.1, alpha: 1) : nil }
+//    static func getLightColor() -> UIColor? { return UserSettings.darkMode ? .darkGray : nil }
+//    static func getMiddleColor() -> UIColor? { return UserSettings.darkMode ? UIColor(white: 0.15, alpha: 1) : nil }
+//    static func getDarkColor() -> UIColor? { return UserSettings.darkMode ? UIColor(white: 0.05, alpha: 1) : nil }
+//    static func getTableViewCellColor() -> UIColor? { return UserSettings.darkMode ? UIColor(white: 0.1, alpha: 1) : nil }
     
     static let songsUpdateInterval: Double = 3600 * 12
 }
