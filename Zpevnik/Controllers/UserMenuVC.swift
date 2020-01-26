@@ -12,7 +12,7 @@ class UserMenuVC: HalfViewController {
     
     private let optionsDataSource = OptionsDataSource(.settings)
     
-    var delegate: UserViewVC?
+    var delegate: UserMenuDelegate?
     var user: User?
     
     private let userNameLabel: UILabel = {
@@ -32,13 +32,22 @@ class UserMenuVC: HalfViewController {
         tableView.register(MoreOptionsCell.self, forCellReuseIdentifier: "moreOptionsCell")
         
         tableView.separatorStyle = .none
-        tableView.alwaysBounceVertical = false
+        tableView.isScrollEnabled = false
+        
+        // disable all panning, so you can hide this view on iPad
+        for recognizer in tableView.gestureRecognizers! {
+            if recognizer.isEnabled && (recognizer is UIPanGestureRecognizer) {
+                recognizer.isEnabled = false
+            }
+        }
         
         return tableView
     }()
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
+        preferredContentSize = CGSize(width: 200, height: 325)
         
         userNameLabel.text = user?.name ?? "Nepřihlášený uživatel"
         
@@ -51,8 +60,8 @@ class UserMenuVC: HalfViewController {
         
         userNameLabel.leadingAnchor.constraint(equalToSystemSpacingAfter: view.leadingAnchor, multiplier: 2).isActive = true
         userNameLabel.topAnchor.constraint(equalToSystemSpacingBelow: view.topAnchor, multiplier: 2).isActive = true
-        menuTable.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0).isActive = true
-        menuTable.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -8).isActive = true
+        menuTable.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
+        menuTable.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         menuTable.topAnchor.constraint(equalToSystemSpacingBelow: userNameLabel.bottomAnchor, multiplier: 3).isActive = true
         menuTable.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
     }
@@ -67,7 +76,7 @@ extension UserMenuVC: UITableViewDelegate {
         
         switch indexPath.row {
             case 0:
-                delegate?.navigationController?.pushViewController(SettingsVC(), animated: true)
+                delegate?.presentViewController(SettingsVC(), animated: true)
                 self.dismiss(animated: true)
             case 1:
                 openURL("https://zpevnik.proscholy.cz")
@@ -78,12 +87,12 @@ extension UserMenuVC: UITableViewDelegate {
             case 4:
                 let aboutVC = AboutVC()
                 aboutVC.state = .aboutSongBook
-                delegate?.navigationController?.pushViewController(aboutVC, animated: true)
+                delegate?.presentViewController(aboutVC, animated: true)
                 self.dismiss(animated: true)
             case 5:
                 let aboutVC = AboutVC()
                 aboutVC.state = .aboutApp
-                delegate?.navigationController?.pushViewController(aboutVC, animated: true)
+                delegate?.presentViewController(aboutVC, animated: true)
                 self.dismiss(animated: true)
             default: break
         }
@@ -95,5 +104,16 @@ extension UserMenuVC: UITableViewDelegate {
         UIApplication.shared.open(url) { _ in
             self.dismiss(animated: true)
         }
+    }
+    
+    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
+             shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
+       // Do not begin the pan until the swipe fails.
+        
+//       if gestureRecognizer == self.swipeGesture &&
+//              otherGestureRecognizer == self.panGesture {
+//          return true
+//       }
+       return false
     }
 }

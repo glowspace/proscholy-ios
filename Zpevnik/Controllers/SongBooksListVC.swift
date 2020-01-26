@@ -23,6 +23,8 @@ class SongBooksListVC: SearchViewVC {
         
         if #available(iOS 13, *) {
             collectionView.backgroundColor = .systemBackground
+        } else {
+            collectionView.backgroundColor = .white
         }
         
         return collectionView
@@ -48,6 +50,12 @@ class SongBooksListVC: SearchViewVC {
         super.viewWillDisappear(animated)
         
         navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
+    
+    override func viewWillTransition(to size: CGSize, with coordinator: UIViewControllerTransitionCoordinator) {
+        super.viewWillTransition(to: size, with: coordinator)
+        
+        songBooksCollection.reloadData()
     }
     
     private func setViews() {
@@ -90,7 +98,8 @@ extension SongBooksListVC: UICollectionViewDelegate, UICollectionViewDelegateFlo
     }
     
     func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        let width = collectionView.frame.width / (collectionView.frame.width > 600 ? 3 : 2) - 3 * spacing / 2
+        let cellsPerRow = max(CGFloat(Int(collectionView.frame.width / (200 + spacing))), 2)
+        let width = collectionView.frame.width / cellsPerRow - 3 * spacing / 2
         
         return CGSize(width: width, height: 3 * width / 4 + 30)
     }

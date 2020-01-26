@@ -8,10 +8,6 @@
 
 import UIKit
 
-enum OptionsType {
-    case songLyric, songList, songListArchived, settings
-}
-
 class OptionsDataSource: NSObject, UITableViewDataSource {
     
     let titles: [String]

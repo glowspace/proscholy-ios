@@ -10,7 +10,7 @@ import UIKit
 
 class UserCell: UIView {
     
-    var delegate: UserViewVC?
+    var delegate: UserCellDelegate?
     
     var userName: String? {
         didSet {
@@ -48,7 +48,7 @@ class UserCell: UIView {
         addSubview(menuIcon)
         
         userNameLabel.leadingAnchor.constraint(equalToSystemSpacingAfter: leadingAnchor, multiplier: 1).isActive = true
-        userNameLabel.topAnchor.constraint(equalToSystemSpacingBelow: topAnchor, multiplier: 1).isActive = true
+        userNameLabel.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
         
         menuIcon.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -8).isActive = true
         menuIcon.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true

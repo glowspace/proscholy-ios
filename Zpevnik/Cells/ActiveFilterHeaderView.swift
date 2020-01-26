@@ -14,9 +14,7 @@ class ActiveFilterHeaderView: UIView {
         let imageView = UIImageView(image: .filter)
         imageView.translatesAutoresizingMaskIntoConstraints = false
         
-        if #available(iOS 13, *) {
-            imageView.tintColor = .systemGray2
-        }
+        imageView.tintColor = .gray2
         
         return imageView
     }()
@@ -29,6 +27,12 @@ class ActiveFilterHeaderView: UIView {
         collectionView.translatesAutoresizingMaskIntoConstraints = false
         
         collectionView.register(ClearAbleFilterTagCell.self, forCellWithReuseIdentifier: "clearableFilterTagCell")
+        
+        if #available(iOS 13, *) {
+            collectionView.backgroundColor = .systemBackground
+        } else {
+            collectionView.backgroundColor = .clear
+        }
         
         return collectionView
     }()

@@ -13,6 +13,8 @@ class HalfViewPresentationController: UIPresentationController {
     private let heightMultiplier: CGFloat
     private var dimmingView: UIView!
     
+    private var startingYLocation: CGFloat!
+    
     override var frameOfPresentedViewInContainerView: CGRect {
         guard let containerView = containerView else { return .zero }
         
@@ -74,7 +76,7 @@ class HalfViewPresentationController: UIPresentationController {
     }
     
     override func size(forChildContentContainer container: UIContentContainer, withParentContainerSize parentSize: CGSize) -> CGSize {
-        return CGSize(width: parentSize.width, height: parentSize.height * heightMultiplier)
+        return CGSize(width: parentSize.width, height: parentSize.height) // * heightMultiplier
     }
 }
 
@@ -82,19 +84,57 @@ private extension HalfViewPresentationController {
     
     func setViews() {
         setDimmingView()
+        
+        let pan = UIPanGestureRecognizer(target: self, action: #selector(didPan))
+        
+        pan.delaysTouchesBegan = false
+        pan.delaysTouchesEnded = false
+        
+        presentedView?.addGestureRecognizer(pan)
     }
     
     func setDimmingView() {
         dimmingView = UIView()
         dimmingView.translatesAutoresizingMaskIntoConstraints = false
         
-        if #available(iOS 13, *) {
-            dimmingView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
-        }
+        dimmingView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
         dimmingView.alpha = 0.0
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismiss))
         dimmingView.addGestureRecognizer(tap)
+    }
+    
+    @objc func didPan(_ panRecognizer: UIPanGestureRecognizer) {
+        let translation = panRecognizer.translation(in: presentedView)
+        let velocity = panRecognizer.velocity(in: presentedView)
+        
+        switch panRecognizer.state {
+        case .began:
+            startingYLocation = presentedView?.frame.minY ?? 0
+        case .changed :
+            if startingYLocation + translation.y > 30.0 {
+                presentedView?.frame.origin.y = startingYLocation + translation.y
+            }
+        case .ended :
+            if let safeAreaHeight = UIApplication.shared.keyWindow?.safeAreaLayoutGuide.layoutFrame.size.height { //}, let bottomPadding = UIApplication.shared.keyWindow?.safeAreaInsets.bottom {
+                
+                if velocity.y > 1500.0 {
+                    presentingViewController.dismiss(animated: true)
+                }
+                
+//                if (presentedView?.frame.origin.y ?? 0) < (safeAreaHeight + bottomPadding) * 0.25 {
+//
+//                } else
+                if (presentedView?.frame.origin.y ?? 0) < (safeAreaHeight) - 70 {
+                    UIView.animate(withDuration: 0.3) {
+                        self.presentedView?.frame.origin.y = self.startingYLocation
+                    }
+                } else {
+                    presentingViewController.dismiss(animated: true)
+                }
+            }
+        default: break
+        }
     }
     
     @objc func dismiss() {

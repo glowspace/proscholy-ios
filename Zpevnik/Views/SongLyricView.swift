@@ -84,7 +84,7 @@ class SongLyricView: UIView {
         
         songLyricNameLabel.topAnchor.constraint(equalToSystemSpacingBelow: scrollView.topAnchor, multiplier: 1.5).isActive = true
         lyricsTextView.topAnchor.constraint(equalToSystemSpacingBelow: songLyricNameLabel.bottomAnchor, multiplier: 1).isActive = true
-        authorsLabel.topAnchor.constraint(equalToSystemSpacingBelow: lyricsTextView.bottomAnchor, multiplier: 1).isActive = true
+        authorsLabel.topAnchor.constraint(equalToSystemSpacingBelow: lyricsTextView.bottomAnchor, multiplier: 3).isActive = true
         
         authorsLabel.bottomAnchor.constraint(equalTo: scrollView.bottomAnchor).isActive = true
         
@@ -93,15 +93,15 @@ class SongLyricView: UIView {
         authorsLabel.widthAnchor.constraint(equalTo: songLyricNameLabel.widthAnchor).isActive = true
     }
     
-    func updateSongLyric(_ songLyric: SongLyric?, _ verses: [Verse]?) {
-        guard let songLyric = songLyric else { return }
+    func updateSongLyric(_ songLyric: SongLyric!, _ verses: [Verse]?) {        
+        layoutIfNeeded()
 
         scrollView.showsVerticalScrollIndicator = false
         scrollView.setContentOffset(CGPoint(x: 0, y: -scrollView.adjustedContentInset.top), animated: false)
         scrollView.showsVerticalScrollIndicator = true
                 
         songLyricNameLabel.text = songLyric.name
-        authorsLabel.text = "Autor: TESST"
+        updateAuthorsText(songLyric)
         
         fontSizeChanged(verses)
     }
@@ -234,13 +234,56 @@ class SongLyricView: UIView {
                     layer.frame.origin.y = rect.origin.y - UserSettings.fontSize
                 }
                 
-                lyricsTextView.layer.addSublayer(layer)
+                if UserSettings.showChords {
+                    lyricsTextView.layer.addSublayer(layer)
+                }
             }
 
             index += verses[i].text.count
         }
         
         lyricsTextView.attributedText = textStorage
+    }
+    
+    private func updateAuthorsText(_ songLyric: SongLyric) {
+        let songLyricType = SongLyricType(rawValue: Int(songLyric.type))
+        var text = ""
+        
+        if songLyricType != .original {
+            if let song = songLyric.song, let original = song.original, let authors = original.authors?.allObjects as? [Author] {
+                text += "Originál: " + original.name! + "\n"
+                if authors.count == 1 {
+                    text += "Autor: " + authors[0].name!
+                } else if authors.count > 0 {
+                    text += "Autoři: "
+
+                    for (i, author) in authors.enumerated() {
+                        text += author.name!
+                        if i != authors.count - 1 {
+                            text += ", "
+                        }
+                    }
+                }
+                text += "\n"
+            }
+        }
+        
+        if let authors = songLyric.authors?.allObjects as? [Author] {
+            if authors.count == 1 {
+                text += "Autor" + (songLyricType == .original ? ": " : " překladu: ") + authors[0].name!
+            } else if authors.count > 0 {
+                text += "Autoři" + (songLyricType == .original ? ": " : " překladu: ")
+
+                for (i, author) in authors.enumerated() {
+                    text += author.name!
+                    if i != authors.count - 1 {
+                        text += ", "
+                    }
+                }
+            }
+        }
+        authorsLabel.text = text
+
     }
     
     private func removeOldTextLayers() {

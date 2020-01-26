@@ -10,8 +10,6 @@ import UIKit
 
 class SongListViewVC: SearchViewVC {
     
-    private let halfViewPresentationManager = HalfViewPresentationManager()
-    
     internal var dataSource: SongLyricDataSource!
     
     internal lazy var filterTagDataSource: FilterTagDataSource = {
@@ -68,15 +66,23 @@ extension SongListViewVC: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        return .leastNormalMagnitude
+        if dataSource.searchText.count > 0 && filterTagDataSource.activeFilters.count == 0 {
+            return .leastNormalMagnitude
+        }
+        
+        return tableView.sectionHeaderHeight
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        if filterTagDataSource.activeFilters.count > 0 {
+            return ActiveFilterHeaderView(dataSource: self, delegate: self)
+        }
+        
         return nil
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        guard let songLyric = dataSource.songLyric(at: indexPath.row) else { return }
+        let songLyric = dataSource.songLyric(at: indexPath.row)
         let songLyricVC = SongLyricVC()
     
         // TODO: MOVE
@@ -120,8 +126,6 @@ extension SongListViewVC {
                 self.songList.scrollToTop()
             }
         }
-        
-        searchView.trailingButton?.isEnabled = !isSearching
     }
     
     @objc override func searchTextChanged(sender: UITextField) {
@@ -157,10 +161,7 @@ extension SongListViewVC: FilterDelegate {
         let filterViewVC = FilterViewVC()
         filterViewVC.dataSource = filterTagDataSource
         
-        filterViewVC.transitioningDelegate = halfViewPresentationManager
-        filterViewVC.modalPresentationStyle = .custom
-        
-        present(filterViewVC, animated: true)
+        presentModally(filterViewVC, animated: true)
     }
     
     func activeFiltersChanged() {

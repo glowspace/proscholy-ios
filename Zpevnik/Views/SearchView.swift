@@ -46,6 +46,8 @@ class SearchView: UIView {
     func updateBorder() {
         if #available(iOS 13, *) {
             layer.borderColor = UIColor.separator.cgColor
+        } else {
+            layer.borderColor = UIColor(white: 0.2, alpha: 1).cgColor
         }
         
         layer.borderWidth = 1

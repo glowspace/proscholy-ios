@@ -31,9 +31,7 @@ class ClearAbleFilterTagCell: UICollectionViewCell {
         button.translatesAutoresizingMaskIntoConstraints = false
         
         button.setImage(UIImage.clear?.withRenderingMode(.alwaysTemplate), for: .normal)
-        if #available(iOS 13, *) {
-            button.tintColor = .systemGray2
-        }
+        button.tintColor = .gray2
         
         button.addTarget(self, action: #selector(clearFilter), for: .touchUpInside)
         
@@ -55,9 +53,7 @@ class ClearAbleFilterTagCell: UICollectionViewCell {
         clipsToBounds = true
         layer.borderWidth = 1
         
-        if #available(iOS 13, *) {
-            layer.borderColor = UIColor.systemGray5.cgColor
-        }
+        layer.borderColor = UIColor.gray5.cgColor
     }
     
     private func setViews() {
@@ -118,9 +114,7 @@ class FilterTagCell: UICollectionViewCell {
         clipsToBounds = true
         layer.borderWidth = 1
         
-        if #available(iOS 13, *) {
-            layer.borderColor = UIColor.systemGray2.cgColor
-        }
+        layer.borderColor = UIColor.gray2.cgColor
     }
     
     func setBackgroundColor(_ color: UIColor) {

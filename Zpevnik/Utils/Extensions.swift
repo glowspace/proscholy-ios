@@ -47,12 +47,57 @@ extension UIColor {
     
     static var blue: UIColor { return UIColor(named: "blue") ?? .systemBlue }
     static var green: UIColor { return UIColor(named: "green") ?? .systemGreen }
+    static var gray2: UIColor {
+        if #available(iOS 13, *) {
+            return .systemGray2
+        } else {
+            return UIColor(white: 0.7, alpha: 1)
+        }
+    }
+    static var gray4: UIColor {
+        if #available(iOS 13, *) {
+            return .systemGray4
+        } else {
+            return UIColor(white: 0.8, alpha: 1)
+        }
+    }
+    static var gray5: UIColor {
+        if #available(iOS 13, *) {
+            return .systemGray5
+        } else {
+            return UIColor(white: 0.9, alpha: 1)
+        }
+    }
     static var icon: UIColor { return UIColor(named: "icon") ?? .gray }
     static var inverted: UIColor { return UIColor(named: "inverted") ?? .black }
     static var red: UIColor { return UIColor(named: "red") ?? .systemRed }
     static var spotifyGreen: UIColor { return UIColor(named: "spotifyGreen") ?? .systemGreen }
     static var yellow: UIColor { return UIColor(named: "yellow") ?? .systemYellow }
     
+}
+
+extension UITextField {
+    
+    func updateFontSize() {
+        self.layoutIfNeeded()
+        
+        if let placeholder = self.placeholder {
+            var fontSize: CGFloat = self.font?.pointSize ?? 20
+            
+            while true {
+                let font = UIFont.systemFont(ofSize: fontSize)
+                if (placeholder as NSString).size(withAttributes: [.font: font]).width < frame.size.width {
+                    self.font = font
+                    break
+                }
+                
+                fontSize -= 1
+                if fontSize == 0 {
+                    break
+                }
+            }
+        }
+    }
 }
 
 extension UITableView {
@@ -99,71 +144,5 @@ extension NSRegularExpression {
 
 // MARK: - OLD
 
-extension UIColor {
-    convenience init(red: Int, green: Int, blue: Int) {
-        self.init(red: CGFloat(red) / 255.0, green: CGFloat(green) / 255.0, blue: CGFloat(blue) / 255.0, alpha: 1.0)
-    }
-
-    static func from(hex: String?) -> UIColor {
-        let hex = hex ?? "#303F9F"
-        var cString: String = hex.trimmingCharacters(in: .whitespacesAndNewlines).uppercased()
-
-        if(cString.hasPrefix("#")) {
-            cString.remove(at: cString.startIndex)
-        }
-
-        if(cString.count != 6) {
-            return .red
-        }
-
-        var rgbValue:UInt32 = 0
-        Scanner(string: cString).scanHexInt32(&rgbValue)
-
-        return UIColor(red: Int((rgbValue & 0xFF0000) >> 16), green: Int((rgbValue & 0x00FF00) >> 8), blue: Int(rgbValue & 0x0000FF))
-    }
-}
-
-extension UITextField {
-    
-    func updateFontSize() {
-        self.layoutIfNeeded()
-        
-        if let placeholder = self.placeholder {
-            var fontSize: CGFloat = self.font?.pointSize ?? 20
-            
-            while true {
-                let font = UIFont.systemFont(ofSize: fontSize)
-                if (placeholder as NSString).size(withAttributes: [.font: font]).width < frame.size.width {
-                    self.font = font
-                    break
-                }
-                
-                fontSize -= 1
-                if fontSize == 0 {
-                    break
-                }
-            }
-        }
-    }
-}
-
 class TableViewCell: UITableViewCell {
-    
-//    override func draw(_ rect: CGRect) {
-//        super.draw(rect)
-        
-//        if #available(iOS 13, *) { } else {
-//            selectedBackgroundView?.backgroundColor = Constants.getMiddleColor() ?? UIColor(white: 0.85, alpha: 1)
-//        }
-//    }
-    
-//    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
-//        super.init(style: style, reuseIdentifier: reuseIdentifier)
-//
-//        selectedBackgroundView = UIView()
-//    }
-//
-//    required init?(coder aDecoder: NSCoder) {
-//        fatalError("init(coder:) has not been implemented")
-//    }
 }

@@ -33,6 +33,8 @@ class ExternalsViewVC: HalfViewController {
         
         if #available(iOS 13, *) {
             collectionView.backgroundColor = .systemBackground
+        } else {
+            collectionView.backgroundColor = .white
         }
         
         return collectionView

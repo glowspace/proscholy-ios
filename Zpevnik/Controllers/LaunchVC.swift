@@ -41,6 +41,10 @@ class LaunchVC: ViewController {
         let indicator = UIActivityIndicatorView()
         indicator.translatesAutoresizingMaskIntoConstraints = false
         
+        if #available(iOS 13, *) { } else {
+            indicator.tintColor = .inverted
+        }
+        
         return indicator
     }()
     

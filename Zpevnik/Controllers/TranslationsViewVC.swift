@@ -8,13 +8,9 @@
 
 import UIKit
 
-enum SongLyricType: Int {
-    case original, translation, authorizedTranslation
-}
-
 class TranslationsViewVC: ViewController {
     
-    var delegate: SongLyricVC?
+    var delegate: TranslationDelegate?
     
     var songLyric: SongLyric! {
         didSet {

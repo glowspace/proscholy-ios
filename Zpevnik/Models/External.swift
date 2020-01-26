@@ -29,36 +29,32 @@ extension External {
 extension External {
     
     func createView() -> UIView? {
-        guard let typeString = typeString else { return nil }
+        guard let typeString = typeString, let type = SupportedExternals(rawValue: typeString) else { return nil }
         
-        switch typeString {
-        case "youtube":
+        switch type {
+        case .youtube:
             return createYoutubeView()
-        case "spotify URI":
+        case .spotify:
             return createSpotifyView()
-        default: break
         }
-        
-        return nil
     }
     
     func size(_ maxWidth: CGFloat, _ spacing: CGFloat) -> CGSize {
-        guard let typeString = typeString else { return .zero }
+        guard let typeString = typeString, let type = SupportedExternals(rawValue: typeString) else { return .zero }
         
         var width: CGFloat = 0, height: CGFloat = 0
         
-        switch typeString {
-        case "youtube":
+        switch type {
+        case .youtube:
             width = min(300, maxWidth - 2 * spacing)
             height = width * 3 / 4
-        case "spotify URI":
+        case .spotify:
             guard let url = URL(string: "spotify:track:\(mediaId ?? "")") else { return .zero }
            
             if UIApplication.shared.canOpenURL(url) {
                 width = min(200, maxWidth - 2 * spacing)
                 height = 50
             }
-        default: break
         }
         
         return CGSize(width: width, height: height)

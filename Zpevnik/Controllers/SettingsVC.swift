@@ -147,11 +147,7 @@ extension SettingsVC: UITableViewDelegate, UITableViewDataSource {
     }
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        if #available(iOS 13, *) {
-            return section == 0 ? 1 : 3
-        } else {
-            return section == 0 ? 1 : 3
-        }
+        return section == 0 ? 1 : 3
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {

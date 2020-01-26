@@ -10,7 +10,7 @@ import UIKit
 
 class SlidingView: UIView {
     
-    private let cornerRadius: CGFloat = 15
+    private let cornerRadius: CGFloat = 18
     let width: CGFloat = 150
     let collapsedWidth: CGFloat = 40
     let height: CGFloat = 36
@@ -26,11 +26,11 @@ class SlidingView: UIView {
         return button
     }()
     
-    private var collapsed = true
+    var collapsed = true
     
     private var toggleButtonLeadingConstraint: NSLayoutConstraint?
     
-    var delegate: SongLyricVC!
+    var delegate: SlideViewDelegate?
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -39,30 +39,21 @@ class SlidingView: UIView {
         
         if #available(iOS 13, *) {
             backgroundColor = .systemBackground
+        } else {
+            backgroundColor = .white
         }
+        
+        layer.cornerRadius = cornerRadius
+        layer.maskedCorners = [.layerMinXMinYCorner, .layerMinXMaxYCorner]
+        layer.borderColor = UIColor.gray4.cgColor
+        layer.borderWidth = 1
         
         setViews()
     }
     
-    func setBorder() {
-        layoutIfNeeded()
-
-        let rectShape = CAShapeLayer()
-        rectShape.bounds = bounds
-        rectShape.position = CGPoint(x: collapsedWidth / 2, y: height / 2)
-        rectShape.path = UIBezierPath(roundedRect: CGRect(origin: .zero, size: CGSize(width: width, height: height)), byRoundingCorners: [.topLeft , .bottomLeft], cornerRadii: CGSize(width: cornerRadius, height: cornerRadius)).cgPath
-
-        layer.mask = rectShape
-
-        if #available(iOS 13, *) {
-            let borderLayer = CAShapeLayer()
-            borderLayer.path = rectShape.path
-            borderLayer.lineWidth = 1
-            borderLayer.strokeColor = UIColor.systemGray4.cgColor
-            borderLayer.fillColor = UIColor.clear.cgColor
-            borderLayer.frame = borderLayer.bounds
-            layer.addSublayer(borderLayer)
-        }
+    func shouldUpdateButtonsState() {
+        headsetButton.isEnabled = delegate?.songLyricHasSupportedExternals() ?? true
+        rollButton.isEnabled = !(delegate?.canScroll() ?? false)
     }
     
     private func setViews() {
@@ -123,11 +114,8 @@ extension SlidingView {
     }
     
     private func toggle() {
-        if self.collapsed {
-            delegate?.slideViewWidthConstraint?.constant = width
-        } else {
+        if !collapsed {
             toggleButtonLeadingConstraint?.isActive = false
-            delegate?.slideViewWidthConstraint?.constant = collapsedWidth
         }
         
         delegate?.toggleSlideView(animations: {

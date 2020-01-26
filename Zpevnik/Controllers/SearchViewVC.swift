@@ -52,6 +52,9 @@ extension SearchViewVC: UITextFieldDelegate {
         if isSearching {
             isSearching = false
             
+            searchView.leadingButton?.setImage(.search, for: .normal)
+            searchView.trailingButton?.isEnabled = true
+            
             searchView.searchField.resignFirstResponder()
             searchView.searchField.text = ""
             searchView.searchField.clearButtonMode = .never
@@ -66,6 +69,7 @@ extension SearchViewVC: UITextFieldDelegate {
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
         searchView.leadingButton?.setImage(.back, for: .normal)
+        searchView.trailingButton?.isEnabled = false
         isSearching = true
     }
     

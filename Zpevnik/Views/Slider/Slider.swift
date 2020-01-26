@@ -15,9 +15,9 @@ class Slider: UIControl {
     let maximumValue: Float
     var currentValue: Float
     
-    var trackTintColor = UIColor(white: 0.9, alpha: 1.0)
-    var trackHighlightTintColor = UIColor(red: 0, green: 122, blue: 255)
-    var thumbTintColor = UIColor.white
+    var trackTintColor: UIColor
+    var trackHighlightTintColor: UIColor
+    var thumbTintColor: UIColor
     
     var curvaceousness : CGFloat = 1.0
     
@@ -87,12 +87,15 @@ class Slider: UIControl {
         self.minimumValue = minimumValue
         self.maximumValue = maximumValue
         
+        trackTintColor = .gray5
+        thumbTintColor = .white
+        trackHighlightTintColor = .blue
+        
         super.init(frame: CGRect.zero)
         
         trackLayer.contentsScale = UIScreen.main.scale
         trackLayer.slider = self
         layer.addSublayer(trackLayer)
-        
         
         thumbLayer.contentsScale = UIScreen.main.scale
         thumbLayer.slider = self

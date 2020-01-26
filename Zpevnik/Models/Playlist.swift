@@ -21,4 +21,16 @@ extension Playlist {
         
         return playlist
     }
+    
+    static func create(_ id: String, _ name: String, _ user: User) -> Playlist? {
+        guard let entityName = Playlist.entity().name, let playlist = NSEntityDescription.insertNewObject(forEntityName: entityName, into: PersistenceService.backgroundContext) as? Playlist else { return nil }
+        
+        playlist.id = id
+        playlist.name = name
+        playlist.user = user
+        
+        user.addToPlaylists(playlist)
+        
+        return playlist
+    }
 }

@@ -91,21 +91,9 @@ class HomeViewVC: SongListViewVC {
 
 extension HomeViewVC {
     
-    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if dataSource.searchText.count > 0 { //} && dataSource.activeFilters.count == 0 {
-            return .leastNormalMagnitude
-        }
-
-        return tableView.sectionHeaderHeight
-    }
-    
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         if dataSource.searchText.count > 0 {
-            if filterTagDataSource.activeFilters.count > 0 {
-                return ActiveFilterHeaderView(dataSource: self, delegate: self)
-            }
-            
-            return nil
+            return super.tableView(tableView, viewForHeaderInSection: section)
         }
         
         if isSearching {
@@ -116,11 +104,9 @@ extension HomeViewVC {
             return TableViewHeader("Nedávno vyhledané", .gray)
         }
         
-        if filterTagDataSource.activeFilters.count > 0 {
-            return ActiveFilterHeaderView(dataSource: self, delegate: self)
-        }
+        let header = super.tableView(tableView, viewForHeaderInSection: section)
         
-        return TableViewHeader("Abecední seznam všech písní", .blue)
+        return header == nil ? TableViewHeader("Abecední seznam všech písní", .blue) : header
     }
     
     override func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
@@ -188,7 +174,14 @@ extension HomeViewVC {
     }
     
     @objc func addToList() {
+        guard let indexPaths = songList.indexPathsForSelectedRows else { return }
         
+        halfViewPresentationManager.heightMultiplier = 1.0 / 2.0
+        
+        let addToPLaylistVC = AddToPlaylistVC()
+        addToPLaylistVC.songLyrics = dataSource.songLyrics(at: indexPaths.map { $0.row })
+        
+        presentModally(addToPLaylistVC, animated: true)
     }
     
     @objc func selectAllLyrics() {

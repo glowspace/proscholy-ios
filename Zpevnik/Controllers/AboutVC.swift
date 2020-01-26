@@ -8,10 +8,6 @@
 
 import UIKit
 
-enum AboutState {
-    case aboutSongBook, aboutApp
-}
-
 class AboutVC: ViewController {
     
     lazy var descriptionTextView: UITextView = {
@@ -23,7 +19,6 @@ class AboutVC: ViewController {
         textView.delegate = self
         
         textView.isEditable = false
-        textView.dataDetectorTypes = [.link]
         
         textView.textContainer.lineBreakMode = .byWordWrapping
         
@@ -57,7 +52,7 @@ class AboutVC: ViewController {
 
                 Projekt vzniká se svolením České biskupské konference.
 
-                Další informace o stavu a rozvoji projektu naleznete na https://zpevnik.proscholy.cz
+                Další informace o stavu a rozvoji projektu naleznete na https://zpevnik.proscholy.cz.
                 """
             
             let attributedDescription: NSMutableAttributedString
@@ -67,8 +62,16 @@ class AboutVC: ViewController {
                 attributedDescription = NSMutableAttributedString(string: description, attributes: [.font: UIFont.systemFont(ofSize: 15), .foregroundColor: UIColor.black])
             }
             
+            if let range = description.range(of: "ProScholy.cz") {
+                attributedDescription.addAttribute(.link, value: "https://zpevnik.proscholy.cz", range: NSRange(range, in: description))
+            }
+            
             if let range = description.range(of: "České biskupské konference") {
                 attributedDescription.addAttribute(.font, value: UIFont.boldSystemFont(ofSize: 18), range: NSRange(range, in: description))
+            }
+            
+            if let range = description.range(of: "https://zpevnik.proscholy.cz") {
+                attributedDescription.addAttribute(.link, value: "https://zpevnik.proscholy.cz", range: NSRange(range, in: description))
             }
             
             descriptionTextView.attributedText = attributedDescription
@@ -104,23 +107,13 @@ class AboutVC: ViewController {
             break
         }
     }
-    
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-
-        if #available(iOS 13, *) {
-            view.backgroundColor = Constants.getDarkColor(traitCollection.userInterfaceStyle) ?? .groupTableViewBackground
-            
-            let attributedDescription = NSMutableAttributedString(string: descriptionTextView.attributedText.string, attributes: [.font: UIFont.systemFont(ofSize: 15), .foregroundColor: traitCollection.userInterfaceStyle == .dark ? UIColor.white : UIColor.black])
-            
-            descriptionTextView.attributedText = attributedDescription
-        }
-    }
 }
 
 extension AboutVC: UITextViewDelegate {
     
     func textView(_ textView: UITextView, shouldInteractWith URL: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
-        return true
+        UIApplication.shared.open(URL)
+        
+        return false
     }
 }

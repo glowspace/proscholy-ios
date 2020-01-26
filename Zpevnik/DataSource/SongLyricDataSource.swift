@@ -25,7 +25,7 @@ class SongBooksSongLyricDataSource: SongLyricDataSource {
         guard let records = songBook.records?.allObjects as? [SongBookRecord] else { return }
         
         for record in records {
-            if let songLyric = record.songLyric {
+            if let songLyric = record.songLyric, songLyric.lyrics != nil {
                 allSongLyrics.append(songLyric)
             }
         }
@@ -102,8 +102,18 @@ class SongLyricDataSource: NSObject {
         return !favorite
     }
     
-    func songLyric(at index: Int) -> SongLyric? {
+    func songLyric(at index: Int) -> SongLyric {
         return showingSongLyrics[index]
+    }
+    
+    func songLyrics(at indexes: [Int]) -> [SongLyric] {
+        var songLyrics = [SongLyric]()
+        
+        for index in indexes {
+            songLyrics.append(showingSongLyrics[index])
+        }
+        
+        return songLyrics
     }
 }
 
