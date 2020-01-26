@@ -55,15 +55,15 @@ class UserMenuVC: HalfViewController {
     }
     
     private func setViews() {
-        view.addSubview(userNameLabel)
-        view.addSubview(menuTable)
+        containerView.addSubview(userNameLabel)
+        containerView.addSubview(menuTable)
         
-        userNameLabel.leadingAnchor.constraint(equalToSystemSpacingAfter: view.leadingAnchor, multiplier: 2).isActive = true
-        userNameLabel.topAnchor.constraint(equalToSystemSpacingBelow: view.topAnchor, multiplier: 2).isActive = true
-        menuTable.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        menuTable.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        userNameLabel.leadingAnchor.constraint(equalToSystemSpacingAfter: containerView.leadingAnchor, multiplier: 2).isActive = true
+        userNameLabel.topAnchor.constraint(equalToSystemSpacingBelow: containerView.topAnchor, multiplier: 2).isActive = true
+        menuTable.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
+        menuTable.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
         menuTable.topAnchor.constraint(equalToSystemSpacingBelow: userNameLabel.bottomAnchor, multiplier: 3).isActive = true
-        menuTable.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0).isActive = true
+        menuTable.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: 0).isActive = true
     }
 }
 

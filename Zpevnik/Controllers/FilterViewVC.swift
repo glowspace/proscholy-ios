@@ -63,14 +63,23 @@ class FilterViewVC: HalfViewController {
         
         setViews()
     }
+    
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        
+        if let transitioningDelegate = transitioningDelegate as? HalfViewPresentationManager {
+            filterTagsView.scrollIndicatorInsets.bottom = filterTagsView.frame.height * (1 - transitioningDelegate.heightMultiplier)
+            filterTagsView.contentInset.bottom = filterTagsView.frame.height * (1 - transitioningDelegate.heightMultiplier)
+        }
+    }
 
     private func setViews() {
-        view.addSubview(filterTagsView)
+        containerView.addSubview(filterTagsView)
         
-        filterTagsView.topAnchor.constraint(equalToSystemSpacingBelow: view.topAnchor, multiplier: 2).isActive = true
-        filterTagsView.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        filterTagsView.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        filterTagsView.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        filterTagsView.topAnchor.constraint(equalToSystemSpacingBelow: containerView.topAnchor, multiplier: 2).isActive = true
+        filterTagsView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
+        filterTagsView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
+        filterTagsView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
     }
     
     private func color(for section: Int) -> UIColor {

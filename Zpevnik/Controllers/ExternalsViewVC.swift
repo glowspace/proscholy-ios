@@ -47,12 +47,12 @@ class ExternalsViewVC: HalfViewController {
     }
     
     private func setViews() {
-        view.addSubview(externalsCollection)
+        containerView.addSubview(externalsCollection)
         
-        externalsCollection.topAnchor.constraint(equalToSystemSpacingBelow: view.topAnchor, multiplier: 2).isActive = true
-        externalsCollection.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
-        externalsCollection.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        externalsCollection.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        externalsCollection.topAnchor.constraint(equalToSystemSpacingBelow: containerView.topAnchor, multiplier: 2).isActive = true
+        externalsCollection.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
+        externalsCollection.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
+        externalsCollection.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
     }
 }
 

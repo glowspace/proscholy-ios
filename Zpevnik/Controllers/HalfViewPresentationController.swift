@@ -21,7 +21,7 @@ class HalfViewPresentationController: UIPresentationController {
         var frame: CGRect = .zero
         
         frame.size = size(forChildContentContainer: presentedViewController, withParentContainerSize: containerView.bounds.size)
-        frame.origin.y = containerView.frame.height * (1 - heightMultiplier)
+        frame.origin.y = containerView.frame.height * (1 - heightMultiplier) - 14
         
         return frame
     }
@@ -53,12 +53,12 @@ class HalfViewPresentationController: UIPresentationController {
         NSLayoutConstraint.activate(NSLayoutConstraint.constraints(withVisualFormat: "H:|[dimmingView]|", metrics: nil, views: ["dimmingView": dimmingView]))
 
         guard let coordinator = presentedViewController.transitionCoordinator else {
-            dimmingView.alpha = 1.0
+            dimmingView.alpha = 0.7
             return
         }
 
         coordinator.animate(alongsideTransition: { _ in
-            self.dimmingView.alpha = 1.0
+            self.dimmingView.alpha = 0.7
         })
     }
     
@@ -76,7 +76,7 @@ class HalfViewPresentationController: UIPresentationController {
     }
     
     override func size(forChildContentContainer container: UIContentContainer, withParentContainerSize parentSize: CGSize) -> CGSize {
-        return CGSize(width: parentSize.width, height: parentSize.height) // * heightMultiplier
+        return CGSize(width: parentSize.width, height: parentSize.height)
     }
 }
 
@@ -97,11 +97,34 @@ private extension HalfViewPresentationController {
         dimmingView = UIView()
         dimmingView.translatesAutoresizingMaskIntoConstraints = false
         
-        dimmingView.backgroundColor = UIColor.black.withAlphaComponent(0.5)
+        dimmingView.backgroundColor = .black
         dimmingView.alpha = 0.0
         
         let tap = UITapGestureRecognizer(target: self, action: #selector(dismiss))
         dimmingView.addGestureRecognizer(tap)
+    }
+    
+    func dimAlphaWithCardTopConstraint(value: CGFloat) -> CGFloat {
+      let fullDimAlpha : CGFloat = 0.7
+      
+      guard let safeAreaHeight = UIApplication.shared.keyWindow?.safeAreaLayoutGuide.layoutFrame.size.height,
+        let bottomPadding = UIApplication.shared.keyWindow?.safeAreaInsets.bottom else {
+        return fullDimAlpha
+      }
+      
+      let fullDimPosition = (safeAreaHeight + bottomPadding) * (1 - heightMultiplier)
+      
+      let noDimPosition = safeAreaHeight + bottomPadding
+      
+      if value < fullDimPosition {
+        return fullDimAlpha
+      }
+      
+      if value > noDimPosition {
+        return 0.0
+      }
+      
+      return fullDimAlpha * 1 - ((value - fullDimPosition) / fullDimPosition)
     }
     
     @objc func didPan(_ panRecognizer: UIPanGestureRecognizer) {
@@ -112,25 +135,30 @@ private extension HalfViewPresentationController {
         case .began:
             startingYLocation = presentedView?.frame.minY ?? 0
         case .changed :
-            if startingYLocation + translation.y > 30.0 {
-                presentedView?.frame.origin.y = startingYLocation + translation.y
+            let multiplier: CGFloat = 0.6 * heightMultiplier
+            
+            dimmingView.alpha = dimAlphaWithCardTopConstraint(value: presentedView?.frame.origin.y ?? 0)
+            
+            if startingYLocation + multiplier * translation.y > 30.0 {
+                if startingYLocation + translation.y > startingYLocation {
+                    presentedView?.frame.origin.y = startingYLocation + translation.y
+                } else {
+                    presentedView?.frame.origin.y = startingYLocation + multiplier * translation.y
+                }
             }
         case .ended :
-            if let safeAreaHeight = UIApplication.shared.keyWindow?.safeAreaLayoutGuide.layoutFrame.size.height { //}, let bottomPadding = UIApplication.shared.keyWindow?.safeAreaInsets.bottom {
-                
-                if velocity.y > 1500.0 {
+            if let safeAreaHeight = UIApplication.shared.keyWindow?.safeAreaLayoutGuide.layoutFrame.size.height {
+                if velocity.y > 1250.0 {
                     presentingViewController.dismiss(animated: true)
-                }
-                
-//                if (presentedView?.frame.origin.y ?? 0) < (safeAreaHeight + bottomPadding) * 0.25 {
-//
-//                } else
-                if (presentedView?.frame.origin.y ?? 0) < (safeAreaHeight) - 70 {
-                    UIView.animate(withDuration: 0.3) {
-                        self.presentedView?.frame.origin.y = self.startingYLocation
-                    }
                 } else {
-                    presentingViewController.dismiss(animated: true)
+                    if (presentedView?.frame.origin.y ?? 0) < (safeAreaHeight) - 70 {
+                        UIView.animate(withDuration: 0.3) {
+                            self.dimmingView.alpha = 0.7
+                            self.presentedView?.frame.origin.y = self.startingYLocation
+                        }
+                    } else {
+                        presentingViewController.dismiss(animated: true)
+                    }
                 }
             }
         default: break

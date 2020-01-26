@@ -47,25 +47,25 @@ class AddToPlaylistVC: HalfViewController {
     }
     
     private func setViews() {
-        view.addSubview(playlistsList)
+        containerView.addSubview(playlistsList)
         
-        playlistsList.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
-        playlistsList.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
+        playlistsList.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
+        playlistsList.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
         if UIDevice.current.userInterfaceIdiom == .phone {
-            playlistsList.topAnchor.constraint(equalTo: view.topAnchor).isActive = true
-            playlistsList.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
+            playlistsList.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
+            playlistsList.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
         } else {
-            playlistsList.topAnchor.constraint(equalToSystemSpacingBelow: view.topAnchor, multiplier: 3).isActive = true
-            playlistsList.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -24).isActive = true
+            playlistsList.topAnchor.constraint(equalToSystemSpacingBelow: containerView.topAnchor, multiplier: 3).isActive = true
+            playlistsList.bottomAnchor.constraint(equalTo: containerView.bottomAnchor, constant: -24).isActive = true
         }
     }
     
     private func createNewPlaylist() {
-        let alert = UIAlertController(title: "Vytvořit nový playlist", message: nil, preferredStyle: .alert)
+        let alert = UIAlertController(title: "Vytvořit nový seznam", message: nil, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: "Zrušit", style: .cancel, handler: nil))
 
         alert.addTextField(configurationHandler: { textField in
-            textField.placeholder = "Název playlistu"
+            textField.placeholder = "Název seznamu"
             textField.autocapitalizationType = .sentences
             textField.enablesReturnKeyAutomatically = true
             textField.returnKeyType = .done
@@ -122,7 +122,7 @@ extension AddToPlaylistVC: UITableViewDataSource, UITableViewDelegate {
         
         if indexPath.row == 0 {
             cell.icon = .add
-            cell.title = "Nový playlist"
+            cell.title = "Nový seznam"
         } else if let playlists = user?.playlists?.allObjects as? [Playlist] {
             cell.icon = .rightArrow
             cell.title = playlists[indexPath.row - 1].name
