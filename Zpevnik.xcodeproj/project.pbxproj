@@ -66,6 +66,7 @@
 		39E36DA223D8A65B0085E8F2 /* TranslationsViewVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E36DA123D8A65A0085E8F2 /* TranslationsViewVC.swift */; };
 		39E36DA423D8E3030085E8F2 /* SlidingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E36DA323D8E3020085E8F2 /* SlidingView.swift */; };
 		39E99CBF23DDC28C00278CD4 /* MockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E99CBE23DDC28C00278CD4 /* MockData.swift */; };
+		39E99CC323DF84A000278CD4 /* ScreenshotVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E99CC223DF849C00278CD4 /* ScreenshotVC.swift */; };
 		39EB06E723C4FFEB00B6E38E /* ActiveFilterHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39EB06E623C4FFEB00B6E38E /* ActiveFilterHeaderView.swift */; };
 		39F7BA2D22E7090F00FDFF90 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39F7BA2C22E7090F00FDFF90 /* AppDelegate.swift */; };
 		39F7BA4222E70B4100FDFF90 /* CoreDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39F7BA4122E70B4100FDFF90 /* CoreDataService.swift */; };
@@ -145,6 +146,7 @@
 		39E36DA123D8A65A0085E8F2 /* TranslationsViewVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TranslationsViewVC.swift; sourceTree = "<group>"; };
 		39E36DA323D8E3020085E8F2 /* SlidingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlidingView.swift; sourceTree = "<group>"; };
 		39E99CBE23DDC28C00278CD4 /* MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockData.swift; sourceTree = "<group>"; };
+		39E99CC223DF849C00278CD4 /* ScreenshotVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotVC.swift; sourceTree = "<group>"; };
 		39EB06E623C4FFEB00B6E38E /* ActiveFilterHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveFilterHeaderView.swift; sourceTree = "<group>"; };
 		39F7BA2922E7090F00FDFF90 /* Zpevnik.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zpevnik.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39F7BA2C22E7090F00FDFF90 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -297,10 +299,10 @@
 		39F7BA4522E70D0200FDFF90 /* Utils */ = {
 			isa = PBXGroup;
 			children = (
-				39AAABF023DD9811005BE9D3 /* Enums.swift */,
 				3997798F22F7714A00CE6FF6 /* Constants.swift */,
 				39F7BA4122E70B4100FDFF90 /* CoreDataService.swift */,
 				39F7BA4322E70C0D00FDFF90 /* DownloadService.swift */,
+				39AAABF023DD9811005BE9D3 /* Enums.swift */,
 				39F7BA5722E7535200FDFF90 /* Extensions.swift */,
 				397B625A22E9BE4300B9CCEC /* Protocols.swift */,
 				399205B922F8122C00E392A7 /* Reachability.swift */,
@@ -329,6 +331,7 @@
 				3982AD4F233A317700EB0F8F /* SongBooksListVC.swift */,
 				3982AD4A233A317700EB0F8F /* SongBookViewVC.swift */,
 				393C335E23C7C1CD00E496AB /* SongListViewVC.swift */,
+				39E99CC223DF849C00278CD4 /* ScreenshotVC.swift */,
 				397B625E22EA25B400B9CCEC /* SongLyricVC.swift */,
 				39F7BA4622E70E9800FDFF90 /* TabBarController.swift */,
 				39E36DA123D8A65A0085E8F2 /* TranslationsViewVC.swift */,
@@ -553,6 +556,7 @@
 				39AAABF323DD9F81005BE9D3 /* AddToPlaylistVC.swift in Sources */,
 				3997799022F7714A00CE6FF6 /* Constants.swift in Sources */,
 				3939FA6E22FC129600F9AED1 /* AboutVC.swift in Sources */,
+				39E99CC323DF84A000278CD4 /* ScreenshotVC.swift in Sources */,
 				39A03CF323DCB513004E7B7C /* User.swift in Sources */,
 				391F764623BE2AEE008BDD0F /* Zpevnik.xcdatamodeld in Sources */,
 				3982AD53233A317700EB0F8F /* FavoriteListVC.swift in Sources */,

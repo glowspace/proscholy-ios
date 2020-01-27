@@ -294,6 +294,7 @@ extension SongLyricVC: SlideViewDelegate {
         isAutoScrolling = false
         
         halfViewPresentationManager.heightMultiplier = 1.0 / 2.0
+        halfViewPresentationManager.canBeExpanded = true
         
         let externalsViewVC = ExternalsViewVC()
         externalsViewVC.songLyric = songLyric
@@ -356,6 +357,7 @@ extension SongLyricVC: UITableViewDelegate {
     
     private func addToPlaylist() {
         halfViewPresentationManager.heightMultiplier = 1.0 / 2.0
+        halfViewPresentationManager.canBeExpanded = true
         
         let addToPLaylistVC = AddToPlaylistVC()
         addToPLaylistVC.songLyrics = [songLyric]

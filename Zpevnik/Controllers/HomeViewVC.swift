@@ -10,9 +10,6 @@ import UIKit
 
 class HomeViewVC: SongListViewVC {
     
-    private var tableViewTopToSearchView: NSLayoutConstraint?
-    private var tableViewTopToView: NSLayoutConstraint?
-    
     private lazy var starButton: UIBarButtonItem = { createBarButtonItem(image: .star, selector: #selector(toggleFavorite)) }()
     private lazy var addToListButton: UIBarButtonItem = { createBarButtonItem(image: .addPlaylist, selector: #selector(addToList)) }()
     private lazy var selectAllButton: UIBarButtonItem = { createBarButtonItem(image: .selectAll, selector: #selector(selectAllLyrics)) }()
@@ -63,10 +60,7 @@ class HomeViewVC: SongListViewVC {
         
         view.addSubview(songList)
         
-        tableViewTopToSearchView = songList.topAnchor.constraint(equalTo: searchView.bottomAnchor)
-        tableViewTopToView = songList.topAnchor.constraint(equalTo: view.topAnchor)
-        
-        tableViewTopToSearchView?.isActive = true
+        songList.topAnchor.constraint(equalTo: searchView.bottomAnchor).isActive = true
         songList.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         songList.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         songList.bottomAnchor.constraint(equalTo: view.bottomAnchor).isActive = true
@@ -76,7 +70,9 @@ class HomeViewVC: SongListViewVC {
         view.addSubview(searchView)
         
         view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[searchView]-8-|", metrics: nil, views: ["searchView": searchView]))
-        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[searchView(==44)]", metrics: nil, views: ["searchView": searchView]))
+        
+        searchView.topAnchor.constraint(equalTo: view.topAnchor, constant: UIApplication.shared.statusBarFrame.height).isActive = true
+        searchView.heightAnchor.constraint(equalToConstant: 44).isActive = true
     }
     
     private func createBarButtonItem(image: UIImage?, selector: Selector) -> UIBarButtonItem {
@@ -90,6 +86,14 @@ class HomeViewVC: SongListViewVC {
 // MARK: - UITableViewDelegate
 
 extension HomeViewVC {
+    
+    override func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        if dataSource.searchText.count > 0 && filterTagDataSource.activeFilters.count == 0 {
+            return .leastNormalMagnitude
+        }
+        
+        return tableView.sectionHeaderHeight
+    }
     
     override func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         if dataSource.searchText.count > 0 {
@@ -152,12 +156,14 @@ extension HomeViewVC {
 
                 updateSelection(1)
                 
-                searchView.removeFromSuperview()
-                tableViewTopToSearchView?.isActive = false
-                tableViewTopToView?.isActive = true
+                UIView.animate(withDuration: 0.3, animations: {
+                    self.searchView.alpha = 0
+                }) { _ in
+                    self.searchView.isHidden = true
+                }
 
-                navigationController?.setNavigationBarHidden(false, animated: false)
-                tabBarController?.tabBar.isHidden = true
+                navigationController?.setNavigationBarHidden(false, animated: true)
+                tabBarController?.setTabBarHidden(true, animated: true)
             }
         }
     }
@@ -177,6 +183,7 @@ extension HomeViewVC {
         guard let indexPaths = songList.indexPathsForSelectedRows else { return }
         
         halfViewPresentationManager.heightMultiplier = 1.0 / 2.0
+        halfViewPresentationManager.canBeExpanded = true
         
         let addToPLaylistVC = AddToPlaylistVC()
         addToPLaylistVC.songLyrics = dataSource.songLyrics(at: indexPaths.map { $0.row })
@@ -201,12 +208,13 @@ extension HomeViewVC {
     @objc func disableSelection() {
         songList.setEditing(false, animated: true)
         
-        addSearchView()
-        tableViewTopToView?.isActive = false
-        tableViewTopToSearchView?.isActive = true
+        self.searchView.isHidden = false
+        UIView.animate(withDuration: 0.3) {
+            self.searchView.alpha = 1
+        }
         
-        navigationController?.setNavigationBarHidden(true, animated: false)
-        tabBarController?.tabBar.isHidden = false
+        navigationController?.setNavigationBarHidden(true, animated: true)
+        tabBarController?.setTabBarHidden(false, animated: true)
     }
 }
 

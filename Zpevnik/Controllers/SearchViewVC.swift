@@ -69,7 +69,7 @@ extension SearchViewVC: UITextFieldDelegate {
     
     func textFieldDidBeginEditing(_ textField: UITextField) {
         searchView.leadingButton?.setImage(.back, for: .normal)
-        searchView.trailingButton?.isEnabled = false
+        searchView.trailingButton?.isEnabled = textField.text?.count != 0
         isSearching = true
     }
     

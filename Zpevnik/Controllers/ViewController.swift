@@ -20,14 +20,29 @@ class ViewController: UIViewController {
         }
     }
     
-    func presentModally(_ viewController: UIViewController, animated: Bool) {
+    func presentModally(_ halfViewController: HalfViewController, animated: Bool) {
         if UIDevice.current.userInterfaceIdiom == .phone {
-            viewController.transitioningDelegate = halfViewPresentationManager
-            viewController.modalPresentationStyle = .custom
+            halfViewController.transitioningDelegate = halfViewPresentationManager
+            halfViewController.modalPresentationStyle = .custom
+            
+            if halfViewPresentationManager.canBeExpanded {
+                let screenShotVC = ScreenshotVC()
+                screenShotVC.screenshottedVC = tabBarController
+                screenShotVC.modalPresentationStyle = .overFullScreen
+                
+                halfViewController.screenshotVC = screenShotVC
+                
+                present(screenShotVC, animated: false)
+                screenShotVC.present(halfViewController, animated: true) {
+                    screenShotVC.screenshot = self.tabBarController?.view.screenshot()
+                    self.tabBarController?.view.isHidden = true
+                }
+            } else {
+                present(halfViewController, animated: true)
+            }
         } else {
-            viewController.modalPresentationStyle = .formSheet
+            halfViewController.modalPresentationStyle = .formSheet
+            present(halfViewController, animated: true)
         }
-        
-        present(viewController, animated: true)
     }
 }

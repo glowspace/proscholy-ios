@@ -66,11 +66,7 @@ extension SongListViewVC: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
-        if dataSource.searchText.count > 0 && filterTagDataSource.activeFilters.count == 0 {
-            return .leastNormalMagnitude
-        }
-        
-        return tableView.sectionHeaderHeight
+        return .leastNormalMagnitude
     }
     
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
@@ -156,6 +152,8 @@ extension SongListViewVC {
 extension SongListViewVC: FilterDelegate {
     
     @objc func showFilters() {
+        searchView.searchField.resignFirstResponder()
+        
         halfViewPresentationManager.heightMultiplier = 1.0 / 2.0
         
         let filterViewVC = FilterViewVC()

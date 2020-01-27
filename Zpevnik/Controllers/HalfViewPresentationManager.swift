@@ -11,8 +11,9 @@ import UIKit
 class HalfViewPresentationManager: NSObject, UIViewControllerTransitioningDelegate {
     
     var heightMultiplier: CGFloat = 1.0
+    var canBeExpanded: Bool = false
     
     func presentationController(forPresented presented: UIViewController, presenting: UIViewController?, source: UIViewController) -> UIPresentationController? {
-        return HalfViewPresentationController(presentedViewController: presented, presenting: presenting, heightMultiplier: heightMultiplier)
+        return HalfViewPresentationController(presentedViewController: presented, presenting: presenting, heightMultiplier: heightMultiplier, canBeExpanded: canBeExpanded)
     }
 }

@@ -68,12 +68,22 @@ extension UIColor {
             return UIColor(white: 0.9, alpha: 1)
         }
     }
+    static var chord: UIColor { return UIColor(named: "chord") ?? .blue }
     static var icon: UIColor { return UIColor(named: "icon") ?? .gray }
     static var inverted: UIColor { return UIColor(named: "inverted") ?? .black }
     static var red: UIColor { return UIColor(named: "red") ?? .systemRed }
     static var spotifyGreen: UIColor { return UIColor(named: "spotifyGreen") ?? .systemGreen }
     static var yellow: UIColor { return UIColor(named: "yellow") ?? .systemYellow }
     
+}
+
+extension UIView {
+
+    func screenshot() -> UIImage {
+        return UIGraphicsImageRenderer(size: bounds.size).image { _ in
+            drawHierarchy(in: CGRect(origin: .zero, size: bounds.size), afterScreenUpdates: true)
+        }
+    }
 }
 
 extension UITextField {

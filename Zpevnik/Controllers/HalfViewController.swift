@@ -12,6 +12,8 @@ class HalfViewController: ViewController {
     
     private let cornerRadius: CGFloat = 20
     
+    var screenshotVC: ScreenshotVC?
+    
     private let handleView: UIView = {
         let view = UIView()
         view.translatesAutoresizingMaskIntoConstraints = false

@@ -12,6 +12,10 @@ enum AboutState {
     case aboutSongBook, aboutApp
 }
 
+enum HalfViewState {
+    case normal, expanded
+}
+
 enum OptionsType {
     case songLyric, songList, songListArchived, settings
 }

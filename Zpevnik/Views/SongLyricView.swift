@@ -165,7 +165,7 @@ class SongLyricView: UIView {
         layoutManager.addTextContainer(textContainer)
         
         var chordAttributes = attributes
-        chordAttributes[.foregroundColor] = UIColor.blue
+        chordAttributes[.foregroundColor] = UIColor.chord
         
         var index = 0
         let minSpacing: CGFloat = 8
@@ -252,7 +252,9 @@ class SongLyricView: UIView {
         if songLyricType != .original {
             if let song = songLyric.song, let original = song.original, let authors = original.authors?.allObjects as? [Author] {
                 text += "Originál: " + original.name! + "\n"
-                if authors.count == 1 {
+                if authors.count == 0 {
+                    text += "Autor: Neznámý"
+                } else if authors.count == 1 {
                     text += "Autor: " + authors[0].name!
                 } else if authors.count > 0 {
                     text += "Autoři: "
@@ -269,7 +271,9 @@ class SongLyricView: UIView {
         }
         
         if let authors = songLyric.authors?.allObjects as? [Author] {
-            if authors.count == 1 {
+            if authors.count == 0 {
+                text += "Autor: Neznámý"
+            } else if authors.count == 1 {
                 text += "Autor" + (songLyricType == .original ? ": " : " překladu: ") + authors[0].name!
             } else if authors.count > 0 {
                 text += "Autoři" + (songLyricType == .original ? ": " : " překladu: ")
