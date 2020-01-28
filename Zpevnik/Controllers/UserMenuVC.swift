@@ -77,7 +77,7 @@ extension UserMenuVC: UITableViewDelegate {
         switch indexPath.row {
             case 0:
                 delegate?.presentViewController(SettingsVC(), animated: true)
-                self.dismiss(animated: true)
+                dismiss(animated: true)
             case 1:
                 openURL("https://zpevnik.proscholy.cz")
             case 2:
@@ -88,12 +88,12 @@ extension UserMenuVC: UITableViewDelegate {
                 let aboutVC = AboutVC()
                 aboutVC.state = .aboutSongBook
                 delegate?.presentViewController(aboutVC, animated: true)
-                self.dismiss(animated: true)
+                dismiss(animated: true)
             case 5:
                 let aboutVC = AboutVC()
                 aboutVC.state = .aboutApp
                 delegate?.presentViewController(aboutVC, animated: true)
-                self.dismiss(animated: true)
+                dismiss(animated: true)
             default: break
         }
     }

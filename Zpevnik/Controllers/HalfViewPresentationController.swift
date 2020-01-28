@@ -10,7 +10,7 @@ import UIKit
 
 class HalfViewPresentationController: UIPresentationController {
     
-    private let defaultDimmingAlpha: CGFloat = 0.5
+    private let defaultDimmingAlpha: CGFloat = 0.3
     private let expandedScale: CGFloat = 0.9
     private let expandedCornerRadius: CGFloat = 10
     private let expandedTopSpace: CGFloat = 30
@@ -48,7 +48,7 @@ class HalfViewPresentationController: UIPresentationController {
                 switch(newValue) {
                 case .normal:
                     self.dimmingView.alpha = self.defaultDimmingAlpha
-                    self.presentingViewController.view.transform = CGAffineTransform.identity //.scaledBy(x: 1, y: 1)
+                    self.presentingViewController.view.transform = .identity
                     self.presentingViewController.view.layer.cornerRadius = 0
                 case .expanded:
                     self.dimmingView.alpha = 0
@@ -104,12 +104,25 @@ class HalfViewPresentationController: UIPresentationController {
         
         guard let coordinator = presentedViewController.transitionCoordinator else {
             dimmingView.alpha = 0.0
+            presentingViewController.view.transform = .identity
+            presentingViewController.view.layer.cornerRadius = 0
             return
         }
 
         coordinator.animate(alongsideTransition: { _ in
             self.dimmingView.alpha = 0.0
+            self.presentingViewController.view.transform = .identity
+            self.presentingViewController.view.layer.cornerRadius = 0
         })
+    }
+    
+    override func dismissalTransitionDidEnd(_ completed: Bool) {
+        super.dismissalTransitionDidEnd(completed)
+        
+        if let halfViewController = self.presentedViewController as? HalfViewController {
+            halfViewController.screenshotVC?.screenshottedVC?.view.isHidden = false
+            halfViewController.screenshotVC?.dismiss(animated: false)
+        }
     }
     
     override func size(forChildContentContainer container: UIContentContainer, withParentContainerSize parentSize: CGSize) -> CGSize {
@@ -220,6 +233,8 @@ private extension HalfViewPresentationController {
                     if velocity.y < 0 {
                         if canBeExpanded && currentState == .normal && (velocity.y < -1500 || translation.y < 0) {
                             currentState = .expanded
+                        } else if currentState == .expanded {
+                            currentState = .expanded
                         } else {
                             currentState = .normal
                         }
@@ -247,13 +262,6 @@ private extension HalfViewPresentationController {
     }
     
     @objc func dismiss() {
-        if let halfViewController = self.presentedViewController as? HalfViewController {
-            halfViewController.screenshotVC?.screenshottedVC?.view.isHidden = false
-            presentedViewController.dismiss(animated: true) {
-                halfViewController.screenshotVC?.dismiss(animated: false)
-            }
-        } else {
-            presentedViewController.dismiss(animated: true)
-        }
+        presentedViewController.dismiss(animated: true)
     }
 }

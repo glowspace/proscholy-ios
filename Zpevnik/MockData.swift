@@ -8,4 +8,13 @@
 
 import Foundation
 
-let user: User? = User.createFromDict(["id": "1", "name": "Patrik Dobiáš", "email": "patrikdobidobias@gmail.com"], PersistenceService.backgroundContext)
+let user: User? = {
+    let user = User.createFromDict(["id": "1", "name": "Patrik Dobiáš", "email": "patrikdobidobias@gmail.com"], PersistenceService.backgroundContext)
+    for i in 0..<100 {
+        if let user = user {
+            _ = Playlist.create("\(i)", "Test \(i)", user)
+        }
+    }
+    
+    return user
+}()

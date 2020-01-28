@@ -67,6 +67,7 @@
 		39E36DA423D8E3030085E8F2 /* SlidingView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E36DA323D8E3020085E8F2 /* SlidingView.swift */; };
 		39E99CBF23DDC28C00278CD4 /* MockData.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E99CBE23DDC28C00278CD4 /* MockData.swift */; };
 		39E99CC323DF84A000278CD4 /* ScreenshotVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E99CC223DF849C00278CD4 /* ScreenshotVC.swift */; };
+		39E99CC523E08F8100278CD4 /* PlaylistDataSource.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39E99CC423E08F8000278CD4 /* PlaylistDataSource.swift */; };
 		39EB06E723C4FFEB00B6E38E /* ActiveFilterHeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39EB06E623C4FFEB00B6E38E /* ActiveFilterHeaderView.swift */; };
 		39F7BA2D22E7090F00FDFF90 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39F7BA2C22E7090F00FDFF90 /* AppDelegate.swift */; };
 		39F7BA4222E70B4100FDFF90 /* CoreDataService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 39F7BA4122E70B4100FDFF90 /* CoreDataService.swift */; };
@@ -147,6 +148,7 @@
 		39E36DA323D8E3020085E8F2 /* SlidingView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SlidingView.swift; sourceTree = "<group>"; };
 		39E99CBE23DDC28C00278CD4 /* MockData.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MockData.swift; sourceTree = "<group>"; };
 		39E99CC223DF849C00278CD4 /* ScreenshotVC.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ScreenshotVC.swift; sourceTree = "<group>"; };
+		39E99CC423E08F8000278CD4 /* PlaylistDataSource.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PlaylistDataSource.swift; sourceTree = "<group>"; };
 		39EB06E623C4FFEB00B6E38E /* ActiveFilterHeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ActiveFilterHeaderView.swift; sourceTree = "<group>"; };
 		39F7BA2922E7090F00FDFF90 /* Zpevnik.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Zpevnik.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		39F7BA2C22E7090F00FDFF90 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -179,6 +181,7 @@
 		397BAD9F230150F500AB75FD /* DataSource */ = {
 			isa = PBXGroup;
 			children = (
+				39E99CC423E08F8000278CD4 /* PlaylistDataSource.swift */,
 				3980061323C6572E0049ADC2 /* FilterTagDataSource.swift */,
 				39E36D9F23D79BE40085E8F2 /* MoreOptionsDataSource.swift */,
 				397BADA22301510E00AB75FD /* SongBookDataSource.swift */,
@@ -529,6 +532,7 @@
 				39357F5923C1F765001B0387 /* HalfViewPresentationManager.swift in Sources */,
 				397B626322EC2E2900B9CCEC /* SongBook.swift in Sources */,
 				39A03CF023DC96AE004E7B7C /* MusicNotesVC.swift in Sources */,
+				39E99CC523E08F8100278CD4 /* PlaylistDataSource.swift in Sources */,
 				39A03CF523DCB522004E7B7C /* Playlist.swift in Sources */,
 				39A03CEE23DC94F7004E7B7C /* File.swift in Sources */,
 				39F7BA5422E74D3C00FDFF90 /* SongBookCell.swift in Sources */,

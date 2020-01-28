@@ -10,7 +10,7 @@ import UIKit
 
 class HalfViewController: ViewController {
     
-    private let cornerRadius: CGFloat = 20
+    private let cornerRadius: CGFloat = 10
     
     var screenshotVC: ScreenshotVC?
     

@@ -56,11 +56,7 @@ class AboutVC: ViewController {
                 """
             
             let attributedDescription: NSMutableAttributedString
-            if #available(iOS 12.0, *) {
-                attributedDescription = NSMutableAttributedString(string: description, attributes: [.font: UIFont.systemFont(ofSize: 15), .foregroundColor: traitCollection.userInterfaceStyle == .dark ? UIColor.white : UIColor.black])
-            } else {
-                attributedDescription = NSMutableAttributedString(string: description, attributes: [.font: UIFont.systemFont(ofSize: 15), .foregroundColor: UIColor.black])
-            }
+            attributedDescription = NSMutableAttributedString(string: description, attributes: [.font: UIFont.systemFont(ofSize: 15), .foregroundColor: UIColor.text])
             
             if let range = description.range(of: "ProScholy.cz") {
                 attributedDescription.addAttribute(.link, value: "https://zpevnik.proscholy.cz", range: NSRange(range, in: description))
@@ -95,11 +91,7 @@ class AboutVC: ViewController {
             """
             
             let attributedDescription: NSMutableAttributedString
-            if #available(iOS 12.0, *) {
-                attributedDescription = NSMutableAttributedString(string: description, attributes: [.font: UIFont.systemFont(ofSize: 15), .foregroundColor: traitCollection.userInterfaceStyle == .dark ? UIColor.white : UIColor.black])
-            } else {
-                attributedDescription = NSMutableAttributedString(string: description, attributes: [.font: UIFont.systemFont(ofSize: 15), .foregroundColor: UIColor.black])
-            }
+            attributedDescription = NSMutableAttributedString(string: description, attributes: [.font: UIFont.systemFont(ofSize: 15), .foregroundColor: UIColor.text])
             
             attributedDescription.addAttribute(.link, value: "https://docs.google.com/forms/d/e/1FAIpQLSfI0143gkLBtMbWQnSa9nzpOoBNMokZrOIS5mUreSR41E_B7A/viewform?usp=pp_url&entry.1865829262=ano,+verzi+pro+iOS", range: NSRange(location: description.count - 4, length: 3))
             

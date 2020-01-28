@@ -109,6 +109,10 @@ extension SongListViewVC: UITableViewDelegate {
     }
     
     func tableView(_ tableView: UITableView, didDeselectRowAt indexPath: IndexPath) { }
+    
+    func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
 }
 
 extension SongListViewVC {
@@ -155,6 +159,7 @@ extension SongListViewVC: FilterDelegate {
         searchView.searchField.resignFirstResponder()
         
         halfViewPresentationManager.heightMultiplier = 1.0 / 2.0
+        halfViewPresentationManager.canBeExpanded = false
         
         let filterViewVC = FilterViewVC()
         filterViewVC.dataSource = filterTagDataSource

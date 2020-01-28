@@ -74,7 +74,6 @@ class SongLyricCell: UITableViewCell {
         return view
     }()
     
-    private var leadingConstraint: NSLayoutConstraint?
     private var starIconWidthConstraint: NSLayoutConstraint?
     
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
@@ -89,18 +88,8 @@ class SongLyricCell: UITableViewCell {
         setViews()
     }
     
-    override func setEditing(_ editing: Bool, animated: Bool) {
-        super.setEditing(editing, animated: animated)
-        
-        leadingConstraint?.constant = editing ? 48 : horizontalSpacing
-        
-        UIView.animate(withDuration: animated ? 0.3 : 0) {
-            self.layoutIfNeeded()
-        }
-    }
-    
     private func setViews() {
-        addSubview(containerView)
+        contentView.addSubview(containerView)
 
         containerView.addSubview(nameLabel)
         containerView.addSubview(starIcon)
@@ -124,16 +113,15 @@ class SongLyricCell: UITableViewCell {
         numberLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
         
         containerView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[nameLabel]|", metrics: nil, views: views))
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-(spacing)-[containerView]-(spacing)-|", metrics: ["spacing": verticalSpacing], views: ["containerView": containerView]))
+        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-(spacing)-[containerView]-(spacing)-|", metrics: ["spacing": verticalSpacing], views: ["containerView": containerView]))
         
         starIcon.heightAnchor.constraint(equalTo: starIcon.widthAnchor).isActive = true
         starIconWidthConstraint = starIcon.widthAnchor.constraint(equalToConstant: 0)
         starIconWidthConstraint?.isActive = true
         
-        leadingConstraint = containerView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: horizontalSpacing)
-        leadingConstraint?.isActive = true
+        containerView.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: horizontalSpacing).isActive = true
         
-        containerView.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -horizontalSpacing).isActive = true
+        containerView.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: -horizontalSpacing).isActive = true
     }
     
     required init?(coder aDecoder: NSCoder) {

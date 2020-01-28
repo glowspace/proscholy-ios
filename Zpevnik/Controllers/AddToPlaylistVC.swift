@@ -101,7 +101,7 @@ class AddToPlaylistVC: HalfViewController {
             songLyric.addToPlaylists(playlist)
         }
         
-        self.dismiss(animated: true)
+        dismiss(animated: true)
     }
 }
 
