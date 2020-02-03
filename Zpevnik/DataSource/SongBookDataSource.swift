@@ -32,7 +32,7 @@ class SongBookDataSource: NSObject {
         super.init()
     }
     
-    func songBook(at index: Int) -> SongBook? {
+    func songBook(at index: Int) -> SongBook {
         return showingSongBooks[index]
     }
 }

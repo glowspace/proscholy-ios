@@ -65,8 +65,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
     
     func application(_ application: UIApplication, continue userActivity: NSUserActivity, restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void) -> Bool {
-        print(userActivity.userInfo)
-        
         return false
     }
     
@@ -100,27 +98,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 extension AppDelegate: GIDSignInDelegate {
     
     func sign(_ signIn: GIDSignIn!, didSignInFor user: GIDGoogleUser!, withError error: Error!) {
-        guard error == nil else { return }
-        
-        guard let authentication = user.authentication else { return }
-        
-        let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken, accessToken: authentication.accessToken)
-        
-        Auth.auth().signIn(with: credential) { (authResult, error) in
-            if let error = error {
-                print(error)
-                return
-            }
-            
-            let currentUser = Auth.auth().currentUser
-            currentUser?.getIDTokenForcingRefresh(true) { idToken, error in
-                if let error = error {
-                    print(error)
-                    return;
-                }
-                
-                print(idToken)
-            }
-        }
+//        guard error == nil else { return }
+//        
+//        guard let authentication = user.authentication else { return }
+//        
+//        let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken, accessToken: authentication.accessToken)
+//        
+//        Auth.auth().signIn(with: credential) { (authResult, error) in
+//            if let error = error {
+//                print(error)
+//                return
+//            }
+//            
+//            let currentUser = Auth.auth().currentUser
+//            currentUser?.getIDTokenForcingRefresh(true) { idToken, error in
+//                if let error = error {
+//                    print(error)
+//                    return;
+//                }
+//                
+//                print(idToken)
+//            }
+//        }
     }
 }

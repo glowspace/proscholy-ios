@@ -8,7 +8,7 @@
 
 import UIKit
 
-class HomeViewVC: SongListViewVC {
+class HomeViewVC: AllSongListViewVC {
     
     private lazy var starButton: UIBarButtonItem = { createBarButtonItem(image: .star, selector: #selector(toggleFavorite)) }()
     private lazy var addToListButton: UIBarButtonItem = { createBarButtonItem(image: .addPlaylist, selector: #selector(addToList)) }()
@@ -17,9 +17,6 @@ class HomeViewVC: SongListViewVC {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
-        dataSource = SongLyricDataSource("lastSearchedHome")
-        dataSource.filterTagDataSource = filterTagDataSource
         
         dataSource.showAll {
             self.songList.reloadData()

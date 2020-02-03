@@ -105,9 +105,8 @@ extension SongBooksListVC: UICollectionViewDelegate, UICollectionViewDelegateFlo
     }
     
     func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        let songBookViewVC = SongBookViewVC()
-        
-        songBookViewVC.songBook = dataSource.songBook(at: indexPath.row)
+        let songBookViewVC = SongListViewVC()
+        songBookViewVC.dataSource = SongBooksSongLyricDataSource(dataSource.songBook(at: indexPath.row))
         
         navigationController?.pushViewController(songBookViewVC, animated: true)
     }

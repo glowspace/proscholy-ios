@@ -68,24 +68,26 @@ class SearchView: UIView {
             leadingButton.translatesAutoresizingMaskIntoConstraints = false
             
             addSubview(leadingButton)
-            addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[leadingButton][searchField]", metrics: nil, views: ["searchField": searchField, "leadingButton": leadingButton]))
+            leadingButton.leadingAnchor.constraint(equalTo: leadingAnchor).isActive = true
+            searchField.leadingAnchor.constraint(equalTo: leadingButton.trailingAnchor).isActive = true
             addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[leadingButton]|", metrics: nil, views: ["leadingButton": leadingButton]))
             
             leadingButton.widthAnchor.constraint(equalTo: leadingButton.heightAnchor).isActive = true
         } else {
-            addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[searchField]", metrics: nil, views: ["searchField": searchField]))
+            searchField.leadingAnchor.constraint(equalToSystemSpacingAfter: leadingAnchor, multiplier: 1).isActive = true
         }
         
         if let trailingButton = trailingButton {
             trailingButton.translatesAutoresizingMaskIntoConstraints = false
             
             addSubview(trailingButton)
-            addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[searchField][trailingButton]|", metrics: nil, views: ["searchField": searchField, "trailingButton": trailingButton]))
+            trailingButton.trailingAnchor.constraint(equalTo: trailingAnchor).isActive = true
+            trailingButton.leadingAnchor.constraint(equalToSystemSpacingAfter: searchField.trailingAnchor, multiplier: 1).isActive = true
             addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[trailingButton]|", metrics: nil, views: ["trailingButton": trailingButton]))
             
             trailingButton.widthAnchor.constraint(equalTo: trailingButton.heightAnchor).isActive = true
         } else {
-            addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:[searchField]-|", metrics: nil, views: ["searchField": searchField]))
+            searchField.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -1).isActive = true
         }
         
         addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[searchField]|", metrics: nil, views: ["searchField": searchField]))

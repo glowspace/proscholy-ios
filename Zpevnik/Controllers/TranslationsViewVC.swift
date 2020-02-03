@@ -44,7 +44,6 @@ class TranslationsViewVC: ViewController {
         
         tableView.register(SongLyricCell.self, forCellReuseIdentifier: "songLyricCell")
         
-        tableView.sectionFooterHeight = .leastNormalMagnitude
         tableView.separatorStyle = .none
         tableView.alwaysBounceVertical = false
         
@@ -96,12 +95,17 @@ extension TranslationsViewVC: UITableViewDataSource, UITableViewDelegate {
         
         cell.name = songLyric.name
         cell.number = songLyric.id
+        cell.verticalSpacing = 6
         
         return cell
     }
     
     func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
-        return 16
+        return 8
+    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        return nil
     }
     
     func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {

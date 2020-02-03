@@ -81,15 +81,15 @@
     </entity>
     <elements>
         <element name="Author" positionX="-288" positionY="45" width="128" height="103"/>
+        <element name="External" positionX="-279" positionY="90" width="128" height="133"/>
+        <element name="File" positionX="-261" positionY="126" width="128" height="118"/>
         <element name="Language" positionX="-288" positionY="72" width="128" height="75"/>
+        <element name="Playlist" positionX="-288" positionY="81" width="128" height="103"/>
         <element name="Song" positionX="-279" positionY="81" width="128" height="90"/>
         <element name="SongBook" positionX="-505.38671875" positionY="-18.53125" width="128" height="133"/>
         <element name="SongBookRecord" positionX="-297" positionY="18" width="128" height="105"/>
         <element name="SongLyric" positionX="-63" positionY="-18" width="128" height="238"/>
         <element name="Tag" positionX="-297" positionY="45" width="128" height="133"/>
         <element name="User" positionX="-297" positionY="72" width="128" height="103"/>
-        <element name="Playlist" positionX="-288" positionY="81" width="128" height="103"/>
-        <element name="External" positionX="-279" positionY="90" width="128" height="133"/>
-        <element name="File" positionX="-261" positionY="126" width="128" height="118"/>
     </elements>
 </model>

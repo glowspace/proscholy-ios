@@ -12,9 +12,23 @@ import Firebase
 class SongLyricVC: ViewController {
     
     private var currentRotation = UIDeviceOrientation.portrait
-    private var isAutoScrolling = false
+    private var isAutoScrolling = false {
+        didSet {
+            bottomSlidingView.autoScrolling = isAutoScrolling
+            slideViewWidthConstraint?.constant = bottomSlidingView.width
+            
+            UIView.animate(withDuration: 0.3) {
+                self.view.layoutIfNeeded()
+            }
+        }
+    }
+    private var scrollSpeed = 3 {
+        didSet {
+            bottomSlidingView.shouldUpdateButtonsState()
+        }
+    }
     
-    private let optionsDataSource = OptionsDataSource(.songLyric)
+    private let optionsDataSource = OptionsDataSource()
     var dataSource: SongLyricDataSource!
     
     private var songLyric: SongLyric! {
@@ -44,7 +58,7 @@ class SongLyricVC: ViewController {
     var slideViewBottomConstraint: NSLayoutConstraint?
     
     private let optionsTableWidth: CGFloat = 200
-    private var optionsTableHeight: CGFloat = 255
+    private var optionsTableHeight: CGFloat = 244
     
     private lazy var translateButton: UIBarButtonItem = { createBarButtonItem(image: .translate, selector: #selector(showTranslations)) }()
     private lazy var starButton: UIBarButtonItem = { createBarButtonItem(image: songLyric.isFavorite() ? .starFilled : .star, selector: #selector(toggleFavorite)) }()
@@ -54,6 +68,7 @@ class SongLyricVC: ViewController {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
+        optionsDataSource.optionsType = .songLyric
         tableView.dataSource = optionsDataSource
         tableView.delegate = self
         
@@ -156,7 +171,7 @@ class SongLyricVC: ViewController {
         slideViewBottomConstraint?.isActive = true
         
         bottomSlidingView.heightAnchor.constraint(equalToConstant: bottomSlidingView.height).isActive = true
-        slideViewWidthConstraint = bottomSlidingView.widthAnchor.constraint(equalToConstant: bottomSlidingView.collapsedWidth)
+        slideViewWidthConstraint = bottomSlidingView.widthAnchor.constraint(equalToConstant: bottomSlidingView.width)
         slideViewWidthConstraint?.isActive = true
     }
     
@@ -196,12 +211,12 @@ class SongLyricVC: ViewController {
         return barButtonItem
     }
     
-    private func autoScroll(completionHandler: @escaping (Bool) -> Void) {
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(2)) {
-            if self.canScroll() {
+    private func autoScroll(completionHandler: @escaping (Bool) -> Void) {        
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(Constants.speeds[scrollSpeed])) {
+            if !self.canScroll() {
                 self.isAutoScrolling = false
             } else {
-                self.songLyricView.scrollView.contentOffset.y += 0.5
+                self.songLyricView.scrollView.contentOffset.y += 0.25
             }
             
             if self.isAutoScrolling {
@@ -283,7 +298,7 @@ extension SongLyricVC: SlideViewDelegate {
         let scrollView = songLyricView.scrollView
         scrollView.layoutIfNeeded()
         
-        return scrollView.contentSize.height - scrollView.contentOffset.y + scrollView.contentInset.bottom <= scrollView.frame.height
+        return scrollView.contentSize.height - scrollView.contentOffset.y + scrollView.contentInset.bottom > scrollView.frame.height
     }
     
     func showTuneOptions() {
@@ -303,11 +318,7 @@ extension SongLyricVC: SlideViewDelegate {
     }
     
     func toggleSlideView(animations: @escaping () -> Void, completionHandler: @escaping () -> Void) {
-        if bottomSlidingView.collapsed {
-            slideViewWidthConstraint?.constant = bottomSlidingView.width
-        } else {
-            slideViewWidthConstraint?.constant = bottomSlidingView.collapsedWidth
-        }
+        slideViewWidthConstraint?.constant = bottomSlidingView.width
         
         UIView.animate(withDuration: 0.3, animations: {
             animations()
@@ -326,15 +337,19 @@ extension SongLyricVC: SlideViewDelegate {
             autoScroll(completionHandler: completionHandler)
         }
     }
+    
+    func canChangeSpeed(add: Bool) -> Bool {
+        return add && scrollSpeed != Constants.maxScrollSpeed || !add && scrollSpeed != Constants.minScrollSpeed
+    }
+    
+    func changeSpeed(add: Bool) {
+        scrollSpeed += add ? 1 : -1
+    }
 }
 
 // MARK: - UITableViewDataSource, UITableViewDelegate
 
 extension SongLyricVC: UITableViewDelegate {
-    
-//    func tableView(_ tableView: UITableView, willSelectRowAt indexPath: IndexPath) -> IndexPath? {
-//        return indexPath
-//    }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
@@ -485,8 +500,10 @@ extension SongLyricVC {
             slideViewBottomConstraint?.constant = -16
         }
         
-        UIView.animate(withDuration: 0.3) {
+        UIView.animate(withDuration: 0.3, animations: {
             self.view.layoutIfNeeded()
+        }) { _ in
+            self.bottomSlidingView.shouldUpdateButtonsState()
         }
     }
 }

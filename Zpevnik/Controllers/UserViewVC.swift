@@ -11,20 +11,21 @@ import UIKit
 class UserViewVC: SearchViewVC {
     
     private let playlistDataSource: PlaylistDataSource = { PlaylistDataSource(user!) }()
+    private let optionsDataSource = OptionsDataSource()
     
     private lazy var playlistsList: UITableView = {
-        let tableView = UITableView()
+        let tableView = UITableView(frame: .zero, style: .grouped)
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
         tableView.dataSource = playlistDataSource
         tableView.delegate = self
         
-        tableView.register(UITableViewCell.self, forCellReuseIdentifier: "playlistCell")
+        tableView.register(MoreOptionsCell.self, forCellReuseIdentifier: "playlistCell")
         
         tableView.separatorStyle = .none
         
-        tableView.setEditing(true, animated: false)
-        tableView.addGestureRecognizer(UILongPressGestureRecognizer(target: self, action: #selector(longPress)))
+        tableView.isEditing = true
+        tableView.allowsSelectionDuringEditing = true
         
         return tableView
     }()
@@ -38,6 +39,26 @@ class UserViewVC: SearchViewVC {
         return userCell
     }()
     
+    private lazy var optionsTable: UITableView = {
+        let tableView = UITableView()
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        
+        tableView.dataSource = optionsDataSource
+        tableView.delegate = self
+        
+        tableView.isHidden = true
+        
+        tableView.separatorStyle = .none
+        tableView.isScrollEnabled = false
+        
+        tableView.register(MoreOptionsCell.self, forCellReuseIdentifier: "moreOptionsCell")
+        
+        tableView.layer.borderColor = UIColor.gray4.cgColor
+        tableView.layer.borderWidth = 1
+        
+        return tableView
+    }()
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -46,11 +67,26 @@ class UserViewVC: SearchViewVC {
         setViews()
     }
     
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        
+        navigationController?.setNavigationBarHidden(true, animated: animated)
+    }
+    
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        
+        navigationController?.setNavigationBarHidden(false, animated: animated)
+    }
+    
     private func setViews() {
+        addSearchView()
+        setPlaceholder("Zadejte slovo nebo číslo")
+        
         view.addSubview(playlistsList)
         view.addSubview(userCell)
         
-        playlistsList.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
+        playlistsList.topAnchor.constraint(equalTo: searchView.bottomAnchor).isActive = true
         playlistsList.leadingAnchor.constraint(equalTo: view.leadingAnchor).isActive = true
         playlistsList.trailingAnchor.constraint(equalTo: view.trailingAnchor).isActive = true
         
@@ -61,8 +97,17 @@ class UserViewVC: SearchViewVC {
         userCell.heightAnchor.constraint(equalToConstant: 44).isActive = true
     }
     
-    fileprivate var sourceIndexPath: IndexPath?
-    fileprivate var snapshot: UIView?
+    private func addSearchView() {
+        view.addSubview(searchView)
+        
+        view.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-8-[searchView]-8-|", metrics: nil, views: ["searchView": searchView]))
+        
+        searchView.topAnchor.constraint(equalTo: view.topAnchor, constant: UIApplication.shared.statusBarFrame.height).isActive = true
+        searchView.heightAnchor.constraint(equalToConstant: 44).isActive = true
+    }
+    
+    private var sourceIndexPath: IndexPath?
+    private var snapshot: UIImageView?
 }
 
 // MARK: - UserCellDelegate
@@ -80,6 +125,61 @@ extension UserViewVC: UserCellDelegate {
     }
 }
 
+// MARK: - UITableViewDelegate
+
+extension UserViewVC: UITableViewDelegate {
+    
+    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
+        return .none
+    }
+    
+    func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
+        return false
+    }
+    
+    func tableView(_ tableView: UITableView, targetIndexPathForMoveFromRowAt sourceIndexPath: IndexPath, toProposedIndexPath proposedDestinationIndexPath: IndexPath) -> IndexPath {
+        playlistDataSource.currentIndexPath = playlistDataSource.currentIndexPath ?? sourceIndexPath
+        
+        if !(tableView.dataSource?.tableView?(tableView, canMoveRowAt: proposedDestinationIndexPath) ?? false) {
+            return playlistDataSource.currentIndexPath!
+        }
+        
+        playlistDataSource.currentIndexPath = proposedDestinationIndexPath
+        
+        return proposedDestinationIndexPath
+    }
+    
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        tableView.deselectRow(at: indexPath, animated: true)
+        
+        let songListViewVC = ReorderableSongListViewVC()
+        
+        if(indexPath.row == 0) {
+            songListViewVC.dataSource = FavoriteSongLyricDataSource()
+        } else {
+            songListViewVC.dataSource = PlaylistSongLyricDataSource(playlistDataSource.playlists[indexPath.row - 1])
+        }
+        
+        navigationController?.pushViewController(songListViewVC, animated: true)
+    }
+    
+    func tableView(_ tableView: UITableView, heightForFooterInSection section: Int) -> CGFloat {
+        return .leastNormalMagnitude
+    }
+    
+    func tableView(_ tableView: UITableView, viewForFooterInSection section: Int) -> UIView? {
+        return nil
+    }
+    
+    func tableView(_ tableView: UITableView, heightForHeaderInSection section: Int) -> CGFloat {
+        return tableView.sectionHeaderHeight
+    }
+    
+    func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
+        return TableViewHeader("Seznamy písní", .red)
+    }
+}
+
 // MARK: - UserMenuDelegate
 
 extension UserViewVC: UserMenuDelegate {
@@ -88,108 +188,6 @@ extension UserViewVC: UserMenuDelegate {
         navigationController?.pushViewController(viewController, animated: animated)
     }
 }
-
-// MARK: - MoveCellHandler, UITableViewDelegate
-
-extension UserViewVC: UITableViewDelegate {
-    
-//    func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
-//        return .none
-//    }
-//
-//    func tableView(_ tableView: UITableView, shouldIndentWhileEditingRowAt indexPath: IndexPath) -> Bool {
-//        return false
-//    }
-    
-    func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
-        return true
-    }
-    
-    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) {
-        
-    }
-    
-    @objc func longPress(_ longPress: UILongPressGestureRecognizer) {
-        let state = longPress.state
-        let location = longPress.location(in: playlistsList)
-        guard let indexPath = playlistsList.indexPathForRow(at: location) else { return }
-        switch state {
-          case .began:
-          sourceIndexPath = indexPath
-          guard let cell = playlistsList.cellForRow(at: indexPath) else { return }
-          // Take a snapshot of the selected row using helper method. See below method
-          snapshot = self.customSnapshotFromView(inputView: cell)
-          guard let snapshot = self.snapshot else { return }
-          var center = cell.center
-          snapshot.center = center
-          snapshot.alpha = 0.0
-          playlistsList.addSubview(snapshot)
-          UIView.animate(withDuration: 0.3, animations: {
-            center.y = location.y
-            snapshot.center = center
-            snapshot.transform = CGAffineTransform(scaleX: 1.05, y: 1.05)
-            snapshot.alpha = 0.98
-            cell.alpha = 0.0
-          }, completion: { (finished) in
-            cell.isHidden = true
-          })
-            case .changed:
-            guard  let snapshot = self.snapshot else {
-              return
-            }
-            var center = snapshot.center
-            center.y = location.y
-            snapshot.center = center
-            guard let sourceIndexPath = self.sourceIndexPath  else {
-              return
-            }
-            if indexPath != sourceIndexPath {
-//              swap(&data[indexPath.row], &data[sourceIndexPath.row])
-              playlistsList.moveRow(at: sourceIndexPath, to: indexPath)
-              self.sourceIndexPath = indexPath
-            }
-          default:
-          guard let cell = playlistsList.cellForRow(at: indexPath) else {
-              return
-            }
-            guard  let snapshot = self.snapshot else {
-              return
-            }
-            cell.isHidden = false
-            cell.alpha = 0.0
-            UIView.animate(withDuration: 0.3, animations: {
-              snapshot.center = cell.center
-              snapshot.transform = CGAffineTransform.identity
-              snapshot.alpha = 0
-              cell.alpha = 1
-            }, completion: { (finished) in
-             self.sourceIndexPath = nil
-            snapshot.removeFromSuperview()
-             self.snapshot = nil
-          })
-        }
-    }
-    
-    private func customSnapshotFromView(inputView: UIView) -> UIView? {
-      UIGraphicsBeginImageContextWithOptions(inputView.bounds.size, false, 0)
-      if let CurrentContext = UIGraphicsGetCurrentContext() {
-        inputView.layer.render(in: CurrentContext)
-      }
-      guard let image = UIGraphicsGetImageFromCurrentImageContext() else {
-        UIGraphicsEndImageContext()
-        return nil
-      }
-      UIGraphicsEndImageContext()
-      let snapshot = UIImageView(image: image)
-      snapshot.layer.masksToBounds = false
-      snapshot.layer.cornerRadius = 0
-      snapshot.layer.shadowOffset = CGSize(width: -5, height: 0)
-      snapshot.layer.shadowRadius = 5
-      snapshot.layer.shadowOpacity = 0.4
-      return snapshot
-    }
-}
-
 
 //import Firebase
 //import GoogleSignIn

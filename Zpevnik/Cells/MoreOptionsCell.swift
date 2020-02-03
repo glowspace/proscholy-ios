@@ -51,16 +51,16 @@ class MoreOptionsCell: UITableViewCell {
     }
     
     private func setViews() {
-        addSubview(iconView)
-        addSubview(titleView)
+        contentView.addSubview(iconView)
+        contentView.addSubview(titleView)
         
-        iconView.leadingAnchor.constraint(equalToSystemSpacingAfter: leadingAnchor, multiplier: 1).isActive = true
+        iconView.leadingAnchor.constraint(equalToSystemSpacingAfter: contentView.leadingAnchor, multiplier: 1).isActive = true
         titleView.leadingAnchor.constraint(equalToSystemSpacingAfter: iconView.trailingAnchor, multiplier: 1).isActive = true
         
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[titleView]-|", metrics: nil, views: ["titleView": titleView]))
+        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:[titleView]-|", metrics: nil, views: ["titleView": titleView]))
         
-        iconView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
-        titleView.centerYAnchor.constraint(equalTo: centerYAnchor).isActive = true
+        iconView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
+        titleView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor).isActive = true
     }
     
     required init?(coder aDecoder: NSCoder) {

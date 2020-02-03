@@ -10,7 +10,7 @@ import UIKit
 
 class UserMenuVC: HalfViewController {
     
-    private let optionsDataSource = OptionsDataSource(.settings)
+    private let optionsDataSource = OptionsDataSource()
     
     var delegate: UserMenuDelegate?
     var user: User?
@@ -26,6 +26,7 @@ class UserMenuVC: HalfViewController {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         
+        optionsDataSource.optionsType = .settings
         tableView.dataSource = optionsDataSource
         tableView.delegate = self
         
@@ -47,6 +48,7 @@ class UserMenuVC: HalfViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
+        // preferred size on iPad only
         preferredContentSize = CGSize(width: 200, height: 325)
         
         userNameLabel.text = user?.name ?? "Nepřihlášený uživatel"
@@ -104,16 +106,5 @@ extension UserMenuVC: UITableViewDelegate {
         UIApplication.shared.open(url) { _ in
             self.dismiss(animated: true)
         }
-    }
-    
-    func gestureRecognizer(_ gestureRecognizer: UIGestureRecognizer,
-             shouldBeRequiredToFailBy otherGestureRecognizer: UIGestureRecognizer) -> Bool {
-       // Do not begin the pan until the swipe fails.
-        
-//       if gestureRecognizer == self.swipeGesture &&
-//              otherGestureRecognizer == self.panGesture {
-//          return true
-//       }
-       return false
     }
 }

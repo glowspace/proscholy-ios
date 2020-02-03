@@ -172,29 +172,41 @@ class SongLyricView: UIView {
         
         for verse in verses {
             var previous: CGRect?
+            var previousRange: NSRange?
             
             for chord in verse.chords {
                 let layer = createTextLayer(NSAttributedString(string: chord.text, attributes: chordAttributes))
-                if let chordRect = rect(for: chord.index + index, textContainer: textContainer, layoutManager: layoutManager, offset: 0) {
+                if var chordRect = rect(for: chord.index + index, textContainer: textContainer, layoutManager: layoutManager, offset: 0) {
+                    var range = NSRange(location: chord.index + index - 1, length: 1)
+                    
                     if let previous = previous, Int(chordRect.minY) == Int(previous.minY) {
                         let diff = previous.minX + previous.width + minSpacing - chordRect.minX
                         if diff > 0 {
-                            textStorage.addAttribute(.kern, value: diff, range: NSRange(location: chord.index + index - 1, length: 1))
+                            textStorage.addAttribute(.kern, value: diff, range: range)
+                            
+                            chordRect.origin.x += diff
                         }
                     }
                     
-//                    if chord.index + index > 0, rect.origin.x + rect.width > lyricsTextView.textContainer.size.width {
-//                        textStorage.insert(NSAttributedString(string: "\n", attributes: chordAttributes), at: chord.index + index - 1)
-//
-//                        rect.origin.x = 0
-//                        rect.origin.y += 1
-//
-//                        index += 1
-//                    }
-                    
-                    if let chordRect = rect(for: chord.index + index, textContainer: textContainer, layoutManager: layoutManager, offset: 0) {
-                        previous = CGRect(origin: chordRect.origin, size: layer.frame.size)
+                    if chordRect.origin.x + layer.frame.width > textContainer.size.width {
+                        let string = textStorage.string
+                        while let r = Range(range, in: string), string[r] != " " {
+                            range.location -= 1
+                        }
+                        
+                        textStorage.replaceCharacters(in: range, with: NSAttributedString(string: "\n", attributes: chordAttributes))
+
+                        if let rect = rect(for: chord.index + index, textContainer: textContainer, layoutManager: layoutManager, offset: 0) {
+                            chordRect = rect
+                        }
+                        
+                        if let range = previousRange {
+                            textStorage.removeAttribute(.kern, range: range)
+                        }
                     }
+                    
+                    previousRange = range
+                    previous = CGRect(origin: chordRect.origin, size: layer.frame.size)
                 }
             }
             
@@ -217,21 +229,17 @@ class SongLyricView: UIView {
                 if var rect = rect(for: chord.index + index, textContainer: textContainer, layoutManager: layoutManager, offset: 0) {
                     rect.size = layer.frame.size
                     
-                    if let previous = previous, rect.minY == previous.minY {
+                    if let previous = previous, Int(rect.minY) == Int(previous.minY) {
                         let diff = previous.minX + previous.width + minSpacing - rect.minX
                         if diff > 0 {
                             rect.origin.x += diff
                         }
                     }
                     
-//                    if rect.origin.x + rect.width > lyricsTextView.textContainer.size.width {
-//                        index += 1
-//                    }
-                    
                     previous = rect
                     
                     layer.frame.origin.x = rect.origin.x
-                    layer.frame.origin.y = rect.origin.y - UserSettings.fontSize
+                    layer.frame.origin.y = rect.origin.y - (chord.inline ? 0 : UserSettings.fontSize)
                 }
                 
                 if UserSettings.showChords {

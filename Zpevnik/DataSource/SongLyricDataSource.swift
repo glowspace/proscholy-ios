@@ -9,19 +9,77 @@
 import UIKit
 import CoreData
 
+// MARK: - FavoriteSongLyricDataSource
+
+class FavoriteSongLyricDataSource: ReorderableSongLyricDataSource {
+    
+    override var title: String? { "Písně s hvězdičkou" }
+    
+    init() {
+        super.init()
+        
+        canShowStar = false
+    }
+    
+    override func loadData() {
+        let predicate = NSPredicate(format: "lyrics != nil and favoriteOrder > -1")
+        let sortDescriptors = [NSSortDescriptor(key: "favoriteOrder", ascending: true)]
+        
+        if let data: [SongLyric] = CoreDataService.fetchData(predicate: predicate, sortDescriptors: sortDescriptors, context: PersistenceService.backgroundContext) {
+            self.allSongLyrics = data
+        } else {
+            self.allSongLyrics = []
+        }
+    }
+}
+
+// MARK: - PlaylistSongLyricDataSource
+
+class PlaylistSongLyricDataSource: ReorderableSongLyricDataSource {
+    
+    private let playlist: Playlist
+    
+    override var title: String? { playlist.name }
+    
+    init(_ playlist: Playlist) {
+        self.playlist = playlist
+        
+        super.init()
+    }
+    
+    override func loadData() {
+        if let songLyrics = playlist.songLyrics?.allObjects as? [SongLyric] {
+            allSongLyrics = songLyrics
+        }
+    }
+}
+
+// MARK: - ReorderableSongLyricDataSource
+
+class ReorderableSongLyricDataSource: SongLyricDataSource {
+    
+    override func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        return true
+    }
+    
+    override func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) { }
+}
+
+// MARK: - SongBooksSongLyricDataSource
+
 class SongBooksSongLyricDataSource: SongLyricDataSource {
     
     private let songBook: SongBook
     
+    override var title: String? { songBook.name }
+    
     init(_ songBook: SongBook) {
         self.songBook = songBook
         
-        super.init("")
-        
-        loadData()
+        super.init()
     }
     
-    private func loadData() {
+    override func loadData() {
         guard let records = songBook.records?.allObjects as? [SongBookRecord] else { return }
         
         for record in records {
@@ -32,6 +90,8 @@ class SongBooksSongLyricDataSource: SongLyricDataSource {
     }
 }
 
+// MARK: - SongLyricDataSource
+
 class SongLyricDataSource: NSObject {
     
     internal var allSongLyrics: [SongLyric]
@@ -40,12 +100,16 @@ class SongLyricDataSource: NSObject {
     
     var showingCount: Int { return showingSongLyrics.count }
     
-    private let lastSearchedKey: String
+    internal var canShowStar = true
+    
+    private let lastSearchedKey: String?
     var searchText: String
     
     var filterTagDataSource: FilterTagDataSource?
     
     var currentSongLyricIndex: Int?
+    
+    var title: String? { nil }
     
     var currentSongLyric: SongLyric? {
         guard let currentIndex = currentSongLyricIndex else { return nil }
@@ -53,82 +117,25 @@ class SongLyricDataSource: NSObject {
         return showingSongLyrics[currentIndex]
     }
     
-    init(_ lastSearchedKey: String) {
+    init(_ lastSearchedKey: String? = nil) {
         allSongLyrics = []
         songLyricsBeforeFilter = []
         showingSongLyrics = []
         
-        self.lastSearchedKey = lastSearchedKey
         searchText = ""
+        self.lastSearchedKey = lastSearchedKey
         
         super.init()
+        
+        loadData()
     }
     
-    func allFavorite(_ indexes: [Int]) -> Bool {
-        for i in indexes {
-            if showingSongLyrics[i].isFavorite() == false {
-                return false
-            }
-        }
-        
-        return indexes.count > 0
-    }
-    
-    func toggleFavorite() -> Bool {
-        guard let currentSongLyric = currentSongLyric else { return false }
-        
-        if currentSongLyric.isFavorite() {
-            currentSongLyric.favoriteOrder = -1
-            return false
-        } else {
-            currentSongLyric.favoriteOrder = Int16(UserSettings.favoriteOrderLast)
-            return true
-        }
-    }
-    
-    func toggleFavorites(_ indexes: [Int]) -> Bool {
-        if indexes.count == 0 { return false }
-        
-        let favorite = allFavorite(indexes)
-        
-        for i in indexes {
-            if favorite {
-                showingSongLyrics[i].favoriteOrder = -1
-            } else {
-                showingSongLyrics[i].favoriteOrder = Int16(UserSettings.favoriteOrderLast)
-            }
-        }
-        
-        return !favorite
-    }
-    
-    func songLyric(at index: Int) -> SongLyric {
-        return showingSongLyrics[index]
-    }
-    
-    func songLyrics(at indexes: [Int]) -> [SongLyric] {
-        var songLyrics = [SongLyric]()
-        
-        for index in indexes {
-            songLyrics.append(showingSongLyrics[index])
-        }
-        
-        return songLyrics
-    }
-}
-
-// MARK: - Data Handlers
-
-extension SongLyricDataSource {
+    // MARK: - Data Handlers
     
     func showAll(_ completionHandler: @escaping () -> Void) {
         self.searchText = ""
         
         PersistenceService.backgroundContext.perform {
-            if self.allSongLyrics.count == 0 {
-                self.loadData()
-            }
-            
             self.songLyricsBeforeFilter = self.allSongLyrics
             
             self.filterData()
@@ -166,7 +173,7 @@ extension SongLyricDataSource {
         }
     }
     
-    private func loadData() {
+    func loadData() {
         let predicate = NSPredicate(format: "lyrics != nil")
         let sortDescriptors = [NSSortDescriptor(key: "name", ascending: true, selector: #selector(NSString.localizedCaseInsensitiveCompare(_:)))]
         
@@ -245,8 +252,7 @@ extension SongLyricDataSource {
         let predicate = NSCompoundPredicate(andPredicateWithSubpredicates: dataSource.tags.enumerated().map { i, tags in
             let filteredTags = tags.enumerated().filter { j, _ in dataSource.active[i][j] }.map { $0.element }
             
-            // TODO: Support for languages
-            return filteredTags.count > 0 ? NSPredicate(format: "ANY tags.name in %@", filteredTags) : NSPredicate(value: true)
+            return filteredTags.count > 0 ? dataSource.predicateForSection(i, filteredTags) : NSPredicate(value: true)
         })
 
         showingSongLyrics = songLyricsBeforeFilter.filter { predicate.evaluate(with: $0) }
@@ -263,6 +269,61 @@ extension SongLyricDataSource {
         }.sorted {
             lastSearched.firstIndex(of: $0.id!)! > lastSearched.firstIndex(of: $1.id!)!
         }
+    }
+}
+
+extension SongLyricDataSource {
+    
+    func allFavorite(_ indexes: [Int]) -> Bool {
+        for i in indexes {
+            if showingSongLyrics[i].isFavorite() == false {
+                return false
+            }
+        }
+        
+        return indexes.count > 0
+    }
+    
+    func toggleFavorite() -> Bool {
+        guard let currentSongLyric = currentSongLyric else { return false }
+        
+        if currentSongLyric.isFavorite() {
+            currentSongLyric.favoriteOrder = -1
+            return false
+        } else {
+            currentSongLyric.favoriteOrder = Int16(UserSettings.favoriteOrderLast)
+            return true
+        }
+    }
+    
+    func toggleFavorites(_ indexes: [Int]) -> Bool {
+        if indexes.count == 0 { return false }
+        
+        let favorite = allFavorite(indexes)
+        
+        for i in indexes {
+            if favorite {
+                showingSongLyrics[i].favoriteOrder = -1
+            } else {
+                showingSongLyrics[i].favoriteOrder = Int16(UserSettings.favoriteOrderLast)
+            }
+        }
+        
+        return !favorite
+    }
+    
+    func songLyric(at index: Int) -> SongLyric {
+        return showingSongLyrics[index]
+    }
+    
+    func songLyrics(at indexes: [Int]) -> [SongLyric] {
+        var songLyrics = [SongLyric]()
+        
+        for index in indexes {
+            songLyrics.append(showingSongLyrics[index])
+        }
+        
+        return songLyrics
     }
 }
 
@@ -309,10 +370,16 @@ extension SongLyricDataSource: UITableViewDataSource {
         return cell
     }
     
+    func tableView(_ tableView: UITableView, canMoveRowAt indexPath: IndexPath) -> Bool {
+        return false
+    }
+    
+    func tableView(_ tableView: UITableView, moveRowAt sourceIndexPath: IndexPath, to destinationIndexPath: IndexPath) { }
+    
     private func setCell(_ cell: UITableViewCell, _ songLyric: SongLyric) {
         guard let cell = cell as? SongLyricCell else { return }
         
-        cell.favorite = songLyric.isFavorite()
+        cell.favorite = canShowStar && songLyric.isFavorite()
         cell.name = songLyric.name
         cell.number = songLyric.id
         

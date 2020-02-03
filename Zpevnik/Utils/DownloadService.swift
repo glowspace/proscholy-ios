@@ -222,7 +222,7 @@ class DownloadService {
                     }
                 }
                 
-                if !existed, let lang = songLyricsData["lang_string"] as? String {
+                if songLyricsData["lyrics"] != nil && !existed, let lang = songLyricsData["lang_string"] as? String {
                     if let languages: [Language] = CoreDataService.fetchData(predicate: NSPredicate(format: "name == %@", lang), context: context), languages.count > 0 {
                         languages[0].count += 1
                     } else {

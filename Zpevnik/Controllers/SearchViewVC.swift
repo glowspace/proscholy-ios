@@ -52,8 +52,8 @@ extension SearchViewVC: UITextFieldDelegate {
         if isSearching {
             isSearching = false
             
-            searchView.leadingButton?.setImage(.search, for: .normal)
-            searchView.trailingButton?.isEnabled = true
+//            searchView.leadingButton?.setImage(.search, for: .normal)
+//            searchView.trailingButton?.isEnabled = true
             
             searchView.searchField.resignFirstResponder()
             searchView.searchField.text = ""

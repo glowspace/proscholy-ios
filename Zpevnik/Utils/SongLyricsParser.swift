@@ -11,6 +11,7 @@ import Foundation
 struct Chord {
     let text: String
     let index: Int
+    let inline: Bool
 }
 
 struct Verse {
@@ -26,11 +27,13 @@ class SongLyricsParser {
         
         lyrics = substituteChordsPlaceholders(lyrics.replacingOccurrences(of: "\r", with: "").replacingOccurrences(of: "@", with: ""))
         
-        let regex = NSRegularExpression(#"(\d\.|\(?[BCR]\d?[:.]\)?)\s*((?:=\s*(\d\.)|.|\n)*?)\n*(?=$|[^=]?\d\.|\(?[BCR]\d?[:.]\)?)"#)
+        let regex = NSRegularExpression(#"\s*(\d\.|\(?[BCR]\d?[:.]\)?)\s*((?:=\s*(\d\.)|.|\n)*?)\n*(?=$|[^=]?\d\.|\(?[BCR]\d?[:.]\)?)"#)
         let range = NSRange(location: 0, length: lyrics.count)
         
         var verses = [Verse]()
         var substitutes = [String: Substring]()
+        
+        var firstIndex: String.Index?
         
         regex.enumerateMatches(in: lyrics, options: [], range: range) { (match, _, _) in
             guard let match = match else { return }
@@ -38,6 +41,9 @@ class SongLyricsParser {
             if let verseNumberRange = Range(match.range(at: 1), in: lyrics), let verseRange = Range(match.range(at: 2), in: lyrics) {
                 let verseNumber = lyrics[verseNumberRange].replacingOccurrences(of: #"\(|\)"#, with: "", options: .regularExpression).replacingOccurrences(of: #"([BCR]\d?)."#, with: "$1:", options: .regularExpression)
                 var verseText = lyrics[verseRange]
+                if firstIndex == nil {
+                    firstIndex = verseNumberRange.lowerBound
+                }
                 
                 if match.range(at: 2).length != 0 {
                     if match.range(at: 3).length != 0, let replaceRange = Range(match.range(at: 3), in: lyrics) {
@@ -58,8 +64,8 @@ class SongLyricsParser {
             }
         }
         
-        if verses.count == 0 {
-            verses.append(createVerse("", lyrics))
+        if firstIndex != lyrics.startIndex {
+            verses.insert(createVerse("", String(lyrics.prefix(upTo: firstIndex ?? lyrics.endIndex))), at: 0)
         }
         
         return verses
@@ -79,7 +85,7 @@ class SongLyricsParser {
             if let range = Range(match.range, in: text) {
                 let chord = text[range].replacingOccurrences(of: #"[\[\]]"#, with: "", options: .regularExpression)
                 
-                chords.append(Chord(text: chord, index: match.range.location - offset))
+                chords.append(Chord(text: chord, index: match.range.location - offset, inline: false))
                 
                 offset += match.range.length
             }

@@ -13,8 +13,6 @@ class FilterTagHeader: UICollectionReusableView {
     var title: String? {
         willSet {
             titleLabel.text = newValue
-            
-            setViews()
         }
     }
     
@@ -29,9 +27,12 @@ class FilterTagHeader: UICollectionReusableView {
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
+        setViews()
     }
     
     private func setViews() {
+        
         addSubview(titleLabel)
         
         addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|[titleLabel]|", metrics: nil, views: ["titleLabel": titleLabel]))

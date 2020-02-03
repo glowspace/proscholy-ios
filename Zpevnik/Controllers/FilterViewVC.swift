@@ -11,10 +11,6 @@ import UIKit
 class FilterViewVC: HalfViewController {
     
     private let spacing: CGFloat = 8
-
-    private let tags: [Tag] = {
-        return CoreDataService.fetchData(predicate: NSPredicate(format: "isValid = true"), context: PersistenceService.backgroundContext) ?? []
-    }()
     
     var dataSource: FilterTagDataSource? {
         didSet {
@@ -41,8 +37,8 @@ class FilterViewVC: HalfViewController {
         
         collectionView.contentInset = UIEdgeInsets(top: 0, left: 2 * spacing, bottom: 0, right: 2 * spacing)
         
-        collectionView.dataSource = self
-        collectionView.delegate = self
+        collectionView.dataSource = dataSource
+        collectionView.delegate = dataSource
         
         collectionView.allowsMultipleSelection = true
         
@@ -80,80 +76,5 @@ class FilterViewVC: HalfViewController {
         filterTagsView.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
         filterTagsView.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
         filterTagsView.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
-    }
-    
-    private func color(for section: Int) -> UIColor {
-        return section == 0 ? .blue : (section == (dataSource?.headers.count ?? 0) - 1 ? .red : .green)
-    }
-}
-
-// MARK: - UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout
-
-extension FilterViewVC: UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
-    
-    func numberOfSections(in collectionView: UICollectionView) -> Int {
-        return dataSource?.headers.count ?? 0
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return dataSource?.tags[section].count ?? 0
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        guard let cell = collectionView.dequeueReusableCell(withReuseIdentifier: "filterTagCell", for: indexPath) as? FilterTagCell else { return UICollectionViewCell() }
-        
-        cell.setBackgroundColor(color(for: indexPath.section))
-        cell.title = dataSource?.tags[indexPath.section][indexPath.row]
-        
-        return cell
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        return FilterTagCell.sizeFor(dataSource?.tags[indexPath.section][indexPath.row])
-    }
-
-    func collectionView(_ collectionView: UICollectionView, viewForSupplementaryElementOfKind kind: String, at indexPath: IndexPath) -> UICollectionReusableView {
-        switch kind {
-        case UICollectionView.elementKindSectionHeader:
-            guard let headerView = collectionView.dequeueReusableSupplementaryView(ofKind: kind, withReuseIdentifier: "filterTagHeader", for: indexPath) as? FilterTagHeader else { return UICollectionReusableView() }
-            
-            headerView.title = dataSource?.headers[indexPath.section]
-
-            return headerView
-        default:
-            return UICollectionReusableView()
-        }
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, referenceSizeForHeaderInSection section: Int) -> CGSize {
-        return FilterTagHeader.sizeFor(dataSource?.headers[section])
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didSelectItemAt indexPath: IndexPath) {
-        guard let cell = collectionView.cellForItem(at: indexPath) as? FilterTagCell else { return }
-        
-        dataSource?.activateFilter(indexPath.section, indexPath.row)
-        
-        cell.setBackgroundColor(color(for: indexPath.section))
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didDeselectItemAt indexPath: IndexPath) {
-        guard let cell = collectionView.cellForItem(at: indexPath) as? FilterTagCell else { return }
-        
-        dataSource?.deactivateFilter(indexPath.section, indexPath.row)
-        
-        cell.setBackgroundColor(color(for: indexPath.section))
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didHighlightItemAt indexPath: IndexPath) {
-        guard let cell = collectionView.cellForItem(at: indexPath) as? FilterTagCell else { return }
-        
-        cell.setBackgroundColor(color(for: indexPath.section))
-    }
-    
-    func collectionView(_ collectionView: UICollectionView, didUnhighlightItemAt indexPath: IndexPath) {
-        guard let cell = collectionView.cellForItem(at: indexPath) as? FilterTagCell else { return }
-        
-        cell.setBackgroundColor(color(for: indexPath.section))
     }
 }

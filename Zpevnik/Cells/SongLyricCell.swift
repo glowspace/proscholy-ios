@@ -10,8 +10,20 @@ import UIKit
 
 class SongLyricCell: UITableViewCell {
     
-    private let horizontalSpacing: CGFloat = 16
-    private let verticalSpacing: CGFloat = 12
+    var horizontalSpacing: CGFloat = 16 {
+        willSet {
+            leadingConstraint?.constant = newValue
+            trailingConstraint?.constant = -newValue
+        }
+    }
+    var verticalSpacing: CGFloat = 12 {
+        willSet {
+            topConstraint?.constant = newValue
+            bottomConstraint?.constant = -newValue
+        }
+    }
+    
+    private var topConstraint, bottomConstraint, leadingConstraint, trailingConstraint, starIconWidthConstraint: NSLayoutConstraint?
     
     var name: String? {
         didSet {
@@ -58,7 +70,7 @@ class SongLyricCell: UITableViewCell {
         label.adjustsFontSizeToFitWidth = true
         label.minimumScaleFactor = 0.75
         
-        label.font = UIFont.systemFont(ofSize: 13)
+        label.font = .preferredFont(forTextStyle: .footnote)
         label.textColor = .gray
         
         label.baselineAdjustment = .alignCenters
@@ -74,8 +86,6 @@ class SongLyricCell: UITableViewCell {
         return view
     }()
     
-    private var starIconWidthConstraint: NSLayoutConstraint?
-    
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
@@ -90,19 +100,13 @@ class SongLyricCell: UITableViewCell {
     
     private func setViews() {
         contentView.addSubview(containerView)
-
+        
         containerView.addSubview(nameLabel)
         containerView.addSubview(starIcon)
         containerView.addSubview(numberLabel)
 
-        let views = [
-            "nameLabel": nameLabel,
-            "starIcon": starIcon,
-            "numberLabel": numberLabel
-        ]
-
         nameLabel.leadingAnchor.constraint(equalTo: containerView.leadingAnchor).isActive = true
-        starIcon.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: nameLabel.trailingAnchor, multiplier: 1).isActive = true
+        starIcon.leadingAnchor.constraint(equalToSystemSpacingAfter: nameLabel.trailingAnchor, multiplier: 1).isActive = true
         numberLabel.leadingAnchor.constraint(equalToSystemSpacingAfter: starIcon.trailingAnchor, multiplier: 1).isActive = true
         numberLabel.trailingAnchor.constraint(equalTo: containerView.trailingAnchor).isActive = true
         
@@ -112,16 +116,22 @@ class SongLyricCell: UITableViewCell {
         starIcon.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
         numberLabel.centerYAnchor.constraint(equalTo: containerView.centerYAnchor).isActive = true
         
-        containerView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|[nameLabel]|", metrics: nil, views: views))
-        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-(spacing)-[containerView]-(spacing)-|", metrics: ["spacing": verticalSpacing], views: ["containerView": containerView]))
-        
         starIcon.heightAnchor.constraint(equalTo: starIcon.widthAnchor).isActive = true
         starIconWidthConstraint = starIcon.widthAnchor.constraint(equalToConstant: 0)
         starIconWidthConstraint?.isActive = true
         
-        containerView.leadingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.leadingAnchor, constant: horizontalSpacing).isActive = true
+        nameLabel.topAnchor.constraint(equalTo: containerView.topAnchor).isActive = true
+        nameLabel.bottomAnchor.constraint(equalTo: containerView.bottomAnchor).isActive = true
         
-        containerView.trailingAnchor.constraint(equalTo: contentView.safeAreaLayoutGuide.trailingAnchor, constant: -horizontalSpacing).isActive = true
+        topConstraint = containerView.topAnchor.constraint(equalTo: contentView.topAnchor, constant: verticalSpacing)
+        bottomConstraint = containerView.bottomAnchor.constraint(equalTo: contentView.bottomAnchor, constant: -verticalSpacing)
+        leadingConstraint = containerView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: horizontalSpacing)
+        trailingConstraint = containerView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -horizontalSpacing)
+        
+        topConstraint?.isActive = true
+        bottomConstraint?.isActive = true
+        leadingConstraint?.isActive = true
+        trailingConstraint?.isActive = true
     }
     
     required init?(coder aDecoder: NSCoder) {

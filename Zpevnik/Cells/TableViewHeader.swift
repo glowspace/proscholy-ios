@@ -25,6 +25,10 @@ class TableViewHeader: UIView {
         label.text = title
         label.textColor = titleColor
         
+        setViews()
+    }
+    
+    private func setViews() {
         addSubview(label)
         
         addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-(spacing)-[label]-(spacing)-|", metrics: ["spacing": spacing], views: ["label": label]))

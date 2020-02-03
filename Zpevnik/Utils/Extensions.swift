@@ -14,9 +14,13 @@ extension UIImage {
     static var aboutProject: UIImage? { return UIImage(named: "aboutProjectIcon") }
     static var add: UIImage? { return UIImage(named: "addIcon") }
     static var addPlaylist: UIImage? { return UIImage(named: "addPlaylistIcon") }
+    static var archive: UIImage? { return UIImage(named: "archiveIcon") }
     static var back: UIImage? { return UIImage(named: "backIcon") }
+    static var bin: UIImage? { return UIImage(named: "binIcon") }
     static var clear: UIImage? { return UIImage(named: "clearIcon") }
     static var downArrow: UIImage? { return UIImage(named: "downArrowIcon") }
+    static var duplicate: UIImage? { return UIImage(named: "duplicateIcon") }
+    static var edit: UIImage? { return UIImage(named: "editIcon") }
     static var feedback: UIImage? { return UIImage(named: "feedbackIcon") }
     static var filter: UIImage? { return UIImage(named: "filterIcon") }
     static var headset: UIImage? { return UIImage(named: "headsetIcon") }
@@ -28,6 +32,7 @@ extension UIImage {
     static var musicNotes: UIImage? { return UIImage(named: "musicNotesIcon") }
     static var person: UIImage? { return UIImage(named: "personIcon") }
     static var personFilled: UIImage? { return UIImage(named: "personIconFilled") }
+    static var remove: UIImage? { return UIImage(named: "removeIcon") }
     static var rightArrow: UIImage? { return UIImage(named: "rightArrowIcon") }
     static var search: UIImage? { return UIImage(named: "searchIcon") }
     static var selectAll: UIImage? { return UIImage(named: "selectAllIcon") }
@@ -39,6 +44,7 @@ extension UIImage {
     static var stop: UIImage? { return UIImage(named: "stopIcon") }
     static var translate: UIImage? { return UIImage(named: "translateIcon") }
     static var tune: UIImage? { return UIImage(named: "tuneIcon") }
+    static var unarchive: UIImage? { return UIImage(named: "unarchiveIcon") }
     static var warning: UIImage? { return UIImage(named: "warningIcon" )}
     static var web: UIImage? { return UIImage(named: "webIcon") }
 }
@@ -129,14 +135,17 @@ extension UITabBarController {
     
     func setTabBarHidden(_ hidden: Bool, animated: Bool) {
         if !hidden {
-            self.tabBar.isHidden = false
+            // when tabbar is hidden and user leaves app, it changes origin to previous,
+            // so it must be set again to make animation possible
+            self.tabBar.frame.origin.y = self.view.frame.height
+            // using `self.tabBar.isHidden = false` makes sliding view on songlyric view jump up
+            self.tabBar.alpha = 1
         }
         UIView.animate(withDuration: animated ? 0.3 : 0, animations: {
-            // + 1 to hide border
-            self.tabBar.frame.origin.y += (self.tabBar.frame.height + 1) * (hidden ? 1 : -1)
+            self.tabBar.frame.origin.y = hidden ? self.view.frame.height : self.view.frame.height - self.tabBar.frame.height
         }) { _ in
             if hidden {
-                self.tabBar.isHidden = true
+                self.tabBar.alpha = 0
             }
         }
     }
@@ -161,11 +170,4 @@ extension NSRegularExpression {
             preconditionFailure("Illegal regular expression: \(pattern).")
         }
     }
-}
-
-
-
-// MARK: - OLD
-
-class TableViewCell: UITableViewCell {
 }

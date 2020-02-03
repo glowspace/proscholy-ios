@@ -32,17 +32,20 @@ class SettingCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         
-        addSubview(titleLabel)
-        addSubview(switchButton)
+        setViews()
+    }
+    
+    private func setViews() {
+        contentView.addSubview(titleLabel)
+        contentView.addSubview(switchButton)
         
         let views = [
             "titleLabel": titleLabel,
             "switchButton": switchButton
         ]
         
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[titleLabel]-[switchButton]-|", metrics: nil, views: views))
-        addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[titleLabel]-|", metrics: nil, views: views))
-        addConstraint(NSLayoutConstraint(item: switchButton, attribute: .centerY, relatedBy: .equal, toItem: self, attribute: .centerY, multiplier: 1, constant: 0))
+        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "H:|-[titleLabel]-[switchButton]-|", options: [.alignAllCenterY], metrics: nil, views: views))
+        contentView.addConstraints(NSLayoutConstraint.constraints(withVisualFormat: "V:|-[titleLabel]-|", metrics: nil, views: views))
     }
     
     required init?(coder aDecoder: NSCoder) {

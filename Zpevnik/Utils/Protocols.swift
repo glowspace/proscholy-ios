@@ -31,6 +31,10 @@ protocol SlideViewDelegate {
     func toggleSlideView(animations: @escaping () -> Void, completionHandler: @escaping () -> Void)
     
     func toggleAutoScroll(completionHandler: @escaping (Bool) -> Void)
+    
+    func canChangeSpeed(add: Bool) -> Bool
+    
+    func changeSpeed(add: Bool)
 }
 
 protocol TranslationDelegate {

@@ -82,10 +82,6 @@ class AboutVC: ViewController {
             
             description += """
             Offline mobilní verze pro iOS.
-
-            Autor mobilní aplikace: Patrik Dobiáš
-            
-            Na vývoji se stále pracuje.
             
             Případné chyby, připomínky, nápady či postřehy k této aplikaci, prosím, uveďte zde.
             """

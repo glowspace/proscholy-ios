@@ -46,8 +46,6 @@ class SettingsVC: ViewController {
         cells = []
         
         cells.append(createSettingCell(title: "Blokovat zhasínání displeje", isOn: UserSettings.blockAutoLock, action: #selector(blockAutoLockToggle)))
-//        cells.append(createSettingCell(title: "Patkové písmo", isOn: UserSettings.serif, action: #selector(serifToggle)))
-//        cells.append(createSettingCell(title: "Posuvky", isOn: UserSettings.showSliders, action: #selector(slidersToggle)))
         cells.append(createSettingCell(title: "Akordy", isOn: UserSettings.showChords, action: #selector(showChordsToggle)))
         cells.append(createFontSizeCell())
         cells.append(createSettingCell(title: "Zobrazit spodní nabídku", isOn: UserSettings.showBottomOptions, action: #selector(bottomOptionsToggle)))
@@ -107,22 +105,6 @@ class SettingsVC: ViewController {
     
     @objc func blockAutoLockToggle() {
         UserSettings.blockAutoLock = !UserSettings.blockAutoLock
-    }
-    
-    @objc func serifToggle() {
-        UserSettings.serif = !UserSettings.serif
-        
-        for controller in [navigationController, tabBarController] {
-            if let view = controller?.view {
-                let superview = view.superview
-                view.removeFromSuperview()
-                superview?.addSubview(view)
-            }
-        }
-    }
-    
-    @objc func slidersToggle() {
-        UserSettings.showSliders = !UserSettings.showSliders
     }
     
     @objc func showChordsToggle() {

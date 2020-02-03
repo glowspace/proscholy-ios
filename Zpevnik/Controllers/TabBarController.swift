@@ -19,11 +19,14 @@ class TabBarController: UITabBarController {
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        let homeViewVC = createNavigationController(controller: HomeViewVC(), title: "Domů", image: .home, selectedImage: .homeFilled, tag: 0)
-        let songBooksVC = createNavigationController(controller: SongBooksListVC(), title: "Zpěvníky", image: .songBook, selectedImage: .songBook, tag: 1)
-        let userViewVC = createNavigationController(controller: UserViewVC(), title: "Já", image: .person, selectedImage: .personFilled, tag: 2)
+        let homeViewVC = HomeViewVC()
+        homeViewVC.dataSource = SongLyricDataSource("lastSearchedHome")
         
-        setViewControllers([homeViewVC, songBooksVC, userViewVC], animated: false)
+        let navHomeViewVC = createNavigationController(controller: homeViewVC, title: "Domů", image: .home, selectedImage: .homeFilled, tag: 0)
+        let navSongBooksVC = createNavigationController(controller: SongBooksListVC(), title: "Zpěvníky", image: .songBook, selectedImage: .songBook, tag: 1)
+        let navUserViewVC = createNavigationController(controller: UserViewVC(), title: "Já", image: .person, selectedImage: .personFilled, tag: 2)
+        
+        setViewControllers([navHomeViewVC, navSongBooksVC, navUserViewVC], animated: false)
         
         tabBar.tintColor = .blue
     }

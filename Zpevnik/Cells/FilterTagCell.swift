@@ -14,7 +14,7 @@ class ClearAbleFilterTagCell: UICollectionViewCell {
     private static let clearButtonSize: CGFloat = 16
     
     // TODO: replace with protocol
-    var delegate: SongListViewVC?
+    var delegate: AllSongListViewVC?
     
     var color: UIColor?
     
@@ -94,8 +94,6 @@ class FilterTagCell: UICollectionViewCell {
     var title: String? {
         willSet {
             filterLabel.text = newValue
-            
-            setViews()
         }
     }
     
@@ -115,6 +113,8 @@ class FilterTagCell: UICollectionViewCell {
         layer.borderWidth = 1
         
         layer.borderColor = UIColor.gray2.cgColor
+        
+        setViews()
     }
     
     func setBackgroundColor(_ color: UIColor) {
@@ -125,6 +125,8 @@ class FilterTagCell: UICollectionViewCell {
         } else {
             if #available(iOS 13, *) {
                 backgroundColor = .systemBackground
+            } else {
+                backgroundColor = .white
             }
         }
     }
