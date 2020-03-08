@@ -27,6 +27,8 @@ class UserSettings {
     
     static var favoriteOrderLast = 0
     
+    static var scrollSpeed = 3
+    
     static func load() {
         let defaults = UserDefaults.standard
         
@@ -34,6 +36,7 @@ class UserSettings {
         showChords = loadObject(forKey: "showChords", defaults: defaults) ?? showChords
         fontSize = loadObject(forKey: "fontSize", defaults: defaults) ?? fontSize
         showBottomOptions = loadObject(forKey: "showBottomOptions", defaults: defaults) ?? showBottomOptions
+        scrollSpeed = loadObject(forKey: "scrollSpeed", defaults: defaults) ?? scrollSpeed
     }
     
     static func loadObject<T>(forKey key: String, defaults: UserDefaults) -> T? {
@@ -47,5 +50,6 @@ class UserSettings {
         defaults.set(showChords, forKey: "showChords")
         defaults.set(fontSize, forKey: "fontSize")
         defaults.set(showBottomOptions, forKey: "showBottomOptions")
+        defaults.set(scrollSpeed, forKey: "scrollSpeed")
     }
 }

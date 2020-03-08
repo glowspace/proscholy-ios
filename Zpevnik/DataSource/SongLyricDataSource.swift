@@ -73,6 +73,8 @@ class SongBooksSongLyricDataSource: SongLyricDataSource {
     
     override var title: String? { songBook.name }
     
+    override var idPredicate: NSPredicate { NSPredicate(format: "self CONTAINS[cd] %@", songBook.shortcut ?? searchText) }
+    
     init(_ songBook: SongBook) {
         self.songBook = songBook
         
@@ -81,6 +83,8 @@ class SongBooksSongLyricDataSource: SongLyricDataSource {
     
     override func loadData() {
         guard let records = songBook.records?.allObjects as? [SongBookRecord] else { return }
+        
+        allSongLyrics = []
         
         for record in records {
             if let songLyric = record.songLyric, songLyric.lyrics != nil {
@@ -110,6 +114,8 @@ class SongLyricDataSource: NSObject {
     var currentSongLyricIndex: Int?
     
     var title: String? { nil }
+    
+    var idPredicate: NSPredicate { NSPredicate(format: "self CONTAINS[cd] %@", searchText) }
     
     var currentSongLyric: SongLyric? {
         guard let currentIndex = currentSongLyricIndex else { return nil }
@@ -383,12 +389,11 @@ extension SongLyricDataSource: UITableViewDataSource {
         cell.name = songLyric.name
         cell.number = songLyric.id
         
-        let predicate = NSPredicate(format: "self CONTAINS[cd] %@", searchText)
         let numbers = songLyric.numbers.filter {
-            predicate.evaluate(with: $0)
+            idPredicate.evaluate(with: $0)
         }
         
-        if numbers.count > 0 && searchText.rangeOfCharacter(from: .decimalDigits) != nil && !songLyric.id!.contains(searchText) {
+        if numbers.count > 0 && (searchText == "" || (searchText.rangeOfCharacter(from: .decimalDigits) != nil && !songLyric.id!.contains(searchText))) {
             cell.number = numbers[0]
         } else {
             cell.number = songLyric.id

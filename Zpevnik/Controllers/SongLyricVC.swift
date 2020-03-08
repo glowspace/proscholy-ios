@@ -22,11 +22,6 @@ class SongLyricVC: ViewController {
             }
         }
     }
-    private var scrollSpeed = 3 {
-        didSet {
-            bottomSlidingView.shouldUpdateButtonsState()
-        }
-    }
     
     private let optionsDataSource = OptionsDataSource()
     var dataSource: SongLyricDataSource!
@@ -58,7 +53,7 @@ class SongLyricVC: ViewController {
     var slideViewBottomConstraint: NSLayoutConstraint?
     
     private let optionsTableWidth: CGFloat = 200
-    private var optionsTableHeight: CGFloat = 244
+    private var optionsTableHeight: CGFloat = 255
     
     private lazy var translateButton: UIBarButtonItem = { createBarButtonItem(image: .translate, selector: #selector(showTranslations)) }()
     private lazy var starButton: UIBarButtonItem = { createBarButtonItem(image: songLyric.isFavorite() ? .starFilled : .star, selector: #selector(toggleFavorite)) }()
@@ -212,7 +207,7 @@ class SongLyricVC: ViewController {
     }
     
     private func autoScroll(completionHandler: @escaping (Bool) -> Void) {        
-        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(Constants.speeds[scrollSpeed])) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + .milliseconds(Constants.speeds[UserSettings.scrollSpeed])) {
             if !self.canScroll() {
                 self.isAutoScrolling = false
             } else {
@@ -339,11 +334,12 @@ extension SongLyricVC: SlideViewDelegate {
     }
     
     func canChangeSpeed(add: Bool) -> Bool {
-        return add && scrollSpeed != Constants.maxScrollSpeed || !add && scrollSpeed != Constants.minScrollSpeed
+        return add && UserSettings.scrollSpeed != Constants.maxScrollSpeed || !add && UserSettings.scrollSpeed != Constants.minScrollSpeed
     }
     
     func changeSpeed(add: Bool) {
-        scrollSpeed += add ? 1 : -1
+        UserSettings.scrollSpeed += add ? 1 : -1
+        bottomSlidingView.shouldUpdateButtonsState()
     }
 }
 
@@ -458,6 +454,8 @@ extension SongLyricVC {
         if(optionsTableTopConstraint?.constant == -1) {
             toggleMoreOptions()
         }
+        
+        isAutoScrolling = false
         
         if gestureRecognizer.direction == .left {
             dataSource.nextSongLyric()
